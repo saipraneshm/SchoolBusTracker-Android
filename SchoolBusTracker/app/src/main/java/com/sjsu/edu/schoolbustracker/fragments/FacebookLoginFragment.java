@@ -36,7 +36,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.sjsu.edu.schoolbustracker.MainActivity;
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.UserRegistration;
+import com.sjsu.edu.schoolbustracker.activity.UserRegistration;
 
 /**
  * A simple {@link Fragment} subclass.
