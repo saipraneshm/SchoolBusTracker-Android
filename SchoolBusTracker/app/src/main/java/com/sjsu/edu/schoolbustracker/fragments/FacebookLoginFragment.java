@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatEditText;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +18,15 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.Profile;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -26,7 +34,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.sjsu.edu.schoolbustracker.MainActivity;
 import com.sjsu.edu.schoolbustracker.R;
+import com.sjsu.edu.schoolbustracker.UserRegistration;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,12 +52,20 @@ public class FacebookLoginFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "FacebookLoginFragment";
+    private static final int RC_SIGN_IN = 9001;
 
+    //Firebase
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
-    private LoginButton loginButton;
+    private LoginButton mFbLoginButton;
     private CallbackManager callbackManager;
+    private AppCompatEditText loginUserID,loginPassword;
+    private AppCompatButton loginButton,signUpButton,signOutButton;
+
+
+    //Google Auth
+    GoogleApiClient mGoogleApiClient;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -106,15 +124,21 @@ public class FacebookLoginFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_facebook_login, container, false);
-        loginButton = (LoginButton) view.findViewById(R.id.login_button);
-        loginButton.setReadPermissions("email", "public_profile");
+        mFbLoginButton = (LoginButton) view.findViewById(R.id.login_button);
+        loginUserID =  (AppCompatEditText) view.findViewById(R.id.LoginUserEmail);
+        loginPassword =  (AppCompatEditText) view.findViewById(R.id.LoginUserPassword);
+        loginButton = (AppCompatButton) view.findViewById(R.id.LoginButton);
+        signUpButton = (AppCompatButton) view.findViewById(R.id.SignUpButton);
+        signOutButton = (AppCompatButton) view.findViewById(R.id.sign_out_button);
+
+        mFbLoginButton.setReadPermissions("email", "public_profile");
         // If using in a fragment
-        loginButton.setFragment(this);
+        mFbLoginButton.setFragment(this);
         // Other app specific specialization
 
         callbackManager = CallbackManager.Factory.create();
         // Callback registration
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        mFbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         // App code
@@ -141,6 +165,77 @@ public class FacebookLoginFragment extends Fragment {
 
                 });
         // Inflate the layout for this fragment
+
+        //Google Authentication
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .enableAutoManage(getActivity() /* FragmentActivity */, (GoogleApiClient.OnConnectionFailedListener) getActivity() /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        view.findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signIn();
+            }
+        });
+
+        //Email Password Login using Firebase
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAuth.signInWithEmailAndPassword(loginUserID.getText().toString(), loginPassword.getText().toString())
+                        .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+
+                                // If sign in fails, display a message to the user. If sign in succeeds
+                                // the auth state listener will be notified and logic to handle the
+                                // signed in user can be handled in the listener.
+                                if (!task.isSuccessful()) {
+                                    Log.w(TAG, "signInWithEmail:failed", task.getException());
+                                    Toast.makeText(getActivity() , R.string.auth_failed,
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                                else{
+                                    Log.w(TAG, "signInWithEmail:successful");
+                                    // Start the Landing Activity
+                                }
+
+                                // ...
+                            }
+                        });
+            }
+        });
+
+        //Start Activity to Register New User
+        signUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent registerNewUserActivity = new Intent(getActivity(),UserRegistration.class);
+                startActivity(registerNewUserActivity);
+            }
+        });
+
+        //Sign Out of Google
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                        new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(Status status) {
+                                // [START_EXCLUDE]
+                              //  updateUI(false);
+                                // [END_EXCLUDE]
+                            }
+                        });
+            }
+        });
+
         return view;
     }
 
@@ -188,6 +283,36 @@ public class FacebookLoginFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode,resultCode,data);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        }
+    }
+
+  /*  private void updateUI(boolean signedIn) {
+        if (signedIn) {
+            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+            findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+        } else {
+            //mStatusTextView.setText(R.string.signed_out);
+
+            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+            findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+        }
+    }*/
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+        if (result.isSuccess()) {
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount acct = result.getSignInAccount();
+            //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+           // updateUI(true);
+            Log.d(TAG, "auth successful:");
+        } else {
+            // Signed out, show unauthenticated UI.
+           // updateUI(false);
+        }
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -227,5 +352,10 @@ public class FacebookLoginFragment extends Fragment {
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    private void signIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 }
