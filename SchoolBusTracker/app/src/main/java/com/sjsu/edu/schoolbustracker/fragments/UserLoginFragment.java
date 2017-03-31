@@ -41,17 +41,17 @@ import com.sjsu.edu.schoolbustracker.activity.UserRegistration;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link FacebookLoginFragment.OnFragmentInteractionListener} interface
+ * {@link UserLoginFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link FacebookLoginFragment#newInstance} factory method to
+ * Use the {@link UserLoginFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FacebookLoginFragment extends Fragment {
+public class UserLoginFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private static final String TAG = "FacebookLoginFragment";
+    private static final String TAG = "UserLoginFragment";
     private static final int RC_SIGN_IN = 9001;
 
     //Firebase
@@ -74,7 +74,7 @@ public class FacebookLoginFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public FacebookLoginFragment() {
+    public UserLoginFragment() {
         // Required empty public constructor
     }
 
@@ -84,11 +84,11 @@ public class FacebookLoginFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment FacebookLoginFragment.
+     * @return A new instance of fragment UserLoginFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static FacebookLoginFragment newInstance(String param1, String param2) {
-        FacebookLoginFragment fragment = new FacebookLoginFragment();
+    public static UserLoginFragment newInstance(String param1, String param2) {
+        UserLoginFragment fragment = new UserLoginFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -123,7 +123,7 @@ public class FacebookLoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_facebook_login, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_login, container, false);
         mFbLoginButton = (LoginButton) view.findViewById(R.id.login_button);
         loginUserID =  (AppCompatEditText) view.findViewById(R.id.LoginUserEmail);
         loginPassword =  (AppCompatEditText) view.findViewById(R.id.LoginUserPassword);
