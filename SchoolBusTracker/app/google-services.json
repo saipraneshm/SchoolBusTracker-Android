@@ -15,6 +15,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "944475910847-fgtft7fb2td7co264m7o2u2h5h25u5i8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sjsu.edu.schoolbustracker",
+            "certificate_hash": "0f10a43f4c45b0377c579cacac2cd9edf8854d18"
+          }
+        },
+        {
+          "client_id": "944475910847-i3qoe72an23glqphpsl19ob1srht1i7q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sjsu.edu.schoolbustracker",
+            "certificate_hash": "45d9f6ab75c689336439ea6e8581dd712dae3863"
+          }
+        },
+        {
+          "client_id": "944475910847-gtb133r1ou9qqlqqfqsi64t9u7dum463.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sjsu.edu.schoolbustracker",
+            "certificate_hash": "96fb6fb6736a0b5be6f1eda4ac490db94090a943"
+          }
+        },
+        {
           "client_id": "944475910847-1qnh69q06qltm4gra5he0a4k6kmtt5er.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -30,6 +54,9 @@
       "api_key": [
         {
           "current_key": "AIzaSyCm9PVaGe8n_C6WiwtcMb1eFcJxHg_cvoI"
+        },
+        {
+          "current_key": "AIzaSyCoG5GYz8BlQJvdNPUP185wJPy8NJHN9CI"
         }
       ],
       "services": {
