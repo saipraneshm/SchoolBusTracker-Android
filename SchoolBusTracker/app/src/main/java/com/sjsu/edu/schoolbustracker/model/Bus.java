@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class Bus {
 
-    private UUID mDriverUUID;
+    private String mDriverUUID;
 
     //Unofficial number to identify the route
     private String mRouteNumber;
@@ -20,11 +20,11 @@ public class Bus {
     //Bus plate information
     private String mRegistrationNumber;
 
-    public UUID getDriverUUID() {
+    public String getDriverUUID() {
         return mDriverUUID;
     }
 
-    public void setDriverUUID(UUID driverUUID) {
+    public void setDriverUUID(String driverUUID) {
         mDriverUUID = driverUUID;
     }
 

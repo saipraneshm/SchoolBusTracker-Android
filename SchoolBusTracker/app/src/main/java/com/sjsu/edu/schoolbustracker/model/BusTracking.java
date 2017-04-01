@@ -7,7 +7,7 @@ package com.sjsu.edu.schoolbustracker.model;
 public class BusTracking {
 
     private String mBusRegistrationNumber;
-    private Trip[] mTripDetails;
+    private Trip mTripDetails;
 
     public String getBusRegistrationNumber() {
         return mBusRegistrationNumber;
@@ -17,11 +17,11 @@ public class BusTracking {
         mBusRegistrationNumber = busRegistrationNumber;
     }
 
-    public Trip[] getTripDetails() {
+    public Trip getTripDetails() {
         return mTripDetails;
     }
 
-    public void setTripDetails(Trip[] tripDetails) {
+    public void setTripDetails(Trip tripDetails) {
         mTripDetails = tripDetails;
     }
 }

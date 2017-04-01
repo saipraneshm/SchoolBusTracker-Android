@@ -34,9 +34,18 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.sjsu.edu.schoolbustracker.MainActivity;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.activity.UserRegistration;
+import com.sjsu.edu.schoolbustracker.model.Bus;
+import com.sjsu.edu.schoolbustracker.model.BusTracking;
+import com.sjsu.edu.schoolbustracker.model.Coordinates;
+import com.sjsu.edu.schoolbustracker.model.Trip;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.UUID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,10 +67,12 @@ public class UserLoginFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
+    private DatabaseReference mDatabase;
+
     private LoginButton mFbLoginButton;
     private CallbackManager callbackManager;
     private AppCompatEditText loginUserID,loginPassword;
-    private AppCompatButton loginButton,signUpButton,signOutButton;
+    private AppCompatButton loginButton,signUpButton,signOutButton,testButton;
 
 
     //Google Auth
@@ -105,6 +116,8 @@ public class UserLoginFragment extends Fragment {
         }
 
         mAuth = FirebaseAuth.getInstance();
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuthStateListener = new FirebaseAuth.AuthStateListener(){
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -130,6 +143,37 @@ public class UserLoginFragment extends Fragment {
         loginButton = (AppCompatButton) view.findViewById(R.id.LoginButton);
         signUpButton = (AppCompatButton) view.findViewById(R.id.SignUpButton);
         signOutButton = (AppCompatButton) view.findViewById(R.id.sign_out_button);
+
+        testButton = (AppCompatButton) view.findViewById(R.id.button2);
+        testButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*Bus newBus = new Bus();
+                UUID busuuid = UUID.randomUUID();
+                newBus.setDriverUUID(busuuid.toString());
+                newBus.setLat("121.13131231");
+                newBus.setLng("36.0001212");
+                newBus.setRegistrationNumber("ADFF12");
+                newBus.setRouteNumber("123");
+                mDatabase.child("Bus").child(newBus.getRegistrationNumber()).setValue(newBus);*/
+
+                BusTracking busTracking = new BusTracking();
+                Trip trip = new Trip();
+                trip.setTripId("1");
+                trip.setmIsComplete(false);
+                Coordinates coord = new Coordinates();
+                coord.setLat("121.123123");
+                coord.setLng("36.123145");
+                DatabaseReference mRef = mDatabase.child("BusTracking")
+                        .child("ADFF12")
+                        .child("Trips")
+                        .child("03-31-2017")
+                        .child(trip.getTripId());
+
+                        mRef.child("Coordinates").child(System.currentTimeMillis() + "").setValue(coord);
+                        mRef.child("isTripComplete").setValue("false");
+            }
+        });
 
         mFbLoginButton.setReadPermissions("email", "public_profile");
         // If using in a fragment
