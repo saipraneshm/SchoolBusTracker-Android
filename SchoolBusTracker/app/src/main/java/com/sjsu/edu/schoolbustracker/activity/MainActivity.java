@@ -12,25 +12,18 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.sjsu.edu.schoolbustracker.R;
+import com.sjsu.edu.schoolbustracker.activity.abs.SingleFragmentActivity;
 import com.sjsu.edu.schoolbustracker.fragments.UserLoginFragment;
 
-public class MainActivity extends FragmentActivity implements UserLoginFragment.OnFragmentInteractionListener, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends SingleFragmentActivity implements
+        UserLoginFragment.OnFragmentInteractionListener, GoogleApiClient.OnConnectionFailedListener {
 
 
     private static final String TAG = "MainActivity";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.fragment_container);
-
-        if(fragment == null){
-            fragment = new UserLoginFragment();
-            fm.beginTransaction().add(R.id.fragment_container, fragment).commit();
-        }
-
+    protected Fragment createFragment() {
+        return new UserLoginFragment();
     }
 
     @Override
@@ -49,4 +42,6 @@ public class MainActivity extends FragmentActivity implements UserLoginFragment.
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
+
+
 }
