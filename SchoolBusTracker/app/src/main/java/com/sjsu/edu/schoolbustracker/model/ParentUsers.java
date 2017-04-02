@@ -6,6 +6,7 @@ package com.sjsu.edu.schoolbustracker.model;
 
 public class ParentUsers {
 
+    private String mUUId;
     private String mEmailId ;
     private String mParentName ;
     private String mPhone;
@@ -50,5 +51,13 @@ public class ParentUsers {
 
     public void setChildren(Student[] children) {
         mChildren = children;
+    }
+
+    public String getUUId() {
+        return mUUId;
+    }
+
+    public void setUUId(String UUId) {
+        mUUId = UUId;
     }
 }

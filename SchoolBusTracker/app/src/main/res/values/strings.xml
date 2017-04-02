@@ -9,4 +9,8 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="title_track">Track</string>
+    <string name="title_history">Trips</string>
+    <string name="title_contact">Driver</string>
+    <string name="title_user_profile">Profile</string>
 </resources>
