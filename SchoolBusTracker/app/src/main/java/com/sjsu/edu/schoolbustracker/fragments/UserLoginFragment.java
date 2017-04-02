@@ -37,6 +37,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.sjsu.edu.schoolbustracker.R;
+import com.sjsu.edu.schoolbustracker.activity.BottomNavigationActivity;
 import com.sjsu.edu.schoolbustracker.activity.UserRegistration;
 import com.sjsu.edu.schoolbustracker.model.Bus;
 import com.sjsu.edu.schoolbustracker.model.BusTracking;
@@ -157,7 +158,7 @@ public class UserLoginFragment extends Fragment {
                 newBus.setRouteNumber("123");
                 mDatabase.child("Bus").child(newBus.getRegistrationNumber()).setValue(newBus);*/
 
-                BusTracking busTracking = new BusTracking();
+               /* BusTracking busTracking = new BusTracking();
                 Trip trip = new Trip();
                 trip.setTripId("1");
                 trip.setmIsComplete(false);
@@ -171,7 +172,8 @@ public class UserLoginFragment extends Fragment {
                         .child(trip.getTripId());
 
                         mRef.child("Coordinates").child(System.currentTimeMillis() + "").setValue(coord);
-                        mRef.child("isTripComplete").setValue("false");
+                        mRef.child("isTripComplete").setValue("false");*/
+               startActivity(new Intent(getActivity(), BottomNavigationActivity.class));
             }
         });
 
