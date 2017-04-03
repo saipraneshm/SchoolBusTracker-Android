@@ -3,11 +3,13 @@ package com.sjsu.edu.schoolbustracker.activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.sjsu.edu.schoolbustracker.R;
+import com.sjsu.edu.schoolbustracker.fragments.TripsFragment;
 
 public class BottomNavigationActivity extends AppCompatActivity {
 
@@ -23,7 +25,10 @@ public class BottomNavigationActivity extends AppCompatActivity {
                     mTextMessage.setText(R.string.title_track);
                     return true;
                 case R.id.navigation_trip_history_parent:
-                    mTextMessage.setText(R.string.title_history);
+                    FragmentManager fm = getSupportFragmentManager();
+                    fm.beginTransaction()
+                            .add(R.id.bottomnnavbar_container, new TripsFragment())
+                            .commit();
                     return true;
                 case R.id.navigation_contact_driver_parent:
                     mTextMessage.setText(R.string.title_contact);
@@ -42,7 +47,7 @@ public class BottomNavigationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_navigation);
 
-        mTextMessage = (TextView) findViewById(R.id.message);
+       // mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
