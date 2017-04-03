@@ -9,4 +9,14 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="transport_coordination">Transport Coordinator</string>
+    <string name="contact_message">Message</string>
+    <string name="contact_call">Call</string>
+    <string name="contact_phoneno">Phone No</string>
+    <string name="driver_text">Driver</string>
+
+
 </resources>
