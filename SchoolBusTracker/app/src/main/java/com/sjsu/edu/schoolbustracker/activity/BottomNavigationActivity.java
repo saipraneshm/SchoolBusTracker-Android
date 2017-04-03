@@ -28,7 +28,7 @@ public class BottomNavigationActivity extends AppCompatActivity {
                 case R.id.navigation_contact_driver_parent:
                     mTextMessage.setText(R.string.title_contact);
                     return true;
-                case R.id.navigation_profile_parent:
+                case R.id.navigation_user_profile_parent:
                     mTextMessage.setText(R.string.title_user_profile);
                     return true;
             }

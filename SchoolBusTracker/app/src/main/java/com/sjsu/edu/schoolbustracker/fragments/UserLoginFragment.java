@@ -34,10 +34,16 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.activity.BottomNavigationActivity;
 import com.sjsu.edu.schoolbustracker.activity.UserRegistration;
+import com.sjsu.edu.schoolbustracker.model.CheckUserType;
+import com.sjsu.edu.schoolbustracker.model.ParentUsers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,7 +65,7 @@ public class UserLoginFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
-    private DatabaseReference mDatabase;
+    private DatabaseReference mDatabase, mCheckUserTypeRef, mProfileRef;
 
     private LoginButton mFbLoginButton;
     private CallbackManager callbackManager;
@@ -113,10 +119,58 @@ public class UserLoginFragment extends Fragment {
         mAuthStateListener = new FirebaseAuth.AuthStateListener(){
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
+                final FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid() + " " + user.getEmail());
+                    mCheckUserTypeRef = mDatabase.child("CheckUserType");
+                    mCheckUserTypeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            boolean doesProfileExists = dataSnapshot.hasChild(user.getUid());
+                            if(doesProfileExists){
+                                Log.d("ProfileExists", user.getEmail() + " profile exists in the database" );
+
+                                Boolean isDriver = dataSnapshot.child(user.getUid()).child("isDriver").getValue(Boolean.class);
+                                Log.d("ProfileExists", isDriver.toString());
+                                if(isDriver){
+                                    mProfileRef = mDatabase.child("Profile").child("Driver").getRef();
+
+                                }else{
+                                    mProfileRef = mDatabase.child("Profile").child("ParentUser").child(user.getUid()).getRef();
+                                    mProfileRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            ParentUsers existingParent = dataSnapshot.getValue(ParentUsers.class);
+                                            Log.d("ProfileExists", existingParent.getEmailId() + " email from existing parent");
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
+
+                            }else{
+                                Log.d("ProfileExists", user.getEmail() + " profile doesn't exist in the database" );
+                                mCheckUserTypeRef.child(user.getUid()).child("isDriver").setValue(false);
+                                ParentUsers newParent = new ParentUsers();
+                                newParent.setUUId(user.getUid());
+                                newParent.setParentName(user.getDisplayName());
+                                newParent.setEmailId(user.getEmail());
+                                mDatabase.child("Profile")
+                                        .child("ParentUser")
+                                        .child(newParent.getUUId())
+                                        .setValue(newParent);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
