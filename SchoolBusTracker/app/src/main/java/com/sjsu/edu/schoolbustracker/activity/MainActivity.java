@@ -4,14 +4,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.activity.abs.SingleFragmentActivity;
 import com.sjsu.edu.schoolbustracker.fragments.UserLoginFragment;
 

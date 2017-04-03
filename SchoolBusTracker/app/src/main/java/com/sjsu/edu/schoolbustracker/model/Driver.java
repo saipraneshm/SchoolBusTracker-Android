@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public class Driver {
 
+    private String mUUId;
     private String mDriverName;
     private String mPhoneNumber;
 
@@ -37,4 +38,13 @@ public class Driver {
     public void setDriverId(UUID driverId) {
         mDriverId = driverId;
     }
+
+    public String getUUId() {
+        return mUUId;
+    }
+
+    public void setUUId(String UUId) {
+        mUUId = UUId;
+    }
+
 }
