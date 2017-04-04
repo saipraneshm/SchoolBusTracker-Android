@@ -14,9 +14,10 @@ import android.widget.TextView;
 
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.fragments.ContactCardFragment;
+import com.sjsu.edu.schoolbustracker.fragments.UserProfileFragment;
 
 public class BottomNavigationActivity extends FragmentActivity
-        implements ContactCardFragment.OnFragmentInteractionListener {
+        implements ContactCardFragment.OnFragmentInteractionListener,UserProfileFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +34,7 @@ public class BottomNavigationActivity extends FragmentActivity
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Log.d("BottomNavigation","Fragment item selected");
                 FragmentManager fm = getSupportFragmentManager();
-
+                Fragment frag;
 
                 switch (item.getItemId()) {
                     case R.id.navigation_real_time_track_parent:
@@ -46,11 +47,13 @@ public class BottomNavigationActivity extends FragmentActivity
                         //mTextMessage.setText(R.string.title_contact);
 
                         Log.d("BottomNavigation","Contact Fragment selected");
-                        Fragment frag = new ContactCardFragment();
+                        frag = new ContactCardFragment();
                         fm.beginTransaction().add(R.id.bottom_layout_fragment_holder, frag).commit();
                         return true;
                     case R.id.navigation_user_profile_parent:
                         //mTextMessage.setText(R.string.title_user_profile);
+                        frag = new UserProfileFragment();
+                        fm.beginTransaction().add(R.id.bottom_layout_fragment_holder, frag).commit();
                         return true;
                 }
 

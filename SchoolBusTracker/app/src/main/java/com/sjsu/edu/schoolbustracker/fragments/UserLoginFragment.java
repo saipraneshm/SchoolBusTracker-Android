@@ -177,6 +177,7 @@ public class UserLoginFragment extends Fragment {
                     });
 
                     startActivity(new Intent(getActivity(), BottomNavigationActivity.class));
+                    getActivity().finish();
 
                 } else {
                     // User is signed out
@@ -224,7 +225,10 @@ public class UserLoginFragment extends Fragment {
 
                         mRef.child("Coordinates").child(System.currentTimeMillis() + "").setValue(coord);
                         mRef.child("isTripComplete").setValue("false");*/
-               startActivity(new Intent(getActivity(), BottomNavigationActivity.class));
+               //startActivity(new Intent(getActivity(), BottomNavigationActivity.class));
+                Intent intent =new Intent(getActivity(),BottomNavigationActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         });
 
@@ -265,6 +269,7 @@ public class UserLoginFragment extends Fragment {
 
         //Google Authentication
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
