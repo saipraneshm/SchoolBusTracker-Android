@@ -53,7 +53,7 @@ public class BottomNavigationActivity extends FragmentActivity
                         //mTextMessage.setText(R.string.title_user_profile);
                         return true;
                 }
-                
+
                 return false;
             }
 

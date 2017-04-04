@@ -18,4 +18,5 @@
     <string name="title_history">Trips</string>
     <string name="title_contact">Driver</string>
     <string name="title_user_profile">Profile</string>
+    <string name="loading">Please Wait</string>
 </resources>
