@@ -14,10 +14,13 @@ import android.widget.TextView;
 
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.fragments.ContactCardFragment;
+import com.sjsu.edu.schoolbustracker.fragments.ProfileInfoFragment;
 import com.sjsu.edu.schoolbustracker.fragments.UserProfileFragment;
 
 public class BottomNavigationActivity extends FragmentActivity
-        implements ContactCardFragment.OnFragmentInteractionListener,UserProfileFragment.OnFragmentInteractionListener {
+        implements ContactCardFragment.OnFragmentInteractionListener,
+        UserProfileFragment.OnFragmentInteractionListener,
+        ProfileInfoFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

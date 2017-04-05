@@ -1,53 +1,38 @@
 package com.sjsu.edu.schoolbustracker.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.AppCompatButton;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.activity.MainActivity;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link UserProfileFragment.OnFragmentInteractionListener} interface
+ * {@link ProfileInfoFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link UserProfileFragment#newInstance} factory method to
+ * Use the {@link ProfileInfoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class UserProfileFragment extends Fragment {
+public class ProfileInfoFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    public static final String ARG_OBJECT = "object";
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    //Firebase
-    private FirebaseAuth mAuth;
-
     private OnFragmentInteractionListener mListener;
-    private final String TAG = "UserProfileFragment";
 
-    CollectionPagerAdapter mDemoCollectionPagerAdapter;
-    ViewPager mViewPager;
-
-    public UserProfileFragment() {
+    public ProfileInfoFragment() {
         // Required empty public constructor
     }
 
@@ -57,11 +42,11 @@ public class UserProfileFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment UserProfileFragment.
+     * @return A new instance of fragment ProfileInfoFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static UserProfileFragment newInstance(String param1, String param2) {
-        UserProfileFragment fragment = new UserProfileFragment();
+    public static ProfileInfoFragment newInstance(String param1, String param2) {
+        ProfileInfoFragment fragment = new ProfileInfoFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -76,34 +61,13 @@ public class UserProfileFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        mAuth = FirebaseAuth.getInstance();
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_user_profile, container, false);
-
-        mDemoCollectionPagerAdapter =
-                new CollectionPagerAdapter(
-                        getChildFragmentManager());
-        mViewPager = (ViewPager) view.findViewById(R.id.profile_view_pager);
-
-        mViewPager.setAdapter(mDemoCollectionPagerAdapter);
-
-        /*AppCompatButton logout = (AppCompatButton) view.findViewById(R.id.logout_btn);
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mAuth.getInstance().signOut();
-                Intent intent =new Intent(getActivity(),MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        });*/
-        return view;
+        return inflater.inflate(R.layout.fragment_profile_info, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -143,33 +107,5 @@ public class UserProfileFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    public class CollectionPagerAdapter extends FragmentPagerAdapter {
-
-
-        public CollectionPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            Fragment fragment = new ProfileInfoFragment();
-            Bundle args = new Bundle();
-            // Our object is just an integer :-P
-            args.putInt(ProfileInfoFragment.ARG_OBJECT, i + 1);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return "OBJECT " + (position + 1);
-        }
     }
 }

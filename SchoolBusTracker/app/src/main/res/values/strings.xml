@@ -20,4 +20,7 @@
     <string name="title_user_profile">Profile</string>
     <string name="loading">Please Wait</string>
     <string name="logout_txt">Logout</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
