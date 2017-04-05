@@ -13,14 +13,18 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.sjsu.edu.schoolbustracker.R;
+import com.sjsu.edu.schoolbustracker.fragments.AccountSettingsFragment;
 import com.sjsu.edu.schoolbustracker.fragments.ContactCardFragment;
+import com.sjsu.edu.schoolbustracker.fragments.NotificationSettingsFragment;
 import com.sjsu.edu.schoolbustracker.fragments.ProfileInfoFragment;
 import com.sjsu.edu.schoolbustracker.fragments.UserProfileFragment;
 
 public class BottomNavigationActivity extends FragmentActivity
         implements ContactCardFragment.OnFragmentInteractionListener,
         UserProfileFragment.OnFragmentInteractionListener,
-        ProfileInfoFragment.OnFragmentInteractionListener{
+        ProfileInfoFragment.OnFragmentInteractionListener,
+        AccountSettingsFragment.OnFragmentInteractionListener,
+        NotificationSettingsFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,7 @@ public class BottomNavigationActivity extends FragmentActivity
                         return true;
                     case R.id.navigation_user_profile_parent:
                         //mTextMessage.setText(R.string.title_user_profile);
+                        Log.d("BottomNavigation","Profile Fragment selected");
                         frag = new UserProfileFragment();
                         fm.beginTransaction().add(R.id.bottom_layout_fragment_holder, frag).commit();
                         return true;

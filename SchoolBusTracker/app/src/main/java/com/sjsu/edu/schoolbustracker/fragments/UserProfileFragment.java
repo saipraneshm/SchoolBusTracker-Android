@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -19,6 +20,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.activity.MainActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,8 +48,9 @@ public class UserProfileFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private final String TAG = "UserProfileFragment";
 
-    CollectionPagerAdapter mDemoCollectionPagerAdapter;
+    //CollectionPagerAdapter mDemoCollectionPagerAdapter;
     ViewPager mViewPager;
+    TabLayout mTabLayout;
 
     public UserProfileFragment() {
         // Required empty public constructor
@@ -84,14 +89,19 @@ public class UserProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+        Log.d(TAG,"Creating views");
         View view = inflater.inflate(R.layout.fragment_user_profile, container, false);
 
-        mDemoCollectionPagerAdapter =
+        /*mDemoCollectionPagerAdapter =
                 new CollectionPagerAdapter(
-                        getChildFragmentManager());
+                        getChildFragmentManager());*/
+        mTabLayout = (TabLayout) view.findViewById(R.id.tab_layout);
         mViewPager = (ViewPager) view.findViewById(R.id.profile_view_pager);
-
-        mViewPager.setAdapter(mDemoCollectionPagerAdapter);
+        setupViewPager(mViewPager);
+        Log.d(TAG,"setting tab layout with view pager");
+        mTabLayout.setupWithViewPager(mViewPager);
+        //mViewPager.setAdapter(mDemoCollectionPagerAdapter);
 
         /*AppCompatButton logout = (AppCompatButton) view.findViewById(R.id.logout_btn);
         logout.setOnClickListener(new View.OnClickListener() {
@@ -145,7 +155,17 @@ public class UserProfileFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    private void setupViewPager(ViewPager viewPager) {
+        CollectionPagerAdapter adapter = new CollectionPagerAdapter(getChildFragmentManager());
+        adapter.addFragment(new ProfileInfoFragment(), "Profile");
+        adapter.addFragment(new NotificationSettingsFragment(), "Notifications");
+        adapter.addFragment(new AccountSettingsFragment(), "Settings");
+        viewPager.setAdapter(adapter);
+    }
+
     public class CollectionPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
 
 
         public CollectionPagerAdapter(FragmentManager fm) {
@@ -153,23 +173,24 @@ public class UserProfileFragment extends Fragment {
         }
 
         @Override
-        public Fragment getItem(int i) {
-            Fragment fragment = new ProfileInfoFragment();
-            Bundle args = new Bundle();
-            // Our object is just an integer :-P
-            args.putInt(ProfileInfoFragment.ARG_OBJECT, i + 1);
-            fragment.setArguments(args);
-            return fragment;
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
         }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
 
         @Override
         public int getCount() {
-            return 3;
+            return mFragmentList.size();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return "OBJECT " + (position + 1);
+            return mFragmentTitleList.get(position);
         }
     }
 }
