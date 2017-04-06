@@ -1,5 +1,6 @@
 package com.sjsu.edu.schoolbustracker.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -34,6 +35,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,6 +43,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.activity.BottomNavigationActivity;
+import com.sjsu.edu.schoolbustracker.activity.MainActivity;
 import com.sjsu.edu.schoolbustracker.activity.UserRegistration;
 import com.sjsu.edu.schoolbustracker.model.CheckUserType;
 import com.sjsu.edu.schoolbustracker.model.ParentUsers;
@@ -71,6 +74,7 @@ public class UserLoginFragment extends Fragment {
     private CallbackManager callbackManager;
     private AppCompatEditText loginUserID,loginPassword;
     private AppCompatButton loginButton,signUpButton,signOutButton,testButton;
+    public ProgressDialog mProgressDialog;
 
 
     //Google Auth
@@ -171,6 +175,10 @@ public class UserLoginFragment extends Fragment {
 
                         }
                     });
+
+                    startActivity(new Intent(getActivity(), BottomNavigationActivity.class));
+                    getActivity().finish();
+
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -189,7 +197,6 @@ public class UserLoginFragment extends Fragment {
         loginButton = (AppCompatButton) view.findViewById(R.id.LoginButton);
         signUpButton = (AppCompatButton) view.findViewById(R.id.SignUpButton);
         signOutButton = (AppCompatButton) view.findViewById(R.id.sign_out_button);
-
         testButton = (AppCompatButton) view.findViewById(R.id.button2);
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,7 +225,10 @@ public class UserLoginFragment extends Fragment {
 
                         mRef.child("Coordinates").child(System.currentTimeMillis() + "").setValue(coord);
                         mRef.child("isTripComplete").setValue("false");*/
-               startActivity(new Intent(getActivity(), BottomNavigationActivity.class));
+               //startActivity(new Intent(getActivity(), BottomNavigationActivity.class));
+                Intent intent =new Intent(getActivity(),BottomNavigationActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         });
 
@@ -259,6 +269,7 @@ public class UserLoginFragment extends Fragment {
 
         //Google Authentication
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
@@ -392,6 +403,34 @@ public class UserLoginFragment extends Fragment {
         }
     }*/
 
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+        // [START_EXCLUDE silent]
+        showProgressDialog();
+        // [END_EXCLUDE]
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signInWithCredential", task.getException());
+                            Toast.makeText(getActivity(), "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        // [START_EXCLUDE]
+                        hideProgressDialog();
+                        // [END_EXCLUDE]
+                    }
+                });
+    }
+
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
@@ -399,6 +438,8 @@ public class UserLoginFragment extends Fragment {
             GoogleSignInAccount acct = result.getSignInAccount();
             //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
            // updateUI(true);
+            firebaseAuthWithGoogle(acct);
+
             Log.d(TAG, "auth successful:");
         } else {
             // Signed out, show unauthenticated UI.
@@ -428,6 +469,22 @@ public class UserLoginFragment extends Fragment {
 
                     }
                 });
+    }
+
+    public void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(getActivity());
+            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
     }
 
     @Override
