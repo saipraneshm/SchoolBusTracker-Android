@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -16,8 +17,16 @@ import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.fragments.ContactCardFragment;
 import com.sjsu.edu.schoolbustracker.fragments.RealTimeFragment;
 import com.sjsu.edu.schoolbustracker.fragments.TripsFragment;
+import com.sjsu.edu.schoolbustracker.fragments.AccountSettingsFragment;
+import com.sjsu.edu.schoolbustracker.fragments.NotificationSettingsFragment;
+import com.sjsu.edu.schoolbustracker.fragments.ProfileInfoFragment;
+import com.sjsu.edu.schoolbustracker.fragments.UserProfileFragment;
 
-public class BottomNavigationActivity extends AppCompatActivity implements ContactCardFragment.OnFragmentInteractionListener {
+public class BottomNavigationActivity extends AppCompatActivity implements ContactCardFragment.OnFragmentInteractionListener
+        ,UserProfileFragment.OnFragmentInteractionListener,
+        ProfileInfoFragment.OnFragmentInteractionListener,
+        AccountSettingsFragment.OnFragmentInteractionListener,
+        NotificationSettingsFragment.OnFragmentInteractionListener{
 
     private TextView mTextMessage;
 
@@ -41,11 +50,11 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
     private BottomNavigationView navigation;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_navigation);
+
 
         mActivityTitles = getResources().getStringArray(R.array.parent_fragment_titles);
         mHandler = new Handler();
@@ -127,7 +136,7 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
             case 2:
                 return new ContactCardFragment();
             case 3:
-                return new RealTimeFragment();
+                return new UserProfileFragment();
             default:
                 return new RealTimeFragment();
         }
