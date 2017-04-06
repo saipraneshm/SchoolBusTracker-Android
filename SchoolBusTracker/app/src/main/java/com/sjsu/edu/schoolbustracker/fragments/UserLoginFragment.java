@@ -257,11 +257,13 @@ public class UserLoginFragment extends Fragment {
                     @Override
                     public void onCancel() {
                         // App code
+                        Log.d(TAG, "Facebook cancelled the login process");
                     }
 
                     @Override
                     public void onError(FacebookException exception) {
                         // App code
+                        Log.e(TAG,"Facebook exception", new Exception());
                     }
 
                 });
