@@ -23,4 +23,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="view_details">view details</string>
     <string name="date_show_off">Date</string>
+
+    <string-array name="parent_fragment_titles">
+        <item>Real-Time tracking</item>
+        <item>Trip History</item>
+        <item>Contact Driver</item>
+        <item>Profile</item>
+    </string-array>
 </resources>

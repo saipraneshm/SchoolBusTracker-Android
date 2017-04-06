@@ -55,6 +55,7 @@ public class TripsFragment extends Fragment{
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(new TripsRecyclerViewAdapter(getActivity() , LIST_LOCATIONS));
 
+
         return view;
     }
 
@@ -144,7 +145,6 @@ public class TripsFragment extends Fragment{
 
 
         }
-
 
         void bindView(NamedLocation namedLocation){
             mCardView.setTag(this);
