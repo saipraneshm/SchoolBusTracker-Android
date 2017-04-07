@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +32,7 @@ public class ContactCardFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private Toolbar mToolbar;
 
     private AppCompatButton driver_call,driver_msg,school_call,school_msg;
     private AppCompatTextView driver_name,driver_phone,school_coordinator_name,school_coordinator_phone;
@@ -73,6 +76,9 @@ public class ContactCardFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contact_card, container, false);
 
+        mToolbar = (Toolbar) view.findViewById(R.id.contacts_toolbar);
+        mToolbar.setTitle("Contacts");
+        mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.cardview_light_background, null));
         driver_call = (AppCompatButton) view.findViewById(R.id.driver_call_button);
         driver_msg = (AppCompatButton) view.findViewById(R.id.driver_msg_button);
         school_call = (AppCompatButton) view.findViewById(R.id.school_call_button);

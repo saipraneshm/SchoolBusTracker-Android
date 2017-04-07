@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -92,6 +93,7 @@ public class UserProfileFragment extends Fragment {
 
         mToolbar = (Toolbar) view.findViewById(R.id.profile_toolbar);
         mToolbar.setTitle("Profile");
+        mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.cardview_light_background, null));
 
         /*mDemoCollectionPagerAdapter =
                 new CollectionPagerAdapter(

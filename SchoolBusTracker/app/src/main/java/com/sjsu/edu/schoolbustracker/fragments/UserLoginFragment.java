@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
@@ -19,6 +20,7 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -175,10 +177,10 @@ public class UserLoginFragment extends Fragment {
 
                         }
                     });
-
-                    startActivity(new Intent(getActivity(), BottomNavigationActivity.class));
-                    getActivity().finish();
-
+                    showProgressDialog();
+                    Intent intent =new Intent(getActivity(),BottomNavigationActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -198,19 +200,20 @@ public class UserLoginFragment extends Fragment {
         signUpButton = (AppCompatButton) view.findViewById(R.id.SignUpButton);
         signOutButton = (AppCompatButton) view.findViewById(R.id.sign_out_button);
         testButton = (AppCompatButton) view.findViewById(R.id.button2);
-        testButton.setOnClickListener(new View.OnClickListener() {
+        testButton.setVisibility(View.GONE);
+        /*testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Bus newBus = new Bus();
+                *//*Bus newBus = new Bus();
                 UUID busuuid = UUID.randomUUID();
                 newBus.setDriverUUID(busuuid.toString());
                 newBus.setLat("121.13131231");
                 newBus.setLng("36.0001212");
                 newBus.setRegistrationNumber("ADFF12");
                 newBus.setRouteNumber("123");
-                mDatabase.child("Bus").child(newBus.getRegistrationNumber()).setValue(newBus);*/
+                mDatabase.child("Bus").child(newBus.getRegistrationNumber()).setValue(newBus);*//*
 
-               /* BusTracking busTracking = new BusTracking();
+               *//* BusTracking busTracking = new BusTracking();
                 Trip trip = new Trip();
                 trip.setTripId("1");
                 trip.setmIsComplete(false);
@@ -224,13 +227,13 @@ public class UserLoginFragment extends Fragment {
                         .child(trip.getTripId());
 
                         mRef.child("Coordinates").child(System.currentTimeMillis() + "").setValue(coord);
-                        mRef.child("isTripComplete").setValue("false");*/
+                        mRef.child("isTripComplete").setValue("false");*//*
                //startActivity(new Intent(getActivity(), BottomNavigationActivity.class));
                 Intent intent =new Intent(getActivity(),BottomNavigationActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
-        });
+        });*/
 
         mFbLoginButton.setReadPermissions("email", "public_profile");
         // If using in a fragment
@@ -238,6 +241,14 @@ public class UserLoginFragment extends Fragment {
         // Other app specific specialization
 
         callbackManager = CallbackManager.Factory.create();
+
+        mFbLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showProgressDialog();
+            }
+        });
+
         // Callback registration
         mFbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                     @Override
@@ -257,12 +268,14 @@ public class UserLoginFragment extends Fragment {
                     @Override
                     public void onCancel() {
                         // App code
+                        hideProgressDialog();
                         Log.d(TAG, "Facebook cancelled the login process");
                     }
 
                     @Override
                     public void onError(FacebookException exception) {
                         // App code
+                        hideProgressDialog();
                         Log.e(TAG,"Facebook exception", new Exception());
                     }
 
@@ -353,6 +366,7 @@ public class UserLoginFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        Log.d("ULF","On Attach has been called");
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -364,9 +378,10 @@ public class UserLoginFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        Log.d("ULF","On Detach has been called");
         mListener = null;
-
     }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -392,18 +407,6 @@ public class UserLoginFragment extends Fragment {
             handleSignInResult(result);
         }
     }
-
-  /*  private void updateUI(boolean signedIn) {
-        if (signedIn) {
-            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
-        } else {
-            //mStatusTextView.setText(R.string.signed_out);
-
-            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.sign_out_button).setVisibility(View.GONE);
-        }
-    }*/
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
@@ -457,16 +460,19 @@ public class UserLoginFragment extends Fragment {
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
+                            LoginManager.getInstance().logOut();
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(getActivity(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
+
+                            hideProgressDialog();
                         }
+                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+                        hideProgressDialog();
 
 
                     }
@@ -492,6 +498,7 @@ public class UserLoginFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d("ULF","On destroy has been called");
         if (mAuthStateListener != null) {
             mAuth.removeAuthStateListener(mAuthStateListener);
         }
@@ -501,11 +508,42 @@ public class UserLoginFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        Log.d("ULF","Onstart has been called");
         mAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("ULF","On resume has been called");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("ULF","On pause has been called");
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d("ULF","On activity created has been called");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("ULF","On stop has been called");
     }
 
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //hideProgressDialog();
     }
 }

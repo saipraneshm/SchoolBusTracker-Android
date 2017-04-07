@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -55,6 +56,7 @@ public class TripsFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_trips, container, false);
         mToolbar = (Toolbar) view.findViewById(R.id.trips_toolbar);
         mToolbar.setTitle("Trips");
+        mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.cardview_light_background, null));
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_trips);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(new TripsRecyclerViewAdapter(getActivity() , LIST_LOCATIONS));
