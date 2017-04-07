@@ -32,10 +32,11 @@ public class ContactCardFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private Toolbar mToolbar;
 
     private AppCompatButton driver_call,driver_msg,school_call,school_msg;
     private AppCompatTextView driver_name,driver_phone,school_coordinator_name,school_coordinator_phone;
+    private Toolbar mToolbar;
+
 
     private OnFragmentInteractionListener mListener;
 
