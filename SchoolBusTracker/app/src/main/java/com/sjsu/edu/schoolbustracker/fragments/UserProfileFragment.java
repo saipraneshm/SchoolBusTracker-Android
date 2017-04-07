@@ -1,28 +1,23 @@
 package com.sjsu.edu.schoolbustracker.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.activity.MainActivity;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.sjsu.edu.schoolbustracker.fragments.childfragments.AccountSettingsFragment;
+import com.sjsu.edu.schoolbustracker.fragments.childfragments.NotificationSettingsFragment;
+import com.sjsu.edu.schoolbustracker.fragments.childfragments.ProfileInfoFragment;
+import com.sjsu.edu.schoolbustracker.helperclasses.CustomFragmentPagerAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,6 +39,8 @@ public class UserProfileFragment extends Fragment {
 
     //Firebase
     private FirebaseAuth mAuth;
+
+    private Toolbar mToolbar;
 
     private OnFragmentInteractionListener mListener;
     private final String TAG = "UserProfileFragment";
@@ -92,6 +89,9 @@ public class UserProfileFragment extends Fragment {
 
         Log.d(TAG,"Creating views");
         View view = inflater.inflate(R.layout.fragment_user_profile, container, false);
+
+        mToolbar = (Toolbar) view.findViewById(R.id.profile_toolbar);
+        mToolbar.setTitle("Profile");
 
         /*mDemoCollectionPagerAdapter =
                 new CollectionPagerAdapter(
@@ -156,41 +156,12 @@ public class UserProfileFragment extends Fragment {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        CollectionPagerAdapter adapter = new CollectionPagerAdapter(getChildFragmentManager());
+        CustomFragmentPagerAdapter adapter = new CustomFragmentPagerAdapter(getChildFragmentManager());
         adapter.addFragment(new ProfileInfoFragment(), "Profile");
         adapter.addFragment(new NotificationSettingsFragment(), "Notifications");
         adapter.addFragment(new AccountSettingsFragment(), "Settings");
         viewPager.setAdapter(adapter);
     }
 
-    public class CollectionPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
 
-
-        public CollectionPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
-    }
 }

@@ -10,6 +10,7 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ public class TripsFragment extends Fragment{
 
     private GoogleMap mMap;
     private RecyclerView mRecyclerView;
+    private Toolbar mToolbar;
 
     public TripsFragment() {
         // Required empty public constructor
@@ -51,11 +53,11 @@ public class TripsFragment extends Fragment{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_trips, container, false);
+        mToolbar = (Toolbar) view.findViewById(R.id.trips_toolbar);
+        mToolbar.setTitle("Trips");
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_trips);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(new TripsRecyclerViewAdapter(getActivity() , LIST_LOCATIONS));
-
-
         return view;
     }
 
@@ -170,6 +172,7 @@ public class TripsFragment extends Fragment{
         }
     }
 
+    //static list - needs to be deleted
     private static final NamedLocation[] LIST_LOCATIONS = new NamedLocation[]{
             new NamedLocation("Cape Town", new LatLng(-33.920455, 18.466941), "Date"),
             new NamedLocation("Beijing", new LatLng(39.937795, 116.387224), "Date"),

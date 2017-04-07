@@ -6,10 +6,8 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -17,18 +15,17 @@ import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.fragments.ContactCardFragment;
 import com.sjsu.edu.schoolbustracker.fragments.RealTimeFragment;
 import com.sjsu.edu.schoolbustracker.fragments.TripsFragment;
-import com.sjsu.edu.schoolbustracker.fragments.AccountSettingsFragment;
-import com.sjsu.edu.schoolbustracker.fragments.NotificationSettingsFragment;
-import com.sjsu.edu.schoolbustracker.fragments.ProfileInfoFragment;
+import com.sjsu.edu.schoolbustracker.fragments.childfragments.AccountSettingsFragment;
+import com.sjsu.edu.schoolbustracker.fragments.childfragments.NotificationSettingsFragment;
+import com.sjsu.edu.schoolbustracker.fragments.childfragments.ProfileInfoFragment;
 import com.sjsu.edu.schoolbustracker.fragments.UserProfileFragment;
+import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 
 public class BottomNavigationActivity extends AppCompatActivity implements ContactCardFragment.OnFragmentInteractionListener
         ,UserProfileFragment.OnFragmentInteractionListener,
         ProfileInfoFragment.OnFragmentInteractionListener,
         AccountSettingsFragment.OnFragmentInteractionListener,
         NotificationSettingsFragment.OnFragmentInteractionListener{
-
-    private TextView mTextMessage;
 
     //Tag to keep track of the current fragment
     private static String sTagCurrent = "CurrentTag";
@@ -54,8 +51,7 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_navigation);
-
-
+        ActivityHelper.initialize(this);
         mActivityTitles = getResources().getStringArray(R.array.parent_fragment_titles);
         mHandler = new Handler();
 
@@ -104,8 +100,11 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
     }
 
     public void loadFragment(){
-        if(getSupportActionBar() != null)
-            getSupportActionBar().setTitle(mActivityTitles[mNavItemIndex]);
+        if(getSupportActionBar() != null){
+            getSupportActionBar().hide();
+        }
+
+           // getSupportActionBar().setTitle(mActivityTitles[mNavItemIndex]);
 
         Runnable mPendingRunnable = new Runnable() {
             @Override
@@ -126,6 +125,7 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
         }
 
     }
+
 
     private Fragment getOnScreenFragment(){
         switch(mNavItemIndex){

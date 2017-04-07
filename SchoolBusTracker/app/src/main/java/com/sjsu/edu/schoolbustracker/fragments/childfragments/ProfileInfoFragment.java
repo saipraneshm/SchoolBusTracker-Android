@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.fragments;
+package com.sjsu.edu.schoolbustracker.fragments.childfragments;
 
 import android.content.Context;
 import android.content.Intent;
