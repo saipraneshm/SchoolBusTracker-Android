@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,8 @@ public class ContactCardFragment extends Fragment {
 
     private AppCompatButton driver_call,driver_msg,school_call,school_msg;
     private AppCompatTextView driver_name,driver_phone,school_coordinator_name,school_coordinator_phone;
+    private Toolbar mToolbar;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -72,6 +75,9 @@ public class ContactCardFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contact_card, container, false);
+
+        mToolbar = (Toolbar) view.findViewById(R.id.contacts_toolbar);
+        mToolbar.setTitle("Contacts");
 
         driver_call = (AppCompatButton) view.findViewById(R.id.driver_call_button);
         driver_msg = (AppCompatButton) view.findViewById(R.id.driver_msg_button);
