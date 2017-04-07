@@ -1,5 +1,6 @@
 package com.sjsu.edu.schoolbustracker.activity;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,9 +11,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.fragments.ContactCardFragment;
 import com.sjsu.edu.schoolbustracker.fragments.RealTimeFragment;
@@ -49,13 +54,17 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
 
     private BottomNavigationView navigation;
 
+    private FirebaseAuth mAuth;
+
+    private final String TAG ="BottomNavigationAct";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_navigation);
 
-
+        mAuth = FirebaseAuth.getInstance();
         mActivityTitles = getResources().getStringArray(R.array.parent_fragment_titles);
         mHandler = new Handler();
 

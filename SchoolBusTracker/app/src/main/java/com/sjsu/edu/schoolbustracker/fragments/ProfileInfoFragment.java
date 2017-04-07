@@ -4,15 +4,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.activity.MainActivity;
+import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
+import com.sjsu.edu.schoolbustracker.model.ParentUsers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,8 +39,14 @@ public class ProfileInfoFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private AppCompatButton mLogoutButton;
-    private FirebaseAuth mAuth;
+    private DatabaseReference mDatabaseReference;
+    private DatabaseReference parentProfileRef;
+    private TextInputEditText mPhoneNumber,mProfileName,mProfileEmail,mProfileAddress;
+    private AppCompatButton mEditProfile,mSaveProfile;
+    private String mUserUID;
+    private ParentUsers parentUser;
+
+    private final String TAG = "ProfileInfoFrag";
 
     public static final String ARG_OBJECT = "object";
 
@@ -68,7 +85,7 @@ public class ProfileInfoFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        mAuth = FirebaseAuth.getInstance();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -76,19 +93,87 @@ public class ProfileInfoFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_profile_info, container, false);
-        mLogoutButton = (AppCompatButton) v.findViewById(R.id.logout_btn);
-        mLogoutButton.setOnClickListener(new View.OnClickListener() {
+
+        mPhoneNumber = (TextInputEditText) v.findViewById(R.id.profile_phone_number);
+        mProfileName = (TextInputEditText) v.findViewById(R.id.profile_name);
+        mProfileEmail = (TextInputEditText) v.findViewById(R.id.profile_email);
+        mProfileAddress = (TextInputEditText) v.findViewById(R.id.profile_address);
+        mEditProfile = (AppCompatButton) v.findViewById(R.id.edit_btn);
+        mSaveProfile = (AppCompatButton) v.findViewById(R.id.save_btn);
+
+        mUserUID = ActivityHelper.getUID(getActivity());
+        Log.d(TAG,"User UID -->"+ mUserUID);
+        parentProfileRef = mDatabaseReference
+                .child(getString(R.string.firebase_profile_node))
+                .child(getString(R.string.firebase_parent_node)).child(mUserUID);
+        setupDataFromFirebase();
+
+        mEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mAuth.signOut();
-                Intent intent =new Intent(getActivity(),MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                getActivity().finish();
+                enableEditTextViews();
+            }
+        });
+        mSaveProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateDataInFirebase();
             }
         });
         // Inflate the layout for this fragment
         return v;
+    }
+
+    private void updateDataInFirebase() {
+
+        ParentUsers updatedProfile = parentUser;
+        updatedProfile.setHouseAddress(mProfileAddress.getText().toString());
+        updatedProfile.setPhone(mPhoneNumber.getText().toString());
+        updatedProfile.setEmailId(mProfileEmail.getText().toString());
+        updatedProfile.setParentName(mProfileName.getText().toString());
+        parentProfileRef.setValue(updatedProfile);
+
+        disableEditTextViews();
+
+    }
+
+    public void setupDataFromFirebase(){
+
+
+        parentProfileRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                parentUser = dataSnapshot.getValue(ParentUsers.class);
+                setUpDataInUI(parentUser);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void setUpDataInUI(ParentUsers parentUser){
+        mPhoneNumber.setText(parentUser.getPhone());
+        mProfileName.setText(parentUser.getParentName());
+        mProfileEmail.setText(parentUser.getEmailId());
+        mProfileAddress.setText(parentUser.getHouseAddress());
+
+        disableEditTextViews();
+    }
+
+    public void disableEditTextViews(){
+        mPhoneNumber.setEnabled(false);
+        mProfileName.setEnabled(false);
+        mProfileEmail.setEnabled(false);
+        mProfileAddress.setEnabled(false);
+    }
+    public void enableEditTextViews(){
+        mPhoneNumber.setEnabled(true);
+        mProfileName.setEnabled(true);
+        mProfileEmail.setEnabled(true);
+        mProfileAddress.setEnabled(true);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -13,34 +13,34 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/school_contact"
-        android:layout_width="368dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        card_view:cardCornerRadius="2dp"
-        card_view:cardElevation="2dp"
+        android:layout_margin="@dimen/horizontal_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintVertical_bias="0.0"
+        card_view:cardCornerRadius="2dp"
+        card_view:cardElevation="2dp">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="0dp">
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="140dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/transport_coordination"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="8dp" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/school_coordinator_name"
@@ -57,12 +57,11 @@
                 android:id="@+id/appCompatTextView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
                 android:text="@string/contact_phoneno"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/appCompatTextView" />
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@+id/appCompatTextView"
+                android:layout_marginLeft="8dp"
+                app:layout_constraintLeft_toLeftOf="parent" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/school_coordinator_phnumber"
@@ -89,14 +88,14 @@
                 app:layout_constraintTop_toBottomOf="@+id/appCompatTextView2">
 
                 <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/school_msg_button"
                     style="?android:attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/horizontal_padding"
                     android:layout_weight="1"
                     android:padding="@dimen/horizontal_padding"
-                    android:text="@string/contact_message"
-                    android:id="@+id/school_msg_button"/>
+                    android:text="@string/contact_message" />
 
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/school_call_button"
@@ -118,23 +117,26 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/_contact"
-        android:layout_width="368dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        card_view:cardCornerRadius="2dp"
-        card_view:cardElevation="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.482"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.588">
+        app:layout_constraintTop_toBottomOf="@+id/school_contact"
+        card_view:cardCornerRadius="2dp"
+        card_view:cardElevation="2dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_horizontal_margin">
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/appCompatTextViewDriver"
@@ -194,14 +196,14 @@
                 app:layout_constraintTop_toBottomOf="@+id/appCompatTextView2_driver">
 
                 <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/driver_msg_button"
                     style="?android:attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/horizontal_padding"
                     android:layout_weight="1"
                     android:padding="@dimen/horizontal_padding"
-                    android:text="@string/contact_message"
-                    android:id="@+id/driver_msg_button"/>
+                    android:text="@string/contact_message" />
 
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/driver_call_button"

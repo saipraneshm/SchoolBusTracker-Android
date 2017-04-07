@@ -33,12 +33,18 @@
     <string name="loading">Please Wait</string>
     <string name="logout_txt">Logout</string>
 
-    <string name="user_name">Name:</string>
-    <string name="email_id">Email ID:</string>
-    <string name="address_text">Address:</string>
+    <string name="user_name">Name</string>
+    <string name="email_id">Email ID</string>
+    <string name="address_text">Address</string>
     <string name="disable_account_text">Disable Account</string>
     <string name="preferred_contact_text">Preferred Contact</string>
     <string name="mobile_phone_text">Mobile Phone</string>
     <string name="email_text">Email</string>
+    <string name="phone_number_text">Phone Number</string>
+    <string name="save_txt">Save</string>
+    <string name="edit_text">Edit</string>
+    <string name="prefUserUID">useruid</string>
+    <string name="firebase_profile_node">Profile</string>
+    <string name="firebase_parent_node">ParentUser</string>
 
 </resources>

@@ -13,6 +13,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -86,13 +89,33 @@ public class UserProfileFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.appbar_menu,menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.logout_btn:
+                mAuth.signOut();
+                Intent intent =new Intent(getActivity(),MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                getActivity().finish();
+                return true;
+            default: return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
         Log.d(TAG,"Creating views");
         View view = inflater.inflate(R.layout.fragment_user_profile, container, false);
-
+        setHasOptionsMenu(true);
         /*mDemoCollectionPagerAdapter =
                 new CollectionPagerAdapter(
                         getChildFragmentManager());*/

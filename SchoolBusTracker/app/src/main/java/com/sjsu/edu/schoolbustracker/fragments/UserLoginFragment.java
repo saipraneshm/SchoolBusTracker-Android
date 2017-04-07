@@ -45,6 +45,7 @@ import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.activity.BottomNavigationActivity;
 import com.sjsu.edu.schoolbustracker.activity.MainActivity;
 import com.sjsu.edu.schoolbustracker.activity.UserRegistration;
+import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 import com.sjsu.edu.schoolbustracker.model.CheckUserType;
 import com.sjsu.edu.schoolbustracker.model.ParentUsers;
 
@@ -127,6 +128,7 @@ public class UserLoginFragment extends Fragment {
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid() + " " + user.getEmail());
+                    ActivityHelper.saveUID(getActivity(),user.getUid());
                     mCheckUserTypeRef = mDatabase.child("CheckUserType");
                     mCheckUserTypeRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
