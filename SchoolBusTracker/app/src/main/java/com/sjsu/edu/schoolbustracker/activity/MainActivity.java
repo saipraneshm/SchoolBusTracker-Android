@@ -2,10 +2,13 @@ package com.sjsu.edu.schoolbustracker.activity;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.sjsu.edu.schoolbustracker.activity.abs.SingleFragmentActivity;
@@ -24,7 +27,9 @@ public class MainActivity extends SingleFragmentActivity implements
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-
+        /*Intent intent = new Intent(this,BottomNavigationActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);*/
     }
 
     @Override
@@ -40,4 +45,33 @@ public class MainActivity extends SingleFragmentActivity implements
     }
 
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG,"Onstart has been called");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG,"On resume has been called");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG,"On pause has been called");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG,"On stop has been called");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG,"On destroy has been called");
+    }
 }

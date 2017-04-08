@@ -45,19 +45,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.activity.BottomNavigationActivity;
-import com.sjsu.edu.schoolbustracker.activity.MainActivity;
 import com.sjsu.edu.schoolbustracker.activity.UserRegistration;
-import com.sjsu.edu.schoolbustracker.model.CheckUserType;
 import com.sjsu.edu.schoolbustracker.model.ParentUsers;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link UserLoginFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link UserLoginFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class UserLoginFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -78,13 +69,12 @@ public class UserLoginFragment extends Fragment {
     private AppCompatButton loginButton,signUpButton,signOutButton,testButton;
     public ProgressDialog mProgressDialog;
 
-
     //Google Auth
     GoogleApiClient mGoogleApiClient;
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+   /* private String mParam1;
+    private String mParam2;*/
 
 
     private OnFragmentInteractionListener mListener;
@@ -93,31 +83,23 @@ public class UserLoginFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment UserLoginFragment.
-     */
     // TODO: Rename and change types and number of parameters
-    public static UserLoginFragment newInstance(String param1, String param2) {
+/*    public static UserLoginFragment newInstance(String param1, String param2) {
         UserLoginFragment fragment = new UserLoginFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
-    }
+    }*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+      /*  if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        }*/
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -177,10 +159,14 @@ public class UserLoginFragment extends Fragment {
 
                         }
                     });
-                    showProgressDialog();
-                    Intent intent =new Intent(getActivity(),BottomNavigationActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+
+                    if(UserLoginFragment.this.isAdded()){
+                        Intent intent =new Intent(getActivity(),BottomNavigationActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+
+                    //activity.finish();
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -245,7 +231,10 @@ public class UserLoginFragment extends Fragment {
         mFbLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showProgressDialog();
+
+                if(mFbLoginButton.getText()
+                        .equals(getResources().getString(R.string.com_facebook_loginview_log_in_button_continue)))
+                    showProgressDialog();
             }
         });
 
@@ -253,28 +242,18 @@ public class UserLoginFragment extends Fragment {
         mFbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        // App code
-                       // Profile profile = Profile.getCurrentProfile();
                         Log.d(TAG, "facebook:onSuccess:" + loginResult);
                         handleFacebookAccessToken(loginResult.getAccessToken());
-                        /*AccessToken accessToken = loginResult.getAccessToken();
-
-                        if(accessToken != null)
-                            Log.d("FirstName", accessToken.getUserId());
-                        else
-                            Log.d("FirstName", "profile info not found");*/
                     }
 
                     @Override
                     public void onCancel() {
-                        // App code
                         hideProgressDialog();
                         Log.d(TAG, "Facebook cancelled the login process");
                     }
 
                     @Override
                     public void onError(FacebookException exception) {
-                        // App code
                         hideProgressDialog();
                         Log.e(TAG,"Facebook exception", new Exception());
                     }
@@ -366,6 +345,7 @@ public class UserLoginFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
         Log.d("ULF","On Attach has been called");
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
@@ -374,6 +354,8 @@ public class UserLoginFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
+
 
     @Override
     public void onDetach() {
@@ -411,7 +393,7 @@ public class UserLoginFragment extends Fragment {
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
         // [START_EXCLUDE silent]
-        showProgressDialog();
+            showProgressDialog();
         // [END_EXCLUDE]
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -460,6 +442,7 @@ public class UserLoginFragment extends Fragment {
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -469,24 +452,24 @@ public class UserLoginFragment extends Fragment {
                             Toast.makeText(getActivity(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
 
-                            hideProgressDialog();
                         }
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-                        hideProgressDialog();
 
+                        hideProgressDialog();
 
                     }
                 });
     }
 
     public void showProgressDialog() {
-        if (mProgressDialog == null) {
+        if (mProgressDialog == null && this.isAdded()) {
             mProgressDialog = new ProgressDialog(getActivity());
             mProgressDialog.setMessage(getString(R.string.loading));
             mProgressDialog.setIndeterminate(true);
         }
 
-        mProgressDialog.show();
+        if(mProgressDialog != null)
+            mProgressDialog.show();
     }
 
     public void hideProgressDialog() {
@@ -544,6 +527,6 @@ public class UserLoginFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        //hideProgressDialog();
+        hideProgressDialog();
     }
 }
