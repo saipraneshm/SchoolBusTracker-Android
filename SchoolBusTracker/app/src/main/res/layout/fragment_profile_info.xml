@@ -16,7 +16,8 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/phone_number_text"
                 android:inputType="phone"
-                android:id="@+id/profile_phone_number"/>
+                android:id="@+id/profile_phone_number"
+                android:textColor="@drawable/edittext_enable_disable"/>
         </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -27,7 +28,8 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/user_name"
                 android:inputType="textPersonName"
-                android:id="@+id/profile_name"/>
+                android:id="@+id/profile_name"
+                android:textColor="@drawable/edittext_enable_disable"/>
         </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -38,7 +40,8 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/email_text"
                 android:inputType="textEmailAddress"
-                android:id="@+id/profile_email"/>
+                android:id="@+id/profile_email"
+                android:textColor="@drawable/edittext_enable_disable"/>
         </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -49,7 +52,8 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/address_text"
                 android:inputType="textPostalAddress"
-                android:id="@+id/profile_address"/>
+                android:id="@+id/profile_address"
+                android:textColor="@drawable/edittext_enable_disable"/>
         </android.support.design.widget.TextInputLayout>
 
     <LinearLayout

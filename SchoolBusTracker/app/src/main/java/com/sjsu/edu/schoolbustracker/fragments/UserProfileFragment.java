@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,8 +22,15 @@ import android.view.ViewGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.activity.MainActivity;
+import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
+import com.sjsu.edu.schoolbustracker.model.ParentUsers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +63,13 @@ public class UserProfileFragment extends Fragment {
     ViewPager mViewPager;
     TabLayout mTabLayout;
 
+    private AppCompatTextView mProfileName,mProfileNumber;
+
+    private DatabaseReference mDatabaseReference;
+    private DatabaseReference parentProfileRef;
+    private String mUserUID;
+    private ParentUsers parentUser;
+
     public UserProfileFragment() {
         // Required empty public constructor
     }
@@ -85,6 +100,7 @@ public class UserProfileFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         mAuth = FirebaseAuth.getInstance();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
     }
 
@@ -124,6 +140,18 @@ public class UserProfileFragment extends Fragment {
         setupViewPager(mViewPager);
         Log.d(TAG,"setting tab layout with view pager");
         mTabLayout.setupWithViewPager(mViewPager);
+
+        mProfileName = (AppCompatTextView) view.findViewById(R.id.profile_top_name);
+        mProfileNumber = (AppCompatTextView) view.findViewById(R.id.profile_top_phone);
+
+        mUserUID = ActivityHelper.getUID(getActivity());
+        Log.d(TAG,"User UID -->"+ mUserUID);
+        parentProfileRef = mDatabaseReference
+                .child(getString(R.string.firebase_profile_node))
+                .child(getString(R.string.firebase_parent_node)).child(mUserUID);
+        setupDataFromFirebase();
+
+
         //mViewPager.setAdapter(mDemoCollectionPagerAdapter);
 
         /*AppCompatButton logout = (AppCompatButton) view.findViewById(R.id.logout_btn);
@@ -137,6 +165,26 @@ public class UserProfileFragment extends Fragment {
             }
         });*/
         return view;
+    }
+
+    private void setupDataFromFirebase() {
+        parentProfileRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                parentUser = dataSnapshot.getValue(ParentUsers.class);
+                setUpDataInUI(parentUser);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void setUpDataInUI(ParentUsers parentUser) {
+        mProfileNumber.setText(parentUser.getPhone());
+        mProfileName.setText(parentUser.getParentName());
     }
 
     // TODO: Rename method, update argument and hook method into UI event

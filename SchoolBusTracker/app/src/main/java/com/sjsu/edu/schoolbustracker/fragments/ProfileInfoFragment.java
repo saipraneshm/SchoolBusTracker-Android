@@ -2,10 +2,12 @@ package com.sjsu.edu.schoolbustracker.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.text.InputType;
 import android.util.Log;
@@ -164,16 +166,21 @@ public class ProfileInfoFragment extends Fragment {
     }
 
     public void disableEditTextViews(){
+
         mPhoneNumber.setEnabled(false);
         mProfileName.setEnabled(false);
         mProfileEmail.setEnabled(false);
         mProfileAddress.setEnabled(false);
+
+
     }
     public void enableEditTextViews(){
+
         mPhoneNumber.setEnabled(true);
         mProfileName.setEnabled(true);
         mProfileEmail.setEnabled(true);
         mProfileAddress.setEnabled(true);
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
