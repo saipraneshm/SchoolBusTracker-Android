@@ -46,5 +46,9 @@
     <string name="prefUserUID">useruid</string>
     <string name="firebase_profile_node">Profile</string>
     <string name="firebase_parent_node">ParentUser</string>
+    <string name="text_notification_label">Text Notification</string>
+    <string name="email_notification_label">Email Notification</string>
+    <string name="push_notification_label">Push Notificaiton</string>
+    <string name="firebase_settings_node">AppSettings</string>
 
 </resources>

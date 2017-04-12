@@ -48,6 +48,7 @@ import com.sjsu.edu.schoolbustracker.activity.UserRegistration;
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 import com.sjsu.edu.schoolbustracker.model.CheckUserType;
 import com.sjsu.edu.schoolbustracker.model.ParentUsers;
+import com.sjsu.edu.schoolbustracker.model.UserSettings;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,7 +70,7 @@ public class UserLoginFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
-    private DatabaseReference mDatabase, mCheckUserTypeRef, mProfileRef;
+    private DatabaseReference mDatabase, mCheckUserTypeRef, mProfileRef,userSettingsReference;
 
     private LoginButton mFbLoginButton;
     private CallbackManager callbackManager;
@@ -161,6 +162,9 @@ public class UserLoginFragment extends Fragment {
                             }else{
                                 Log.d("ProfileExists", user.getEmail() + " profile doesn't exist in the database" );
                                 mCheckUserTypeRef.child(user.getUid()).child("isDriver").setValue(false);
+                                userSettingsReference = mDatabase
+                                        .child(getString(R.string.firebase_settings_node))
+                                        .child(user.getUid());
                                 ParentUsers newParent = new ParentUsers();
                                 newParent.setUUId(user.getUid());
                                 newParent.setParentName(user.getDisplayName());
@@ -169,6 +173,13 @@ public class UserLoginFragment extends Fragment {
                                         .child("ParentUser")
                                         .child(newParent.getUUId())
                                         .setValue(newParent);
+
+                                UserSettings newSettings = new UserSettings();
+                                newSettings.setEmailNotification(true);
+                                newSettings.setPushNotification(true);
+                                newSettings.setTextNotification(true);
+
+                                userSettingsReference.setValue(newSettings);
                             }
                         }
 
