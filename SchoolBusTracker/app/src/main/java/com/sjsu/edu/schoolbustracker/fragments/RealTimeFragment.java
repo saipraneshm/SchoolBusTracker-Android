@@ -53,8 +53,8 @@ public class RealTimeFragment extends Fragment {
 
     private void setUpViewPager(ViewPager viewPager){
         CustomFragmentPagerAdapter realTimePagerAdapter = new CustomFragmentPagerAdapter(getChildFragmentManager());
-        realTimePagerAdapter.addFragment(new RealTimeMapFragment(),"Map");
-        realTimePagerAdapter.addFragment(new MapTextFragment(),"Tracking");
+        realTimePagerAdapter.addFragment(new MapTextFragment(),"Map");
+        realTimePagerAdapter.addFragment(new RealTimeMapFragment(),"Tracking");
         viewPager.setAdapter(realTimePagerAdapter);
     }
 

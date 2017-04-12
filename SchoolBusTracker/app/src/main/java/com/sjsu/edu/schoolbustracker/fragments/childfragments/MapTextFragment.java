@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.sjsu.edu.schoolbustracker.R;
 
 /**
@@ -24,7 +26,7 @@ public class MapTextFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_map_text, container, false);
+        return inflater.inflate(R.layout.real_time_cardview, container, false);
     }
 
 }
