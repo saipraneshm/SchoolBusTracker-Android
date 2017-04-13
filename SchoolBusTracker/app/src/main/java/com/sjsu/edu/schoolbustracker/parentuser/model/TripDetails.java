@@ -20,6 +20,8 @@ public class TripDetails {
     private String mDate;
     private Coordinates mSourceCoordinates;
     private Coordinates mDestinationCoordinates;
+    //Timestamp as key
+    private String timestamp;
 
     public String getSource() {
         return mSource;
@@ -123,5 +125,13 @@ public class TripDetails {
 
     public void setDestinationCoordinates(Coordinates destinationCoordinates) {
         mDestinationCoordinates = destinationCoordinates;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 }

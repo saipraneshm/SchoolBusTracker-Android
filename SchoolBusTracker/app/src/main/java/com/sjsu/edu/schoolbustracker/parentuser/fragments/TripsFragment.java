@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
+import com.sjsu.edu.schoolbustracker.parentuser.activity.TripDetailActivity;
 import com.sjsu.edu.schoolbustracker.parentuser.adapter.TripsFirebaseRecyclerAdapter;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Coordinates;
 import com.sjsu.edu.schoolbustracker.parentuser.model.TripDetails;
@@ -67,6 +68,7 @@ public class TripsFragment extends Fragment{
         tripDetails.setTripId("23");
         tripDetails.setSourceCoordinates(new Coordinates(37.3382,-121.8863));
         tripDetails.setDestinationCoordinates(new Coordinates(37.3382,-121.8863));
+        tripDetails.setTimestamp(System.currentTimeMillis()+"");
 
         previousTripRef
                 .child(FirebaseUtil.getCurrentUserId())
@@ -87,8 +89,13 @@ public class TripsFragment extends Fragment{
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         DatabaseReference reference = FirebaseUtil.getExisitingPreviousTripsRef();
         mAdapter = new TripsFirebaseRecyclerAdapter(reference,getActivity());
+        mAdapter.setOnItemClickListener(new TripsFirebaseRecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(String tripTimeStamp) {
+                startActivity(TripDetailActivity.newInstance(getActivity(),tripTimeStamp));
+            }
+        });
         mRecyclerView.setAdapter(mAdapter);
-
         return view;
     }
 

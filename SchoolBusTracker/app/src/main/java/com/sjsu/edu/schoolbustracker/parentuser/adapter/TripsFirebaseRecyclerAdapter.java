@@ -29,10 +29,20 @@ public class TripsFirebaseRecyclerAdapter extends FirebaseRecyclerAdapter<TripDe
     GoogleMap mGoogleMap;
     UiSettings mUiSettings;
     MapView mMapView;
+    private static OnItemClickListener listener;
 
     public TripsFirebaseRecyclerAdapter(DatabaseReference dataRef, Context context){
         super(TripDetails.class, R.layout.previous_trips_cardview, TripViewHolder.class, dataRef );
         this.context = context;
+    }
+
+
+    public interface OnItemClickListener{
+        void onItemClick(String tripTimeStamp);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.listener = listener;
     }
 
     @Override
@@ -60,32 +70,8 @@ public class TripsFirebaseRecyclerAdapter extends FirebaseRecyclerAdapter<TripDe
            holder.mDate.setText(model.getDate());
        }
 
-
-
     }
-    static class TripViewHolder extends RecyclerView.ViewHolder{
 
-        TextView mDate, mViewDetails;
-        MapView mMapView;
-        GoogleMap mMap;
-        UiSettings mUiSettings;
-        CardView mCardView;
-
-        public TripViewHolder(View itemView) {
-            super(itemView);
-            mCardView = (CardView) itemView.findViewById(R.id.previous_trips_card_view);
-            mDate = (TextView)itemView.findViewById(R.id.date_tv);
-            mViewDetails = (TextView)itemView.findViewById(R.id.view_details_tv);
-            mMapView = (MapView)itemView.findViewById(R.id.map_view);
-            mMapView.setClickable(false);
-        }
-
-        void bindView(TripDetails tripDetails) {
-            mCardView.setTag(this);
-        }
-
-
-    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -110,7 +96,36 @@ public class TripsFirebaseRecyclerAdapter extends FirebaseRecyclerAdapter<TripDe
     }
 
 
+    static class TripViewHolder extends RecyclerView.ViewHolder{
 
+        TextView mDate, mViewDetails;
+        MapView mMapView;
+        GoogleMap mMap;
+        UiSettings mUiSettings;
+        CardView mCardView;
+
+        public TripViewHolder(View itemView) {
+            super(itemView);
+            mCardView = (CardView) itemView.findViewById(R.id.previous_trips_card_view);
+            mDate = (TextView)itemView.findViewById(R.id.date_tv);
+            mViewDetails = (TextView)itemView.findViewById(R.id.view_details_tv);
+            mMapView = (MapView)itemView.findViewById(R.id.map_view);
+            mMapView.setClickable(false);
+        }
+
+        void bindView(final TripDetails tripDetails) {
+            mCardView.setTag(this);
+            mCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onItemClick(tripDetails.getTimestamp());
+                }
+            });
+        }
+
+
+
+    }
 }
 
 
