@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.fragments.childfragments;
+package com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments;
 
 
 import android.os.Bundle;
@@ -7,8 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.sjsu.edu.schoolbustracker.R;
 
 /**

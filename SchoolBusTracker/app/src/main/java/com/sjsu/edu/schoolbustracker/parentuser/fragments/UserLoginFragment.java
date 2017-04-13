@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.fragments;
+package com.sjsu.edu.schoolbustracker.parentuser.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -41,12 +41,13 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.activity.BottomNavigationActivity;
-import com.sjsu.edu.schoolbustracker.activity.UserRegistration;
-import com.sjsu.edu.schoolbustracker.model.ParentUsers;
+import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
+import com.sjsu.edu.schoolbustracker.parentuser.activity.BottomNavigationActivity;
+import com.sjsu.edu.schoolbustracker.parentuser.activity.UserRegistration;
+import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
+import com.sjsu.edu.schoolbustracker.parentuser.model.Profile;
 
 
 public class UserLoginFragment extends Fragment {
@@ -61,7 +62,7 @@ public class UserLoginFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
-    private DatabaseReference mDatabase, mCheckUserTypeRef, mProfileRef;
+    private DatabaseReference  mCheckUserTypeRef, mProfileRef;
 
     private LoginButton mFbLoginButton;
     private CallbackManager callbackManager;
@@ -103,7 +104,6 @@ public class UserLoginFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuthStateListener = new FirebaseAuth.AuthStateListener(){
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -111,7 +111,7 @@ public class UserLoginFragment extends Fragment {
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid() + " " + user.getEmail());
-                    mCheckUserTypeRef = mDatabase.child("CheckUserType");
+                    mCheckUserTypeRef = FirebaseUtil.getCheckUserRef();
                     mCheckUserTypeRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -122,10 +122,10 @@ public class UserLoginFragment extends Fragment {
                                 Boolean isDriver = dataSnapshot.child(user.getUid()).child("isDriver").getValue(Boolean.class);
                                 Log.d("ProfileExists", isDriver.toString());
                                 if(isDriver){
-                                    mProfileRef = mDatabase.child("Profile").child("Driver").getRef();
+                                    mProfileRef = FirebaseUtil.getDriverRef();
 
                                 }else{
-                                    mProfileRef = mDatabase.child("Profile").child("ParentUser").child(user.getUid()).getRef();
+                                    mProfileRef = FirebaseUtil.getParentUserRef().child(user.getUid()).getRef();
                                     mProfileRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -143,13 +143,12 @@ public class UserLoginFragment extends Fragment {
                             }else{
                                 Log.d("ProfileExists", user.getEmail() + " profile doesn't exist in the database" );
                                 mCheckUserTypeRef.child(user.getUid()).child("isDriver").setValue(false);
-                                ParentUsers newParent = new ParentUsers();
-                                newParent.setUUId(user.getUid());
-                                newParent.setParentName(user.getDisplayName());
+                                Profile newParent = new ParentUsers();
+                                newParent.setUUID(user.getUid());
+                                newParent.setName(user.getDisplayName());
                                 newParent.setEmailId(user.getEmail());
-                                mDatabase.child("Profile")
-                                        .child("ParentUser")
-                                        .child(newParent.getUUId())
+                                FirebaseUtil.getParentUserRef()
+                                        .child(newParent.getUUID())
                                         .setValue(newParent);
                             }
                         }

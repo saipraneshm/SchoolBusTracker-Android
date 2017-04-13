@@ -1,13 +1,11 @@
-package com.sjsu.edu.schoolbustracker.fragments;
+package com.sjsu.edu.schoolbustracker.parentuser.fragments;
 
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,13 +13,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.sjsu.edu.schoolbustracker.R;
@@ -134,20 +133,20 @@ public class TripsFragment extends Fragment{
 
     class TripsViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback {
 
-        AppCompatButton mDate, mViewDetails;
+        TextView mDate, mViewDetails;
         MapView mMapView;
         GoogleMap mMap;
+        UiSettings mUiSettings;
         CardView mCardView;
 
         TripsViewHolder(View itemView) {
             super(itemView);
 
             mCardView = (CardView) itemView.findViewById(R.id.previous_trips_card_view);
-            mDate = (AppCompatButton)itemView.findViewById(R.id.date_button);
-            mViewDetails = (AppCompatButton)itemView.findViewById(R.id.view_details_button);
+            mDate = (TextView)itemView.findViewById(R.id.date_tv);
+            mViewDetails = (TextView)itemView.findViewById(R.id.view_details_tv);
             mMapView = (MapView)itemView.findViewById(R.id.map_view);
-
-
+            mMapView.setClickable(false);
         }
 
         void bindView(NamedLocation namedLocation){
@@ -166,6 +165,8 @@ public class TripsFragment extends Fragment{
         public void onMapReady(GoogleMap googleMap) {
             MapsInitializer.initialize(getActivity());
             mMap = googleMap;
+            mUiSettings = mMap.getUiSettings();
+            mUiSettings.setMapToolbarEnabled(false);
             NamedLocation data = (NamedLocation) mMapView.getTag();
             if( data != null){
                 setMapLocation(mMap, data);

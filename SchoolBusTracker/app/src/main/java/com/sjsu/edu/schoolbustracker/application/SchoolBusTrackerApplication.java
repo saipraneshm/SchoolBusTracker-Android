@@ -2,10 +2,7 @@ package com.sjsu.edu.schoolbustracker.application;
 
 import android.app.Application;
 
-import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
-import java.math.BigDecimal;
-import java.util.Currency;
 
 
 /**

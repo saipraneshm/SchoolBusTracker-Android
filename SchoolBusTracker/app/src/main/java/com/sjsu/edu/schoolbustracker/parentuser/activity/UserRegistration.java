@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.activity;
+package com.sjsu.edu.schoolbustracker.parentuser.activity;
 
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;

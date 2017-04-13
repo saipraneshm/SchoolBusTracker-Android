@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.activity;
+package com.sjsu.edu.schoolbustracker.parentuser.activity;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,16 +9,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.fragments.ContactCardFragment;
-import com.sjsu.edu.schoolbustracker.fragments.RealTimeFragment;
-import com.sjsu.edu.schoolbustracker.fragments.TripsFragment;
-import com.sjsu.edu.schoolbustracker.fragments.childfragments.AccountSettingsFragment;
-import com.sjsu.edu.schoolbustracker.fragments.childfragments.NotificationSettingsFragment;
-import com.sjsu.edu.schoolbustracker.fragments.childfragments.ProfileInfoFragment;
-import com.sjsu.edu.schoolbustracker.fragments.UserProfileFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.ContactCardFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.RealTimeFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.TripsFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.AccountSettingsFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.NotificationSettingsFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.ProfileInfoFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.UserProfileFragment;
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 
 public class BottomNavigationActivity extends AppCompatActivity implements ContactCardFragment.OnFragmentInteractionListener

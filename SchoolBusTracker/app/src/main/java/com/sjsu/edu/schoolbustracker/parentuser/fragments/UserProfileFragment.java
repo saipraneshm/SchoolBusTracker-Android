@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.fragments;
+package com.sjsu.edu.schoolbustracker.parentuser.fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -15,9 +15,9 @@ import android.view.ViewGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.fragments.childfragments.AccountSettingsFragment;
-import com.sjsu.edu.schoolbustracker.fragments.childfragments.NotificationSettingsFragment;
-import com.sjsu.edu.schoolbustracker.fragments.childfragments.ProfileInfoFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.AccountSettingsFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.NotificationSettingsFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.ProfileInfoFragment;
 import com.sjsu.edu.schoolbustracker.helperclasses.CustomFragmentPagerAdapter;
 
 /**

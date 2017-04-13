@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.fragments;
+package com.sjsu.edu.schoolbustracker.parentuser.fragments;
 
 
 import android.os.Bundle;
@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.fragments.childfragments.MapTextFragment;
-import com.sjsu.edu.schoolbustracker.fragments.childfragments.RealTimeMapFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.MapTextFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.RealTimeMapFragment;
 import com.sjsu.edu.schoolbustracker.helperclasses.CustomFragmentPagerAdapter;
 
 /**

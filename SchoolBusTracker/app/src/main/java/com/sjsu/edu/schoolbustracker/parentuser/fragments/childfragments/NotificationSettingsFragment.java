@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.fragments.childfragments;
+package com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments;
 
 import android.content.Context;
 import android.net.Uri;

@@ -3,7 +3,7 @@
                android:layout_height="match_parent"
                android:layout_width="match_parent"
                android:orientation="vertical"
-               tools:context="com.sjsu.edu.schoolbustracker.fragments.TripsFragment"
+               tools:context=".parentuser.fragments.TripsFragment"
                >
     <android.support.v7.widget.Toolbar
         android:id="@+id/trips_toolbar"

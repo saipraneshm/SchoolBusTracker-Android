@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.fragments.childfragments;
+package com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.activity.MainActivity;
+import com.sjsu.edu.schoolbustracker.parentuser.activity.MainActivity;
 
 /**
  * A simple {@link Fragment} subclass.
