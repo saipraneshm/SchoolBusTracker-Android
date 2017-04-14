@@ -1,64 +1,55 @@
-package com.sjsu.edu.schoolbustracker.fragments;
+package com.sjsu.edu.schoolbustracker.parentuser.fragments;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatButton;
-import android.text.InputType;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.activity.MainActivity;
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
-import com.sjsu.edu.schoolbustracker.model.ParentUsers;
+import com.sjsu.edu.schoolbustracker.parentuser.model.UserSettings;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ProfileInfoFragment.OnFragmentInteractionListener} interface
+ * {@link NotificationSettingsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ProfileInfoFragment#newInstance} factory method to
+ * Use the {@link NotificationSettingsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProfileInfoFragment extends Fragment {
+public class NotificationSettingsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private DatabaseReference mDatabaseReference;
-    private DatabaseReference parentProfileRef;
-    private TextInputEditText mPhoneNumber,mProfileName,mProfileEmail,mProfileAddress;
-    private AppCompatButton mEditProfile,mSaveProfile;
-    private String mUserUID;
-    private ParentUsers parentUser;
-
-    private final String TAG = "ProfileInfoFrag";
-
-    public static final String ARG_OBJECT = "object";
-
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
+    private SwitchCompat mPushNotificationSwitch,mEmailNotificationSwitch,mTextNotificationSwitch;
+    private AppCompatButton saveSettings;
+
+    private String mUserUID;
+    private final String TAG = "NotificationSettings";
+    private DatabaseReference mDatabaseReference;
+    private DatabaseReference userSettingsReference;
+    private UserSettings mUserSettings;
+
     private OnFragmentInteractionListener mListener;
 
-    public ProfileInfoFragment() {
+    public NotificationSettingsFragment() {
         // Required empty public constructor
     }
 
@@ -68,11 +59,11 @@ public class ProfileInfoFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileInfoFragment.
+     * @return A new instance of fragment NotificationSettingsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ProfileInfoFragment newInstance(String param1, String param2) {
-        ProfileInfoFragment fragment = new ProfileInfoFragment();
+    public static NotificationSettingsFragment newInstance(String param1, String param2) {
+        NotificationSettingsFragment fragment = new NotificationSettingsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -93,60 +84,46 @@ public class ProfileInfoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
 
-        View v = inflater.inflate(R.layout.fragment_profile_info, container, false);
-
-        mPhoneNumber = (TextInputEditText) v.findViewById(R.id.profile_phone_number);
-        mProfileName = (TextInputEditText) v.findViewById(R.id.profile_name);
-        mProfileEmail = (TextInputEditText) v.findViewById(R.id.profile_email);
-        mProfileAddress = (TextInputEditText) v.findViewById(R.id.profile_address);
-        mEditProfile = (AppCompatButton) v.findViewById(R.id.edit_btn);
-        mSaveProfile = (AppCompatButton) v.findViewById(R.id.save_btn);
+        View v = inflater.inflate(R.layout.fragment_notification_settings, container, false);
+        mPushNotificationSwitch = (SwitchCompat) v.findViewById(R.id.push_notification_switch);
+        mEmailNotificationSwitch = (SwitchCompat) v.findViewById(R.id.email_notification_switch);
+        mTextNotificationSwitch = (SwitchCompat) v.findViewById(R.id.text_notification_switch);
+        saveSettings = (AppCompatButton) v.findViewById(R.id.save_settings_button);
 
         mUserUID = ActivityHelper.getUID(getActivity());
         Log.d(TAG,"User UID -->"+ mUserUID);
-        parentProfileRef = mDatabaseReference
-                .child(getString(R.string.firebase_profile_node))
-                .child(getString(R.string.firebase_parent_node)).child(mUserUID);
-        setupDataFromFirebase();
+        userSettingsReference = mDatabaseReference
+                .child(getString(R.string.firebase_settings_node))
+                .child(mUserUID);
 
-        mEditProfile.setOnClickListener(new View.OnClickListener() {
+        setupSwitchButtonStates();
+
+        saveSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                enableEditTextViews();
+
+                UserSettings newSettings = new UserSettings();
+                newSettings.setEmailNotification(mEmailNotificationSwitch.isChecked());
+                newSettings.setPushNotification(mPushNotificationSwitch.isChecked());
+                newSettings.setTextNotification(mTextNotificationSwitch.isChecked());
+
+                userSettingsReference.setValue(newSettings);
+
             }
         });
-        mSaveProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateDataInFirebase();
-            }
-        });
-        // Inflate the layout for this fragment
         return v;
     }
 
-    private void updateDataInFirebase() {
-
-        ParentUsers updatedProfile = parentUser;
-        updatedProfile.setHouseAddress(mProfileAddress.getText().toString());
-        updatedProfile.setPhone(mPhoneNumber.getText().toString());
-        updatedProfile.setEmailId(mProfileEmail.getText().toString());
-        updatedProfile.setParentName(mProfileName.getText().toString());
-        parentProfileRef.setValue(updatedProfile);
-
-        disableEditTextViews();
-
-    }
-
-    public void setupDataFromFirebase(){
-
-
-        parentProfileRef.addValueEventListener(new ValueEventListener() {
+    private void setupSwitchButtonStates() {
+        userSettingsReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                parentUser = dataSnapshot.getValue(ParentUsers.class);
-                setUpDataInUI(parentUser);
+                mUserSettings = dataSnapshot.getValue(UserSettings.class);
+                mPushNotificationSwitch.setChecked(mUserSettings.getPushNotification());
+                mTextNotificationSwitch.setChecked(mUserSettings.getTextNotification());
+                mEmailNotificationSwitch.setChecked(mUserSettings.getEmailNotification());
             }
 
             @Override
@@ -154,32 +131,7 @@ public class ProfileInfoFragment extends Fragment {
 
             }
         });
-    }
 
-    public void setUpDataInUI(ParentUsers parentUser){
-        mPhoneNumber.setText(parentUser.getPhone());
-        mProfileName.setText(parentUser.getParentName());
-        mProfileEmail.setText(parentUser.getEmailId());
-        mProfileAddress.setText(parentUser.getHouseAddress());
-
-        disableEditTextViews();
-    }
-
-    public void disableEditTextViews(){
-
-        mPhoneNumber.setEnabled(false);
-        mProfileName.setEnabled(false);
-        mProfileEmail.setEnabled(false);
-        mProfileAddress.setEnabled(false);
-
-
-    }
-    public void enableEditTextViews(){
-
-        mPhoneNumber.setEnabled(true);
-        mProfileName.setEnabled(true);
-        mProfileEmail.setEnabled(true);
-        mProfileAddress.setEnabled(true);
 
     }
 

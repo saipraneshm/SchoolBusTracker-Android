@@ -1,31 +1,25 @@
-package com.sjsu.edu.schoolbustracker.activity;
+package com.sjsu.edu.schoolbustracker.parentuser.activity;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.fragments.ContactCardFragment;
-import com.sjsu.edu.schoolbustracker.fragments.RealTimeFragment;
-import com.sjsu.edu.schoolbustracker.fragments.TripsFragment;
-import com.sjsu.edu.schoolbustracker.fragments.AccountSettingsFragment;
-import com.sjsu.edu.schoolbustracker.fragments.NotificationSettingsFragment;
-import com.sjsu.edu.schoolbustracker.fragments.ProfileInfoFragment;
-import com.sjsu.edu.schoolbustracker.fragments.UserProfileFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.ContactCardFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.RealTimeFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.TripsFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.AccountSettingsFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.NotificationSettingsFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.ProfileInfoFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.UserProfileFragment;
 
 public class BottomNavigationActivity extends AppCompatActivity implements ContactCardFragment.OnFragmentInteractionListener
         ,UserProfileFragment.OnFragmentInteractionListener,

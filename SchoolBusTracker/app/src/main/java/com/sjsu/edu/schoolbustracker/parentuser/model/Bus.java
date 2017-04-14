@@ -1,6 +1,4 @@
-package com.sjsu.edu.schoolbustracker.model;
-
-import java.util.UUID;
+package com.sjsu.edu.schoolbustracker.parentuser.model;
 
 /**
  * Created by sai pranesh on 31-Mar-17.

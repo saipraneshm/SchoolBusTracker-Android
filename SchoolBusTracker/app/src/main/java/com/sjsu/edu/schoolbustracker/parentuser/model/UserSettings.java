@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.model;
+package com.sjsu.edu.schoolbustracker.parentuser.model;
 
 /**
  * Created by akshaymathur on 4/11/17.

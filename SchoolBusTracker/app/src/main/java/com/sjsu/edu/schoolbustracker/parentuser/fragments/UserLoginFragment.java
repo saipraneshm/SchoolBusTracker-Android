@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.fragments;
+package com.sjsu.edu.schoolbustracker.parentuser.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -42,13 +42,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.activity.BottomNavigationActivity;
-import com.sjsu.edu.schoolbustracker.activity.MainActivity;
-import com.sjsu.edu.schoolbustracker.activity.UserRegistration;
+import com.sjsu.edu.schoolbustracker.parentuser.activity.BottomNavigationActivity;
+import com.sjsu.edu.schoolbustracker.parentuser.activity.UserRegistration;
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
-import com.sjsu.edu.schoolbustracker.model.CheckUserType;
-import com.sjsu.edu.schoolbustracker.model.ParentUsers;
-import com.sjsu.edu.schoolbustracker.model.UserSettings;
+import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
+import com.sjsu.edu.schoolbustracker.parentuser.model.UserSettings;
 
 /**
  * A simple {@link Fragment} subclass.

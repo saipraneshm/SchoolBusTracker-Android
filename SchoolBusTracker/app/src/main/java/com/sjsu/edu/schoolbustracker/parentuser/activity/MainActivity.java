@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.activity;
+package com.sjsu.edu.schoolbustracker.parentuser.activity;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -8,8 +8,8 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.sjsu.edu.schoolbustracker.activity.abs.SingleFragmentActivity;
-import com.sjsu.edu.schoolbustracker.fragments.UserLoginFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.activity.abs.SingleFragmentActivity;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.UserLoginFragment;
 
 public class MainActivity extends SingleFragmentActivity implements
         UserLoginFragment.OnFragmentInteractionListener, GoogleApiClient.OnConnectionFailedListener {

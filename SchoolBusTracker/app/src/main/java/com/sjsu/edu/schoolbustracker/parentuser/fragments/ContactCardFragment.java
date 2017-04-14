@@ -1,34 +1,27 @@
-package com.sjsu.edu.schoolbustracker.fragments;
+package com.sjsu.edu.schoolbustracker.parentuser.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
+import android.support.v7.widget.AppCompatTextView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
-import com.sjsu.edu.schoolbustracker.model.UserSettings;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link NotificationSettingsFragment.OnFragmentInteractionListener} interface
+ * {@link ContactCardFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link NotificationSettingsFragment#newInstance} factory method to
+ * Use the {@link ContactCardFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NotificationSettingsFragment extends Fragment {
+public class ContactCardFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -38,18 +31,12 @@ public class NotificationSettingsFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private SwitchCompat mPushNotificationSwitch,mEmailNotificationSwitch,mTextNotificationSwitch;
-    private AppCompatButton saveSettings;
-
-    private String mUserUID;
-    private final String TAG = "NotificationSettings";
-    private DatabaseReference mDatabaseReference;
-    private DatabaseReference userSettingsReference;
-    private UserSettings mUserSettings;
+    private AppCompatButton driver_call,driver_msg,school_call,school_msg;
+    private AppCompatTextView driver_name,driver_phone,school_coordinator_name,school_coordinator_phone;
 
     private OnFragmentInteractionListener mListener;
 
-    public NotificationSettingsFragment() {
+    public ContactCardFragment() {
         // Required empty public constructor
     }
 
@@ -59,11 +46,11 @@ public class NotificationSettingsFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment NotificationSettingsFragment.
+     * @return A new instance of fragment ContactCardFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NotificationSettingsFragment newInstance(String param1, String param2) {
-        NotificationSettingsFragment fragment = new NotificationSettingsFragment();
+    public static ContactCardFragment newInstance(String param1, String param2) {
+        ContactCardFragment fragment = new ContactCardFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -78,61 +65,67 @@ public class NotificationSettingsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_contact_card, container, false);
 
-        View v = inflater.inflate(R.layout.fragment_notification_settings, container, false);
-        mPushNotificationSwitch = (SwitchCompat) v.findViewById(R.id.push_notification_switch);
-        mEmailNotificationSwitch = (SwitchCompat) v.findViewById(R.id.email_notification_switch);
-        mTextNotificationSwitch = (SwitchCompat) v.findViewById(R.id.text_notification_switch);
-        saveSettings = (AppCompatButton) v.findViewById(R.id.save_settings_button);
+        driver_call = (AppCompatButton) view.findViewById(R.id.driver_call_button);
+        driver_msg = (AppCompatButton) view.findViewById(R.id.driver_msg_button);
+        school_call = (AppCompatButton) view.findViewById(R.id.school_call_button);
+        school_msg = (AppCompatButton) view.findViewById(R.id.school_msg_button);
 
-        mUserUID = ActivityHelper.getUID(getActivity());
-        Log.d(TAG,"User UID -->"+ mUserUID);
-        userSettingsReference = mDatabaseReference
-                .child(getString(R.string.firebase_settings_node))
-                .child(mUserUID);
+        driver_name = (AppCompatTextView) view.findViewById(R.id.driver_name_text);
+        driver_phone = (AppCompatTextView) view.findViewById(R.id.driver_phnumber);
+        school_coordinator_name = (AppCompatTextView) view.findViewById(R.id.school_coordinator_name);
+        school_coordinator_phone = (AppCompatTextView) view.findViewById(R.id.school_coordinator_phnumber);
 
-        setupSwitchButtonStates();
+        //SET phone and name values from firebase
 
-        saveSettings.setOnClickListener(new View.OnClickListener() {
+        driver_msg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                UserSettings newSettings = new UserSettings();
-                newSettings.setEmailNotification(mEmailNotificationSwitch.isChecked());
-                newSettings.setPushNotification(mPushNotificationSwitch.isChecked());
-                newSettings.setTextNotification(mTextNotificationSwitch.isChecked());
-
-                userSettingsReference.setValue(newSettings);
+                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                sendIntent.setData(Uri.parse("sms:"+driver_phone.getText().toString()));
+                startActivity(sendIntent);
 
             }
         });
-        return v;
-    }
-
-    private void setupSwitchButtonStates() {
-        userSettingsReference.addValueEventListener(new ValueEventListener() {
+        school_msg.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                mUserSettings = dataSnapshot.getValue(UserSettings.class);
-                mPushNotificationSwitch.setChecked(mUserSettings.getPushNotification());
-                mTextNotificationSwitch.setChecked(mUserSettings.getTextNotification());
-                mEmailNotificationSwitch.setChecked(mUserSettings.getEmailNotification());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onClick(View view) {
+                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                sendIntent.setData(Uri.parse("sms:"+school_coordinator_phone.getText().toString()));
+                startActivity(sendIntent);
 
             }
         });
 
+        school_call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse("tel:"+school_coordinator_phone.getText().toString()));
+                callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(callIntent);
 
+            }
+        });
+        driver_call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse("tel:"+driver_phone.getText().toString()));
+                callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(callIntent);
+
+            }
+        });
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
