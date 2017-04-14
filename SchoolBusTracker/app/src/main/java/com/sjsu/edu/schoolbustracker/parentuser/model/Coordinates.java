@@ -5,29 +5,22 @@ package com.sjsu.edu.schoolbustracker.parentuser.model;
  */
 
 public class Coordinates {
-    private double mLat;
-    private double mLng;
+    private String mLat;
+    private String mLng;
 
-    public Coordinates(){}
-
-    public Coordinates(double lat , double lng){
-        mLat = lat;
-        mLng = lng;
-    }
-
-    public double getLat() {
+    public String getLat() {
         return mLat;
     }
 
-    public void setLat(double lat) {
+    public void setLat(String lat) {
         mLat = lat;
     }
 
-    public double getLng() {
+    public String getLng() {
         return mLng;
     }
 
-    public void setLng(double lng) {
+    public void setLng(String lng) {
         mLng = lng;
     }
 }

@@ -6,6 +6,7 @@ package com.sjsu.edu.schoolbustracker.parentuser.model;
 
 public class Trip {
 
+
     private String mTripId;
     private Boolean mIsComplete;
 
