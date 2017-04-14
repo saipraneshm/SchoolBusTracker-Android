@@ -1,10 +1,23 @@
-<android.support.v7.widget.RecyclerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:id="@+id/recycler_view_trips"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:scrollbars="vertical"
-             tools:context="com.sjsu.edu.schoolbustracker.fragments.TripsFragment">
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+               xmlns:tools="http://schemas.android.com/tools"
+               android:layout_height="match_parent"
+               android:layout_width="match_parent"
+               android:orientation="vertical"
+               tools:context=".parentuser.fragments.TripsFragment"
+               >
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/trips_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        />
 
-</android.support.v7.widget.RecyclerView>
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/recycler_view_trips"
+        android:scrollbars="vertical"/>
+
+</LinearLayout>
+
+
