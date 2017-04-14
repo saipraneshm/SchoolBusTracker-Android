@@ -66,7 +66,6 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
 
     private FirebaseAuth mAuth;
 
-    private final String TAG ="BottomNavigationAct";
 
     //Saving data in bundle
     private static final String CURRENT_TAG = "currentTag";

@@ -11,8 +11,10 @@ import android.support.v4.app.Fragment;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
+import com.sjsu.edu.schoolbustracker.helperclasses.CustomFragmentPagerAdapter;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.MainActivity;
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.AccountSettingsFragment;
@@ -205,7 +208,7 @@ public class UserProfileFragment extends Fragment {
 
     private void setUpDataInUI(ParentUsers parentUser) {
         mProfileNumber.setText(parentUser.getPhone());
-        mProfileName.setText(parentUser.getParentName());
+        mProfileName.setText(parentUser.getName());
     }
 
     // TODO: Rename method, update argument and hook method into UI event

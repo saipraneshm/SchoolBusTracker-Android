@@ -134,7 +134,7 @@ public class ProfileInfoFragment extends Fragment {
         updatedProfile.setHouseAddress(mProfileAddress.getText().toString());
         updatedProfile.setPhone(mPhoneNumber.getText().toString());
         updatedProfile.setEmailId(mProfileEmail.getText().toString());
-        updatedProfile.setParentName(mProfileName.getText().toString());
+        updatedProfile.setName(mProfileName.getText().toString());
         parentProfileRef.setValue(updatedProfile);
 
         disableEditTextViews();
@@ -160,7 +160,7 @@ public class ProfileInfoFragment extends Fragment {
 
     public void setUpDataInUI(ParentUsers parentUser){
         mPhoneNumber.setText(parentUser.getPhone());
-        mProfileName.setText(parentUser.getParentName());
+        mProfileName.setText(parentUser.getName());
         mProfileEmail.setText(parentUser.getEmailId());
         mProfileAddress.setText(parentUser.getHouseAddress());
 
