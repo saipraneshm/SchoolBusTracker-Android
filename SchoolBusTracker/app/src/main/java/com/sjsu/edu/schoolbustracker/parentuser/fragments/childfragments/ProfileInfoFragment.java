@@ -1,15 +1,18 @@
 package com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments;
 
 import android.content.Context;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,6 +38,7 @@ public class ProfileInfoFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+
     private DatabaseReference mDatabaseReference;
     private DatabaseReference parentProfileRef;
     private TextInputEditText mPhoneNumber,mProfileName,mProfileEmail,mProfileAddress;
@@ -42,6 +47,7 @@ public class ProfileInfoFragment extends Fragment {
     private ParentUsers parentUser;
 
     private final String TAG = "ProfileInfoFrag";
+
 
     public static final String ARG_OBJECT = "object";
 
@@ -81,6 +87,7 @@ public class ProfileInfoFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
     }
 
     @Override
@@ -113,11 +120,13 @@ public class ProfileInfoFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 updateDataInFirebase();
+
             }
         });
         // Inflate the layout for this fragment
         return v;
     }
+
 
     private void updateDataInFirebase() {
 
@@ -175,6 +184,7 @@ public class ProfileInfoFragment extends Fragment {
         mProfileAddress.setEnabled(true);
 
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

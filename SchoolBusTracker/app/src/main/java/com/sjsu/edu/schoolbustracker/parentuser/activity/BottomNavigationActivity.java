@@ -1,18 +1,28 @@
 package com.sjsu.edu.schoolbustracker.parentuser.activity;
 
+
+import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import android.util.Log;
+import android.view.MenuItem;
+
 import com.sjsu.edu.schoolbustracker.R;
+import com.sjsu.edu.schoolbustracker.helperclasses.QueryPreferences;
+
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.ContactCardFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.RealTimeFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.TripsFragment;
@@ -21,13 +31,18 @@ import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.Notific
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.ProfileInfoFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.UserProfileFragment;
 
+import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
+
 public class BottomNavigationActivity extends AppCompatActivity implements ContactCardFragment.OnFragmentInteractionListener
         ,UserProfileFragment.OnFragmentInteractionListener,
         ProfileInfoFragment.OnFragmentInteractionListener,
         AccountSettingsFragment.OnFragmentInteractionListener,
         NotificationSettingsFragment.OnFragmentInteractionListener{
 
+
     private TextView mTextMessage;
+
+    private static final String TAG = "BottomNavigation" ;
 
     //Tag to keep track of the current fragment
     private static String sTagCurrent = "CurrentTag";
@@ -48,9 +63,15 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
 
     private BottomNavigationView navigation;
 
+
     private FirebaseAuth mAuth;
 
     private final String TAG ="BottomNavigationAct";
+
+    //Saving data in bundle
+    private static final String CURRENT_TAG = "currentTag";
+    private static final String CURRENT_NAV_INDEX = "currentNavItemIndex";
+
 
 
     @Override
@@ -58,11 +79,21 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_navigation);
 
-        mAuth = FirebaseAuth.getInstance();
+
+        ActivityHelper.initialize(this);
         mActivityTitles = getResources().getStringArray(R.array.parent_fragment_titles);
         mHandler = new Handler();
 
+        
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
+       /* if(QueryPreferences.getTripDetailsNavRef(this)){
+            QueryPreferences.setTripDetailsNavRef(this,false);
+            mNavItemIndex = 1;
+            sTagCurrent = sTagTripHistory;
+            loadFragment();
+            navigation.getMenu().getItem(1).setChecked(true);
+        }*/
+
         navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -104,11 +135,13 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
             sTagCurrent = sTagRealTimeTrack;
             loadFragment();
         }
+
     }
 
     public void loadFragment(){
         if(getSupportActionBar() != null)
             getSupportActionBar().setTitle(mActivityTitles[mNavItemIndex]);
+
 
         Runnable mPendingRunnable = new Runnable() {
             @Override
@@ -130,6 +163,7 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
 
     }
 
+
     private Fragment getOnScreenFragment(){
         switch(mNavItemIndex){
             case 0:
@@ -148,12 +182,7 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
     @Override
     public void onBackPressed() {
 
-        if(mNavItemIndex != 0){
-                mNavItemIndex = 0;
-                sTagCurrent = sTagRealTimeTrack;
-                loadFragment();
-                return;
-        }
+
         super.onBackPressed();
 
     }
@@ -162,4 +191,5 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
     public void onFragmentInteraction(Uri uri) {
 
     }
+
 }

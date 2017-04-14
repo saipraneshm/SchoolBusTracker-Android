@@ -5,8 +5,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.Toolbar;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +37,9 @@ public class ContactCardFragment extends Fragment {
 
     private AppCompatButton driver_call,driver_msg,school_call,school_msg;
     private AppCompatTextView driver_name,driver_phone,school_coordinator_name,school_coordinator_phone;
+    private Toolbar mToolbar;
+
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -40,23 +47,7 @@ public class ContactCardFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ContactCardFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ContactCardFragment newInstance(String param1, String param2) {
-        ContactCardFragment fragment = new ContactCardFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,6 +63,11 @@ public class ContactCardFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contact_card, container, false);
+
+
+        mToolbar = (Toolbar) view.findViewById(R.id.contacts_toolbar);
+        mToolbar.setTitle("Contacts");
+        mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.cardview_light_background, null));
 
         driver_call = (AppCompatButton) view.findViewById(R.id.driver_call_button);
         driver_msg = (AppCompatButton) view.findViewById(R.id.driver_msg_button);

@@ -4,223 +4,250 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-    android:layout_marginRight="@dimen/activity_horizontal_margin"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
     tools:context=".parentuser.fragments.ContactCardFragment"
-    tools:layout_editor_absoluteX="0dp"
-    tools:layout_editor_absoluteY="81dp">
+    tools:layout_editor_absoluteY="81dp"
+    tools:layout_editor_absoluteX="0dp">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/school_contact"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/contacts_toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/horizontal_padding"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="?attr/colorPrimary"
+        app:layout_collapseMode="parallax"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        card_view:cardCornerRadius="2dp"
-        card_view:cardElevation="2dp">
-
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="0dp">
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/appCompatTextView"
-                android:layout_width="140dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/transport_coordination"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginStart="8dp" />
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/school_coordinator_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintLeft_toRightOf="@+id/appCompatTextView"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Akshay Mathur" />
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/appCompatTextView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/contact_phoneno"
-                android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@+id/appCompatTextView"
-                android:layout_marginLeft="8dp"
-                app:layout_constraintLeft_toLeftOf="parent" />
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/school_coordinator_phnumber"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintLeft_toRightOf="@+id/appCompatTextView2"
-                app:layout_constraintTop_toBottomOf="@+id/school_coordinator_name"
-                tools:text="(999) 999-9999" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
-                android:orientation="horizontal"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/appCompatTextView2">
-
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/school_msg_button"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/horizontal_padding"
-                    android:layout_weight="1"
-                    android:padding="@dimen/horizontal_padding"
-                    android:text="@string/contact_message" />
-
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/school_call_button"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:layout_margin="@dimen/horizontal_padding"
-                    android:layout_weight="1"
-                    android:padding="@dimen/horizontal_padding"
-                    android:text="@string/contact_call" />
-
-            </LinearLayout>
-
-
-        </android.support.constraint.ConstraintLayout>
-
-
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/_contact"
+        android:layout_marginTop="0dp" />
+    <ScrollView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.482"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/school_contact"
-        card_view:cardCornerRadius="2dp"
-        card_view:cardElevation="2dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
-
+        app:layout_constraintTop_toBottomOf="@+id/contacts_toolbar">
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_horizontal_margin">
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/appCompatTextViewDriver"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/driver_text"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/driver_name_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintLeft_toRightOf="@+id/appCompatTextViewDriver"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Sai Pranesh" />
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/appCompatTextView2_driver"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/contact_phoneno"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/appCompatTextViewDriver" />
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/driver_phnumber"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintLeft_toRightOf="@+id/appCompatTextView2_driver"
-                app:layout_constraintTop_toBottomOf="@+id/driver_name_text"
-                tools:text="(999) 999-9999" />
-
-            <LinearLayout
+            android:layout_height="wrap_content">
+            <android.support.v7.widget.CardView
+                android:id="@+id/school_contact"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
-                android:orientation="horizontal"
+                card_view:cardCornerRadius="2dp"
+                card_view:cardElevation="2dp"
+                android:layout_marginRight="8dp"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginLeft="8dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp">
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:layout_editor_absoluteX="0dp"
+                    tools:layout_editor_absoluteY="0dp">
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/appCompatTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/transport_coordination"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/school_coordinator_name"
+                        android:layout_width="95dp"
+                        android:layout_height="wrap_content"
+                        tools:text="Akshay Mathur"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="15dp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintLeft_toRightOf="@+id/appCompatTextView"
+                        android:layout_marginLeft="8dp"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="15dp" />
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/appCompatTextView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/contact_phoneno"
+                        android:layout_marginLeft="8dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toBottomOf="@+id/appCompatTextView"
+                        android:layout_marginStart="8dp" />
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/school_coordinator_phnumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="(999) 999-9999"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toBottomOf="@+id/school_coordinator_name"
+                        app:layout_constraintLeft_toRightOf="@+id/appCompatTextView2"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginStart="16dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="24dp"
+                        app:layout_constraintTop_toBottomOf="@+id/school_coordinator_phnumber"
+                        android:layout_marginRight="8dp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:layout_marginLeft="8dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp">
+
+                        <android.support.v7.widget.AppCompatButton
+                            android:id="@+id/school_msg_button"
+                            style="?android:attr/borderlessButtonStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/horizontal_padding"
+                            android:layout_weight="1"
+                            android:padding="@dimen/horizontal_padding"
+                            android:text="@string/contact_message" />
+
+                        <android.support.v7.widget.AppCompatButton
+                            android:id="@+id/school_call_button"
+                            style="?android:attr/borderlessButtonStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="48dp"
+                            android:layout_margin="@dimen/horizontal_padding"
+                            android:layout_weight="1"
+                            android:padding="@dimen/horizontal_padding"
+                            android:text="@string/contact_call" />
+
+                    </LinearLayout>
+
+
+                </android.support.constraint.ConstraintLayout>
+
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/driver_contact"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/appCompatTextView2_driver">
+                app:layout_constraintTop_toBottomOf="@+id/school_contact"
+                card_view:cardCornerRadius="2dp"
+                card_view:cardElevation="2dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                android:layout_marginBottom="8dp">
 
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/driver_msg_button"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/horizontal_padding"
-                    android:layout_weight="1"
-                    android:padding="@dimen/horizontal_padding"
-                    android:text="@string/contact_message" />
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/driver_call_button"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:layout_margin="@dimen/horizontal_padding"
-                    android:layout_weight="1"
-                    android:padding="@dimen/horizontal_padding"
-                    android:text="@string/contact_call" />
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/appCompatTextViewDriver"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/driver_text"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-            </LinearLayout>
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/driver_name_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintLeft_toRightOf="@+id/appCompatTextViewDriver"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Sai Pranesh" />
 
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/appCompatTextView2_driver"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/contact_phoneno"
+                        app:layout_constraintTop_toBottomOf="@+id/appCompatTextViewDriver"
+                        android:layout_marginLeft="8dp"
+                        app:layout_constraintLeft_toLeftOf="parent" />
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/driver_phnumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="9dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintLeft_toRightOf="@+id/appCompatTextView2_driver"
+                        app:layout_constraintTop_toBottomOf="@+id/driver_name_text"
+                        tools:text="(999) 999-9999" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/driver_phnumber">
+
+                        <android.support.v7.widget.AppCompatButton
+                            android:id="@+id/driver_msg_button"
+                            style="?android:attr/borderlessButtonStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/horizontal_padding"
+                            android:layout_weight="1"
+                            android:padding="@dimen/horizontal_padding"
+                            android:text="@string/contact_message" />
+
+                        <android.support.v7.widget.AppCompatButton
+                            android:id="@+id/driver_call_button"
+                            style="?android:attr/borderlessButtonStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="48dp"
+                            android:layout_margin="@dimen/horizontal_padding"
+                            android:layout_weight="1"
+                            android:padding="@dimen/horizontal_padding"
+                            android:text="@string/contact_call" />
+
+                    </LinearLayout>
+
+
+                </android.support.constraint.ConstraintLayout>
+
+
+            </android.support.v7.widget.CardView>
 
         </android.support.constraint.ConstraintLayout>
 
 
-    </android.support.v7.widget.CardView>
+    </ScrollView>
+
+
+
+
 
 </android.support.constraint.ConstraintLayout>

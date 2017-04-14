@@ -6,9 +6,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_bus_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_bus_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
@@ -45,9 +45,14 @@
             android:name=".parentuser.activity.BottomNavigationActivity"
             android:label="@string/title_activity_bottom_navigation">
         </activity>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCHlQEEB2xbKOAWTz5hVLkZHOWlOAzCMkY"/>
+
+        <activity android:name=".parentuser.activity.TripDetailActivity">
+
+        </activity>
     </application>
 
 </manifest>

@@ -6,22 +6,14 @@ import java.util.UUID;
  * Created by sai pranesh on 31-Mar-17.
  */
 
-public class Driver {
 
-    private String mUUId;
-    private String mDriverName;
+public class Driver extends Profile {
+
+
     private String mPhoneNumber;
-
     //For image purposes
     private UUID mDriverId;
 
-    public String getDriverName() {
-        return mDriverName;
-    }
-
-    public void setDriverName(String driverName) {
-        mDriverName = driverName;
-    }
 
     public String getPhoneNumber() {
         return mPhoneNumber;
@@ -37,14 +29,6 @@ public class Driver {
 
     public void setDriverId(UUID driverId) {
         mDriverId = driverId;
-    }
-
-    public String getUUId() {
-        return mUUId;
-    }
-
-    public void setUUId(String UUId) {
-        mUUId = UUId;
     }
 
 }

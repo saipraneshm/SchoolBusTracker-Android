@@ -4,30 +4,15 @@ package com.sjsu.edu.schoolbustracker.parentuser.model;
  * Created by sai pranesh on 31-Mar-17.
  */
 
-public class ParentUsers {
 
-    private String mUUId;
-    private String mEmailId ;
-    private String mParentName ;
+public class ParentUsers extends Profile {
+
     private String mPhone;
     private String mHouseAddress;
     private Student[] mChildren;
 
-    public String getEmailId() {
-        return mEmailId;
-    }
 
-    public void setEmailId(String emailId) {
-        mEmailId = emailId;
-    }
-
-    public String getParentName() {
-        return mParentName;
-    }
-
-    public void setParentName(String parentName) {
-        mParentName = parentName;
-    }
+    public ParentUsers(){}
 
     public String getPhone() {
         return mPhone;
@@ -52,13 +37,4 @@ public class ParentUsers {
     public void setChildren(Student[] children) {
         mChildren = children;
     }
-
-    public String getUUId() {
-        return mUUId;
-    }
-
-    public void setUUId(String UUId) {
-        mUUId = UUId;
-    }
-
 }

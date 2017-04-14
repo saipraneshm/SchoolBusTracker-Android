@@ -4,13 +4,14 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 import com.sjsu.edu.schoolbustracker.parentuser.model.UserSettings;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,6 +40,7 @@ public class NotificationSettingsFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+
     private SwitchCompat mPushNotificationSwitch,mEmailNotificationSwitch,mTextNotificationSwitch;
     private AppCompatButton saveSettings;
 
@@ -46,7 +49,6 @@ public class NotificationSettingsFragment extends Fragment {
     private DatabaseReference mDatabaseReference;
     private DatabaseReference userSettingsReference;
     private UserSettings mUserSettings;
-
     private OnFragmentInteractionListener mListener;
 
     public NotificationSettingsFragment() {
@@ -79,6 +81,7 @@ public class NotificationSettingsFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
     }
 
     @Override
@@ -131,7 +134,6 @@ public class NotificationSettingsFragment extends Fragment {
 
             }
         });
-
 
     }
 
