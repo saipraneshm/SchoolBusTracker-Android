@@ -2,28 +2,34 @@ package com.sjsu.edu.schoolbustracker.parentuser.fragments;
 
 
 import android.os.Bundle;
+
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.sjsu.edu.schoolbustracker.R;
+
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.MapTextFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.RealTimeMapFragment;
 import com.sjsu.edu.schoolbustracker.helperclasses.CustomFragmentPagerAdapter;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class RealTimeFragment extends Fragment {
 
+
     ViewPager mViewPager;
     TabLayout mTabLayout;
     Toolbar mToolbar;
+
 
     public RealTimeFragment() {
         // Required empty public constructor
@@ -31,6 +37,7 @@ public class RealTimeFragment extends Fragment {
 
 
     @Override
+
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -57,7 +64,6 @@ public class RealTimeFragment extends Fragment {
         realTimePagerAdapter.addFragment(new RealTimeMapFragment(),"Tracking");
         viewPager.setAdapter(realTimePagerAdapter);
     }
-
 
 
 
