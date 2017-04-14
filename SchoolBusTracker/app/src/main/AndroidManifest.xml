@@ -50,6 +50,7 @@
             android:value="AIzaSyCHlQEEB2xbKOAWTz5hVLkZHOWlOAzCMkY"/>
 
         <activity android:name=".parentuser.activity.TripDetailActivity">
+
         </activity>
     </application>
 

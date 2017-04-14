@@ -54,7 +54,7 @@ public class TripsFragment extends Fragment{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DatabaseReference previousTripRef = FirebaseUtil.getPreviousTripRef();
+       /* DatabaseReference previousTripRef = FirebaseUtil.getPreviousTripRef();
 
         TripDetails tripDetails = new TripDetails();
         tripDetails.setBusNo("20");
@@ -73,7 +73,7 @@ public class TripsFragment extends Fragment{
         previousTripRef
                 .child(FirebaseUtil.getCurrentUserId())
                 .child(System.currentTimeMillis()+"")
-                .setValue(tripDetails);
+                .setValue(tripDetails);*/
 
     }
 
