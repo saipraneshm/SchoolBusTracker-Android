@@ -16,9 +16,9 @@ import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.ContactCardFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.RealTimeFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.TripsFragment;
-import com.sjsu.edu.schoolbustracker.parentuser.fragments.AccountSettingsFragment;
-import com.sjsu.edu.schoolbustracker.parentuser.fragments.NotificationSettingsFragment;
-import com.sjsu.edu.schoolbustracker.parentuser.fragments.ProfileInfoFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.AccountSettingsFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.NotificationSettingsFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.ProfileInfoFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.UserProfileFragment;
 
 public class BottomNavigationActivity extends AppCompatActivity implements ContactCardFragment.OnFragmentInteractionListener
