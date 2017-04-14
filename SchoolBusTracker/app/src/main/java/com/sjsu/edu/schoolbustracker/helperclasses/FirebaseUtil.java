@@ -18,6 +18,7 @@ public class FirebaseUtil {
     private static final String CHECK_USER_TYPE = "CheckUserType";
     private static final String DRIVER = "Driver";
     private static final String PARENT_USER = "ParentUser";
+    private static final String BUS_HISTORY = "BusHistory";
 
     public static DatabaseReference getBaseRef(){
         return FirebaseDatabase.getInstance().getReference();
@@ -49,6 +50,20 @@ public class FirebaseUtil {
 
     public static DatabaseReference getParentUserRef(){
         return getBaseRef().child(PROFILE).child(PARENT_USER).getRef();
+    }
+
+    //Fetches the current user's previous trip ref
+    public static DatabaseReference getExisitingPreviousTripsRef(){
+        String userId = getCurrentUserId();
+        if(userId != null){
+            return getBaseRef().child(BUS_HISTORY).child(userId).getRef();
+        }
+        return null;
+    }
+
+    //Fetches only the Bus history ref
+    public static DatabaseReference getPreviousTripRef(){
+        return getBaseRef().child(BUS_HISTORY);
     }
 
 
