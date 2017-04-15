@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -50,6 +51,8 @@ import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 /**
@@ -79,6 +82,7 @@ public class UserProfileFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private final String TAG = "UserProfileFragment";
     private GoogleApiClient mGoogleApiClient;
+    private CircleImageView mParentImageView;
 
     //CollectionPagerAdapter mDemoCollectionPagerAdapter;
     ViewPager mViewPager;
@@ -225,6 +229,8 @@ public class UserProfileFragment extends Fragment {
                 startActivity(intent);
             }
         });*/
+
+        mParentImageView = (CircleImageView) view.findViewById(R.id.parent_profile_pic);
         return view;
     }
 
@@ -247,6 +253,7 @@ public class UserProfileFragment extends Fragment {
     private void setUpDataInUI(ParentUsers parentUser) {
         mProfileNumber.setText(parentUser.getPhone());
         mProfileName.setText(parentUser.getName());
+        Glide.with(this).load(parentUser.getPhotoUri()).into(mParentImageView);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -165,6 +165,7 @@ public class UserLoginFragment extends Fragment {
                                 newParent.setUUID(user.getUid());
                                 newParent.setName(user.getDisplayName());
                                 newParent.setEmailId(user.getEmail());
+                                newParent.setPhotoUri(user.getPhotoUrl().toString());
                                 FirebaseUtil.getParentUserRef()
                                         .child(newParent.getUUID())
                                         .setValue(newParent);
