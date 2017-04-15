@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.sjsu.edu.schoolbustracker.R;
+import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.helperclasses.QueryPreferences;
 
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.ContactCardFragment;
@@ -137,9 +138,15 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ActivityHelper.saveUID(this, FirebaseUtil.getCurrentUserId());
+    }
+
     public void loadFragment(){
         if(getSupportActionBar() != null)
-            getSupportActionBar().setTitle(mActivityTitles[mNavItemIndex]);
+            getSupportActionBar().hide();
 
 
         Runnable mPendingRunnable = new Runnable() {

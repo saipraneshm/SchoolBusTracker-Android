@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 
 import com.google.firebase.database.DataSnapshot;
@@ -120,42 +121,41 @@ public class UserProfileFragment extends Fragment {
 
     }
 
-    @Override
 
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.appbar_menu,menu);
-    }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.logout_btn:
-                mAuth.signOut();
-                Intent intent =new Intent(getActivity(),MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                getActivity().finish();
-                return true;
-            default: return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
         Log.d(TAG,"Creating views");
         View view = inflater.inflate(R.layout.fragment_user_profile, container, false);
+
         setHasOptionsMenu(true);
 
 
         mToolbar = (Toolbar) view.findViewById(R.id.profile_toolbar);
         mToolbar.setTitle("Profile");
         mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.cardview_light_background, null));
-
+        mToolbar.inflateMenu(R.menu.appbar_menu);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.logout_btn:
+                        LoginManager.getInstance().logOut();
+                        mAuth.signOut();
+                        Intent intent =new Intent(getActivity(),MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        getActivity().finish();
+                        return true;
+                    default: return false;
+                }
+            }
+        });
+        if(getActivity().getActionBar()!= null)
+            getActivity().getActionBar().show();
         /*mDemoCollectionPagerAdapter =
                 new CollectionPagerAdapter(
                         getChildFragmentManager());*/

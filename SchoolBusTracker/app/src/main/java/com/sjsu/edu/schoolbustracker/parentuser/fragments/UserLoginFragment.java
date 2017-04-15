@@ -100,6 +100,7 @@ public class UserLoginFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener(){
             @Override
@@ -109,7 +110,7 @@ public class UserLoginFragment extends Fragment {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid() + " " + user.getEmail());
 
-                    ActivityHelper.saveUID(getActivity(),user.getUid());
+
                     mCheckUserTypeRef = FirebaseUtil.getCheckUserRef();
 
                     mCheckUserTypeRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -146,7 +147,7 @@ public class UserLoginFragment extends Fragment {
                                 Log.d("ProfileExists", user.getEmail() + " profile doesn't exist in the database" );
                                 mCheckUserTypeRef.child(user.getUid()).child("isDriver").setValue(false);
 
-                                userSettingsReference = mDatabase
+                                userSettingsReference = FirebaseUtil.getBaseRef()
                                         .child(getString(R.string.firebase_settings_node))
                                         .child(user.getUid());
                                
