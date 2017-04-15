@@ -5,6 +5,7 @@ package com.sjsu.edu.schoolbustracker.parentuser.model;
  */
 
 public class Coordinates {
+
     private double mLat;
     private double mLng;
 

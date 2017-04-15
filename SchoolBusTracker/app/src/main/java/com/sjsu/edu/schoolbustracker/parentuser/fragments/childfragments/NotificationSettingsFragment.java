@@ -4,11 +4,23 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
+import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
+import com.sjsu.edu.schoolbustracker.parentuser.model.UserSettings;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +40,15 @@ public class NotificationSettingsFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+
+    private SwitchCompat mPushNotificationSwitch,mEmailNotificationSwitch,mTextNotificationSwitch;
+    private AppCompatButton saveSettings;
+
+    private String mUserUID;
+    private final String TAG = "NotificationSettings";
+    private DatabaseReference mDatabaseReference;
+    private DatabaseReference userSettingsReference;
+    private UserSettings mUserSettings;
     private OnFragmentInteractionListener mListener;
 
     public NotificationSettingsFragment() {
@@ -59,13 +80,61 @@ public class NotificationSettingsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notification_settings, container, false);
+
+        View v = inflater.inflate(R.layout.fragment_notification_settings, container, false);
+        mPushNotificationSwitch = (SwitchCompat) v.findViewById(R.id.push_notification_switch);
+        mEmailNotificationSwitch = (SwitchCompat) v.findViewById(R.id.email_notification_switch);
+        mTextNotificationSwitch = (SwitchCompat) v.findViewById(R.id.text_notification_switch);
+        saveSettings = (AppCompatButton) v.findViewById(R.id.save_settings_button);
+
+        mUserUID = ActivityHelper.getUID(getActivity());
+        Log.d(TAG,"User UID -->"+ mUserUID);
+        userSettingsReference = mDatabaseReference
+                .child(getString(R.string.firebase_settings_node))
+                .child(mUserUID);
+
+        setupSwitchButtonStates();
+
+        saveSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                UserSettings newSettings = new UserSettings();
+                newSettings.setEmailNotification(mEmailNotificationSwitch.isChecked());
+                newSettings.setPushNotification(mPushNotificationSwitch.isChecked());
+                newSettings.setTextNotification(mTextNotificationSwitch.isChecked());
+
+                userSettingsReference.setValue(newSettings);
+
+            }
+        });
+        return v;
+    }
+
+    private void setupSwitchButtonStates() {
+        userSettingsReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mUserSettings = dataSnapshot.getValue(UserSettings.class);
+                mPushNotificationSwitch.setChecked(mUserSettings.getPushNotification());
+                mTextNotificationSwitch.setChecked(mUserSettings.getTextNotification());
+                mEmailNotificationSwitch.setChecked(mUserSettings.getEmailNotification());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

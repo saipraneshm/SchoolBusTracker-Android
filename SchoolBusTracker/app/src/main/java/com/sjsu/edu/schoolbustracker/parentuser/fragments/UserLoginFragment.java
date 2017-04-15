@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+
 import android.support.annotation.Nullable;
+
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
@@ -20,7 +22,9 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+
 import com.facebook.login.LoginManager;
+
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -41,13 +45,18 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+
+
+
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
+import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.BottomNavigationActivity;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.UserRegistration;
 import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Profile;
+import com.sjsu.edu.schoolbustracker.parentuser.model.UserSettings;
 
 
 public class UserLoginFragment extends Fragment {
@@ -62,7 +71,9 @@ public class UserLoginFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
-    private DatabaseReference  mCheckUserTypeRef, mProfileRef;
+
+    private DatabaseReference mDatabase, mCheckUserTypeRef, mProfileRef,userSettingsReference;
+
 
     private LoginButton mFbLoginButton;
     private CallbackManager callbackManager;
@@ -70,12 +81,12 @@ public class UserLoginFragment extends Fragment {
     private AppCompatButton loginButton,signUpButton,signOutButton,testButton;
     public ProgressDialog mProgressDialog;
 
+
     //Google Auth
     GoogleApiClient mGoogleApiClient;
 
     // TODO: Rename and change types of parameters
-   /* private String mParam1;
-    private String mParam2;*/
+
 
 
     private OnFragmentInteractionListener mListener;
@@ -84,24 +95,11 @@ public class UserLoginFragment extends Fragment {
         // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
-/*    public static UserLoginFragment newInstance(String param1, String param2) {
-        UserLoginFragment fragment = new UserLoginFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }*/
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      /*  if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }*/
-
         mAuth = FirebaseAuth.getInstance();
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener(){
@@ -111,7 +109,10 @@ public class UserLoginFragment extends Fragment {
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid() + " " + user.getEmail());
+
+
                     mCheckUserTypeRef = FirebaseUtil.getCheckUserRef();
+
                     mCheckUserTypeRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -122,10 +123,12 @@ public class UserLoginFragment extends Fragment {
                                 Boolean isDriver = dataSnapshot.child(user.getUid()).child("isDriver").getValue(Boolean.class);
                                 Log.d("ProfileExists", isDriver.toString());
                                 if(isDriver){
+
                                     mProfileRef = FirebaseUtil.getDriverRef();
 
                                 }else{
                                     mProfileRef = FirebaseUtil.getParentUserRef().child(user.getUid()).getRef();
+
                                     mProfileRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -143,6 +146,19 @@ public class UserLoginFragment extends Fragment {
                             }else{
                                 Log.d("ProfileExists", user.getEmail() + " profile doesn't exist in the database" );
                                 mCheckUserTypeRef.child(user.getUid()).child("isDriver").setValue(false);
+
+                                userSettingsReference = FirebaseUtil.getBaseRef()
+                                        .child(getString(R.string.firebase_settings_node))
+                                        .child(user.getUid());
+                               
+
+                                UserSettings newSettings = new UserSettings();
+                                newSettings.setEmailNotification(true);
+                                newSettings.setPushNotification(true);
+                                newSettings.setTextNotification(true);
+
+                                userSettingsReference.setValue(newSettings);
+
                                 Profile newParent = new ParentUsers();
                                 newParent.setUUID(user.getUid());
                                 newParent.setName(user.getDisplayName());
@@ -150,6 +166,7 @@ public class UserLoginFragment extends Fragment {
                                 FirebaseUtil.getParentUserRef()
                                         .child(newParent.getUUID())
                                         .setValue(newParent);
+
                             }
                         }
 
@@ -159,13 +176,14 @@ public class UserLoginFragment extends Fragment {
                         }
                     });
 
+
                     if(UserLoginFragment.this.isAdded()){
                         Intent intent =new Intent(getActivity(),BottomNavigationActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }
 
-                    //activity.finish();
+
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -184,41 +202,8 @@ public class UserLoginFragment extends Fragment {
         loginButton = (AppCompatButton) view.findViewById(R.id.LoginButton);
         signUpButton = (AppCompatButton) view.findViewById(R.id.SignUpButton);
         signOutButton = (AppCompatButton) view.findViewById(R.id.sign_out_button);
-        testButton = (AppCompatButton) view.findViewById(R.id.button2);
-        testButton.setVisibility(View.GONE);
-        /*testButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                *//*Bus newBus = new Bus();
-                UUID busuuid = UUID.randomUUID();
-                newBus.setDriverUUID(busuuid.toString());
-                newBus.setLat("121.13131231");
-                newBus.setLng("36.0001212");
-                newBus.setRegistrationNumber("ADFF12");
-                newBus.setRouteNumber("123");
-                mDatabase.child("Bus").child(newBus.getRegistrationNumber()).setValue(newBus);*//*
 
-               *//* BusTracking busTracking = new BusTracking();
-                Trip trip = new Trip();
-                trip.setTripId("1");
-                trip.setmIsComplete(false);
-                Coordinates coord = new Coordinates();
-                coord.setLat("121.123123");
-                coord.setLng("36.123145");
-                DatabaseReference mRef = mDatabase.child("BusTracking")
-                        .child("ADFF12")
-                        .child("Trips")
-                        .child("03-31-2017")
-                        .child(trip.getTripId());
 
-                        mRef.child("Coordinates").child(System.currentTimeMillis() + "").setValue(coord);
-                        mRef.child("isTripComplete").setValue("false");*//*
-               //startActivity(new Intent(getActivity(), BottomNavigationActivity.class));
-                Intent intent =new Intent(getActivity(),BottomNavigationActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        });*/
 
         mFbLoginButton.setReadPermissions("email", "public_profile");
         // If using in a fragment
@@ -226,6 +211,7 @@ public class UserLoginFragment extends Fragment {
         // Other app specific specialization
 
         callbackManager = CallbackManager.Factory.create();
+
 
         mFbLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -237,23 +223,30 @@ public class UserLoginFragment extends Fragment {
             }
         });
 
+
         // Callback registration
         mFbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
+
                         Log.d(TAG, "facebook:onSuccess:" + loginResult);
                         handleFacebookAccessToken(loginResult.getAccessToken());
+
                     }
 
                     @Override
                     public void onCancel() {
+
                         hideProgressDialog();
+
                         Log.d(TAG, "Facebook cancelled the login process");
                     }
 
                     @Override
                     public void onError(FacebookException exception) {
+
                         hideProgressDialog();
+
                         Log.e(TAG,"Facebook exception", new Exception());
                     }
 
@@ -345,7 +338,6 @@ public class UserLoginFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        Log.d("ULF","On Attach has been called");
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -356,12 +348,14 @@ public class UserLoginFragment extends Fragment {
 
 
 
+
     @Override
     public void onDetach() {
         super.onDetach();
         Log.d("ULF","On Detach has been called");
         mListener = null;
     }
+
 
 
     /**
@@ -389,10 +383,12 @@ public class UserLoginFragment extends Fragment {
         }
     }
 
+
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
         // [START_EXCLUDE silent]
             showProgressDialog();
+
         // [END_EXCLUDE]
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -442,10 +438,14 @@ public class UserLoginFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
+                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+
+
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
+
                             LoginManager.getInstance().logOut();
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(getActivity(), "Authentication failed.",
@@ -456,19 +456,24 @@ public class UserLoginFragment extends Fragment {
 
                         hideProgressDialog();
 
+
                     }
                 });
     }
 
     public void showProgressDialog() {
+
         if (mProgressDialog == null && this.isAdded()) {
+
             mProgressDialog = new ProgressDialog(getActivity());
             mProgressDialog.setMessage(getString(R.string.loading));
             mProgressDialog.setIndeterminate(true);
         }
 
+
         if(mProgressDialog != null)
             mProgressDialog.show();
+
     }
 
     public void hideProgressDialog() {
@@ -480,7 +485,7 @@ public class UserLoginFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("ULF","On destroy has been called");
+
         if (mAuthStateListener != null) {
             mAuth.removeAuthStateListener(mAuthStateListener);
         }
@@ -490,42 +495,20 @@ public class UserLoginFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Log.d("ULF","Onstart has been called");
         mAuth.addAuthStateListener(mAuthStateListener);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("ULF","On resume has been called");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d("ULF","On pause has been called");
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.d("ULF","On activity created has been called");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d("ULF","On stop has been called");
-    }
 
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         hideProgressDialog();
     }
+
 }

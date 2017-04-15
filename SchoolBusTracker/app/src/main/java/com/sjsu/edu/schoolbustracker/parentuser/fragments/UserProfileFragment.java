@@ -1,24 +1,49 @@
 package com.sjsu.edu.schoolbustracker.parentuser.fragments;
 
 import android.content.Context;
+
+import android.content.Intent;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
+import com.sjsu.edu.schoolbustracker.helperclasses.CustomFragmentPagerAdapter;
+import com.sjsu.edu.schoolbustracker.parentuser.activity.MainActivity;
+import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.AccountSettingsFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.NotificationSettingsFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.ProfileInfoFragment;
-import com.sjsu.edu.schoolbustracker.helperclasses.CustomFragmentPagerAdapter;
+import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,6 +66,7 @@ public class UserProfileFragment extends Fragment {
     //Firebase
     private FirebaseAuth mAuth;
 
+
     private Toolbar mToolbar;
 
     private OnFragmentInteractionListener mListener;
@@ -49,6 +75,15 @@ public class UserProfileFragment extends Fragment {
     //CollectionPagerAdapter mDemoCollectionPagerAdapter;
     ViewPager mViewPager;
     TabLayout mTabLayout;
+
+
+    private AppCompatTextView mProfileName,mProfileNumber;
+
+    private DatabaseReference mDatabaseReference;
+    private DatabaseReference parentProfileRef;
+    private String mUserUID;
+    private ParentUsers parentUser;
+
 
     public UserProfileFragment() {
         // Required empty public constructor
@@ -81,7 +116,12 @@ public class UserProfileFragment extends Fragment {
         }
         mAuth = FirebaseAuth.getInstance();
 
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
+
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -91,10 +131,31 @@ public class UserProfileFragment extends Fragment {
         Log.d(TAG,"Creating views");
         View view = inflater.inflate(R.layout.fragment_user_profile, container, false);
 
+        setHasOptionsMenu(true);
+
+
         mToolbar = (Toolbar) view.findViewById(R.id.profile_toolbar);
         mToolbar.setTitle("Profile");
         mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.cardview_light_background, null));
-
+        mToolbar.inflateMenu(R.menu.appbar_menu);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.logout_btn:
+                        LoginManager.getInstance().logOut();
+                        mAuth.signOut();
+                        Intent intent =new Intent(getActivity(),MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        getActivity().finish();
+                        return true;
+                    default: return false;
+                }
+            }
+        });
+        if(getActivity().getActionBar()!= null)
+            getActivity().getActionBar().show();
         /*mDemoCollectionPagerAdapter =
                 new CollectionPagerAdapter(
                         getChildFragmentManager());*/
@@ -103,6 +164,17 @@ public class UserProfileFragment extends Fragment {
         setupViewPager(mViewPager);
         Log.d(TAG,"setting tab layout with view pager");
         mTabLayout.setupWithViewPager(mViewPager);
+
+        mProfileName = (AppCompatTextView) view.findViewById(R.id.profile_top_name);
+        mProfileNumber = (AppCompatTextView) view.findViewById(R.id.profile_top_phone);
+
+        mUserUID = ActivityHelper.getUID(getActivity());
+        Log.d(TAG,"User UID -->"+ mUserUID);
+        parentProfileRef = mDatabaseReference
+                .child(getString(R.string.firebase_profile_node))
+                .child(getString(R.string.firebase_parent_node)).child(mUserUID);
+        setupDataFromFirebase();
+
         //mViewPager.setAdapter(mDemoCollectionPagerAdapter);
 
         /*AppCompatButton logout = (AppCompatButton) view.findViewById(R.id.logout_btn);
@@ -116,6 +188,27 @@ public class UserProfileFragment extends Fragment {
             }
         });*/
         return view;
+    }
+
+
+    private void setupDataFromFirebase() {
+        parentProfileRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                parentUser = dataSnapshot.getValue(ParentUsers.class);
+                setUpDataInUI(parentUser);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void setUpDataInUI(ParentUsers parentUser) {
+        mProfileNumber.setText(parentUser.getPhone());
+        mProfileName.setText(parentUser.getName());
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -158,12 +251,12 @@ public class UserProfileFragment extends Fragment {
     }
 
     private void setupViewPager(ViewPager viewPager) {
+
         CustomFragmentPagerAdapter adapter = new CustomFragmentPagerAdapter(getChildFragmentManager());
         adapter.addFragment(new ProfileInfoFragment(), "Profile");
         adapter.addFragment(new NotificationSettingsFragment(), "Notifications");
         adapter.addFragment(new AccountSettingsFragment(), "Settings");
         viewPager.setAdapter(adapter);
     }
-
 
 }

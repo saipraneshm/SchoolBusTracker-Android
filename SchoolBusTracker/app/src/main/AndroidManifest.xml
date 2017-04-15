@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_bus_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".parentuser.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
