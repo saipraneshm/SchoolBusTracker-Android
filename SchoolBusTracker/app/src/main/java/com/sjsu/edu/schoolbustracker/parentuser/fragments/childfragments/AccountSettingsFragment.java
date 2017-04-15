@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +39,7 @@ public class AccountSettingsFragment extends Fragment {
     private String mUserUID;
     private DatabaseReference userSettingsReference;
     private UserSettings mUserSettings;
+    private AppCompatButton mEnableAccountButton,mDisableAccountButton;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -84,6 +86,28 @@ public class AccountSettingsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_account_settings, container, false);
         mRadioEmail = (RadioButton) v.findViewById(R.id.radio_email);
         mRadioMobile = (RadioButton) v.findViewById(R.id.radio_mobile);
+        mEnableAccountButton = (AppCompatButton) v.findViewById(R.id.enable_account_btn);
+        mDisableAccountButton = (AppCompatButton) v.findViewById(R.id.disable_account_btn);
+
+        mDisableAccountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mUserSettings.setAccountEnabled(false);
+                userSettingsReference.setValue(mUserSettings);
+                mDisableAccountButton.setVisibility(View.GONE);
+                mEnableAccountButton.setVisibility(View.VISIBLE);
+            }
+        });
+
+        mEnableAccountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mUserSettings.setAccountEnabled(true);
+                userSettingsReference.setValue(mUserSettings);
+                mEnableAccountButton.setVisibility(View.GONE);
+                mDisableAccountButton.setVisibility(View.VISIBLE);
+            }
+        });
 
         mUserUID = ActivityHelper.getUID(getActivity());
         Log.d(TAG,"User UID -->"+ mUserUID);
@@ -126,6 +150,16 @@ public class AccountSettingsFragment extends Fragment {
                 }
                 else if(mUserSettings.getContactPreference().equals("Mobile")){
                     mRadioMobile.setChecked(true);
+                }
+
+                if(mUserSettings.isAccountEnabled()){
+                    mEnableAccountButton.setVisibility(View.GONE);
+                    mDisableAccountButton.setVisibility(View.VISIBLE);
+                }
+                else{
+                    mDisableAccountButton.setVisibility(View.GONE);
+                    mEnableAccountButton.setVisibility(View.VISIBLE);
+
                 }
             }
 

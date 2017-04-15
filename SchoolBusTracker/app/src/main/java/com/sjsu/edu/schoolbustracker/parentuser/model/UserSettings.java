@@ -10,6 +10,16 @@ public class UserSettings {
     private Boolean mTextNotification;
     private Boolean mEmailNotification;
     private String mContactPreference;
+    private Boolean mAccountEnabled;
+
+
+    public void setAccountEnabled(Boolean accountEnabled) {
+        mAccountEnabled = accountEnabled;
+    }
+
+    public Boolean isAccountEnabled(){
+        return mAccountEnabled;
+    }
 
     public String getContactPreference() {
         return mContactPreference;

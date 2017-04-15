@@ -54,6 +54,7 @@
 
     <string name="arrival_value_str">Time to Arrival</string>
     <string name="distance_str_value">Distance to travel</string>
+    <string name="enable_account_text">Enable Account</string>
 
 
 </resources>

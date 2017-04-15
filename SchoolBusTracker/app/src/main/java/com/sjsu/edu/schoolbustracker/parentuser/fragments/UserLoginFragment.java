@@ -156,6 +156,8 @@ public class UserLoginFragment extends Fragment {
                                 newSettings.setEmailNotification(true);
                                 newSettings.setPushNotification(true);
                                 newSettings.setTextNotification(true);
+                                newSettings.setAccountEnabled(true);
+                                newSettings.setContactPreference("Mobile");
 
                                 userSettingsReference.setValue(newSettings);
 
