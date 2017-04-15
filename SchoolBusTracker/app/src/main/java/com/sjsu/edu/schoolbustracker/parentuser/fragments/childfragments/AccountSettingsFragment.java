@@ -4,11 +4,20 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
+import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
+import com.sjsu.edu.schoolbustracker.parentuser.model.UserSettings;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +32,12 @@ public class AccountSettingsFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private final String TAG = "AccountSettings";
+    private RadioButton mRadioEmail,mRadioMobile;
+    private String mUserUID;
+    private DatabaseReference userSettingsReference;
+    private UserSettings mUserSettings;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -65,8 +80,63 @@ public class AccountSettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_account_settings, container, false);
+
+        View v = inflater.inflate(R.layout.fragment_account_settings, container, false);
+        mRadioEmail = (RadioButton) v.findViewById(R.id.radio_email);
+        mRadioMobile = (RadioButton) v.findViewById(R.id.radio_mobile);
+
+        mUserUID = ActivityHelper.getUID(getActivity());
+        Log.d(TAG,"User UID -->"+ mUserUID);
+        userSettingsReference = FirebaseDatabase.getInstance().getReference()
+                .child(getString(R.string.firebase_settings_node))
+                .child(mUserUID);
+
+        setupRadioButtonStates();
+
+
+        mRadioEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mUserSettings.setContactPreference("Email");
+                userSettingsReference.setValue(mUserSettings);
+
+            }
+        });
+        mRadioMobile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mUserSettings.setContactPreference("Mobile");
+                userSettingsReference.setValue(mUserSettings);
+
+            }
+        });
+        return v;
     }
+
+    private void setupRadioButtonStates() {
+
+        userSettingsReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mUserSettings = dataSnapshot.getValue(UserSettings.class);
+
+                if(mUserSettings.getContactPreference().equals("Email")){
+                    mRadioEmail.setChecked(true);
+
+                }
+                else if(mUserSettings.getContactPreference().equals("Mobile")){
+                    mRadioMobile.setChecked(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

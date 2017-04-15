@@ -9,6 +9,15 @@ public class UserSettings {
     private Boolean mPushNotification;
     private Boolean mTextNotification;
     private Boolean mEmailNotification;
+    private String mContactPreference;
+
+    public String getContactPreference() {
+        return mContactPreference;
+    }
+
+    public void setContactPreference(String contactPreference) {
+        mContactPreference = contactPreference;
+    }
 
     public Boolean getPushNotification() {
         return mPushNotification;
