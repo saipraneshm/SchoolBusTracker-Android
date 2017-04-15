@@ -6,6 +6,8 @@ import android.content.Intent;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 
@@ -25,6 +27,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
 
 import com.google.firebase.database.DataSnapshot;
@@ -71,6 +78,7 @@ public class UserProfileFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private final String TAG = "UserProfileFragment";
+    private GoogleApiClient mGoogleApiClient;
 
     //CollectionPagerAdapter mDemoCollectionPagerAdapter;
     ViewPager mViewPager;
@@ -145,6 +153,36 @@ public class UserProfileFragment extends Fragment {
                     case R.id.logout_btn:
                         LoginManager.getInstance().logOut();
                         mAuth.signOut();
+                        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                .requestIdToken(getString(R.string.default_web_client_id))
+                                .requestEmail()
+                                .build();
+                        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                                .enableAutoManage(getActivity() /* FragmentActivity */, (GoogleApiClient.OnConnectionFailedListener) getActivity() /* OnConnectionFailedListener */)
+                                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                                .build();
+                        mGoogleApiClient.connect();
+                        mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                            @Override
+                            public void onConnected(@Nullable Bundle bundle) {
+                                if(mGoogleApiClient.isConnected()){
+                                    Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
+                                        @Override
+                                        public void onResult(@NonNull Status status) {
+                                            if (status.isSuccess()) {
+                                                Log.d(TAG, "User Logged out");
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onConnectionSuspended(int i) {
+
+                            }
+                        });
+
                         Intent intent =new Intent(getActivity(),MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);

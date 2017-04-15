@@ -169,6 +169,8 @@ public class UserLoginFragment extends Fragment {
                                         .child(newParent.getUUID())
                                         .setValue(newParent);
 
+
+
                             }
                         }
 
@@ -184,6 +186,7 @@ public class UserLoginFragment extends Fragment {
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }
+                    Log.d(TAG,user.getPhotoUrl().toString());
 
 
                 } else {
