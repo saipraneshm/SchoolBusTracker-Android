@@ -16,6 +16,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ import android.view.MenuItem;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
@@ -42,8 +45,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.CustomFragmentPagerAdapter;
+import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.MainActivity;
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
+import com.sjsu.edu.schoolbustracker.parentuser.adapter.StudentFirebaseRecyclerAdapter;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.AccountSettingsFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.NotificationSettingsFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.ProfileInfoFragment;
@@ -83,6 +88,8 @@ public class UserProfileFragment extends Fragment {
     private final String TAG = "UserProfileFragment";
     private GoogleApiClient mGoogleApiClient;
     private CircleImageView mParentImageView;
+    private RecyclerView mChildImageLayout;
+    private StudentFirebaseRecyclerAdapter mAdapter;
 
     //CollectionPagerAdapter mDemoCollectionPagerAdapter;
     ViewPager mViewPager;
@@ -93,6 +100,7 @@ public class UserProfileFragment extends Fragment {
 
     private DatabaseReference mDatabaseReference;
     private DatabaseReference parentProfileRef;
+    private DatabaseReference mStudentReference;
     private String mUserUID;
     private ParentUsers parentUser;
 
@@ -231,6 +239,14 @@ public class UserProfileFragment extends Fragment {
         });*/
 
         mParentImageView = (CircleImageView) view.findViewById(R.id.parent_profile_pic);
+        mChildImageLayout = (RecyclerView) view.findViewById(R.id.student_list_view);
+
+        mStudentReference = FirebaseUtil.getStudentsRef();
+
+        mChildImageLayout.setLayoutManager(new LinearLayoutManager(getActivity(),
+                LinearLayoutManager.HORIZONTAL,false));
+        mAdapter = new StudentFirebaseRecyclerAdapter(mStudentReference,getActivity());
+        mChildImageLayout.setAdapter(mAdapter);
         return view;
     }
 

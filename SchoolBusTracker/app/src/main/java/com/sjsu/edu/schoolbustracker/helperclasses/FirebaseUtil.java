@@ -6,6 +6,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Profile;
 
 /**
@@ -19,9 +21,14 @@ public class FirebaseUtil {
     private static final String DRIVER = "Driver";
     private static final String PARENT_USER = "ParentUser";
     private static final String BUS_HISTORY = "BusHistory";
+    private static final String STUDENTS = "Students";
 
     public static DatabaseReference getBaseRef(){
         return FirebaseDatabase.getInstance().getReference();
+    }
+
+    public static StorageReference getBaseStorageReference(){
+        return FirebaseStorage.getInstance().getReference();
     }
 
     @Nullable
@@ -64,6 +71,23 @@ public class FirebaseUtil {
     //Fetches only the Bus history ref
     public static DatabaseReference getPreviousTripRef(){
         return getBaseRef().child(BUS_HISTORY);
+    }
+
+    //Fetches the reference to students of the current user;
+    public static DatabaseReference getStudentsRef(){
+        String userId = getCurrentUserId();
+        if(userId!=null){
+            return getBaseRef().child(STUDENTS).child(userId).getRef();
+        }
+        return null;
+    }
+
+    public static StorageReference getStudentPhotoRef(String fileName){
+
+        if(fileName!=null){
+            return getBaseStorageReference().child(STUDENTS).child(fileName);
+        }
+        return null;
     }
 
 
