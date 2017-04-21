@@ -2,9 +2,12 @@ package com.sjsu.edu.schoolbustracker.parentuser.activity;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.transition.Slide;
 import android.util.Log;
+import android.view.Window;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -16,6 +19,7 @@ public class MainActivity extends SingleFragmentActivity implements
 
 
     private static final String TAG = "MainActivity";
+
 
     @Override
     protected Fragment createFragment() {
@@ -39,5 +43,14 @@ public class MainActivity extends SingleFragmentActivity implements
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        /*if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+            getWindow().setExitTransition(new Slide());
+        }*/
 
+
+    }
 }

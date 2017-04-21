@@ -3,6 +3,7 @@ package com.sjsu.edu.schoolbustracker.parentuser.activity;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -12,7 +13,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
+import android.transition.Slide;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +36,8 @@ import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.Profile
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.UserProfileFragment;
 
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
+
+import static android.view.Gravity.BOTTOM;
 
 public class BottomNavigationActivity extends AppCompatActivity implements ContactCardFragment.OnFragmentInteractionListener
         ,UserProfileFragment.OnFragmentInteractionListener,
@@ -142,6 +147,11 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
     protected void onStart() {
         super.onStart();
         ActivityHelper.saveUID(this, FirebaseUtil.getCurrentUserId());
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+            getWindow().setEnterTransition(new Slide(BOTTOM));
+        }*/
+
     }
 
     public void loadFragment(){
@@ -197,5 +207,7 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+
 
 }

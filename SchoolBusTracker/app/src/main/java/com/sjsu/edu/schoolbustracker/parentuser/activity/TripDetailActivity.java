@@ -15,6 +15,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
@@ -35,6 +36,7 @@ public class TripDetailActivity extends AppCompatActivity implements OnMapReadyC
     private DatabaseReference mCurrentTripRef;
     private TripDetails mCurrentTripDetail;
     private static final String TAG  = "TripDetailActivity";
+    private UiSettings mUiSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,7 @@ public class TripDetailActivity extends AppCompatActivity implements OnMapReadyC
         final SupportMapFragment mapFragment= (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.google_map_fragment);
 
 
+
         mDateTextView = (TextView) findViewById(R.id.date_tv);
         mSourceTextView = (TextView) findViewById(R.id.source_address_tv);
         mDestinationTextView = (TextView) findViewById(R.id.destination_address_tv);
@@ -59,6 +62,7 @@ public class TripDetailActivity extends AppCompatActivity implements OnMapReadyC
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mCurrentTripDetail = dataSnapshot.getValue(TripDetails.class);
                 if(mCurrentTripDetail != null){
+                    mapFragment.getView().setClickable(false);
                     mapFragment.getMapAsync(TripDetailActivity.this);
                     mDateTextView.setText(mCurrentTripDetail.getDate());
                     mSourceTextView.setText(mCurrentTripDetail.getSource());
@@ -83,6 +87,9 @@ public class TripDetailActivity extends AppCompatActivity implements OnMapReadyC
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        mUiSettings = googleMap.getUiSettings();
+        mUiSettings.setAllGesturesEnabled(false);
+        mUiSettings.setMapToolbarEnabled(false);
         LatLng currentLatLng = new LatLng(mCurrentTripDetail.getSourceCoordinates().getLat(), mCurrentTripDetail.getSourceCoordinates().getLng());
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom( currentLatLng , 13));
         googleMap.addMarker(new MarkerOptions().position(currentLatLng));

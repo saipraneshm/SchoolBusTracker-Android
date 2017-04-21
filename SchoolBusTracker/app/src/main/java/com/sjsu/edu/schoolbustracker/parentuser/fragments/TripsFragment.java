@@ -36,6 +36,7 @@ import com.sjsu.edu.schoolbustracker.parentuser.adapter.TripsFirebaseRecyclerAda
 import com.sjsu.edu.schoolbustracker.parentuser.model.Coordinates;
 import com.sjsu.edu.schoolbustracker.parentuser.model.TripDetails;
 
+import java.security.Timestamp;
 import java.util.Date;
 
 import java.util.HashSet;
@@ -63,7 +64,7 @@ public class TripsFragment extends Fragment{
         super.onCreate(savedInstanceState);
 
 
-       /* DatabaseReference previousTripRef = FirebaseUtil.getPreviousTripRef();
+        DatabaseReference previousTripRef = FirebaseUtil.getPreviousTripRef();
 
         TripDetails tripDetails = new TripDetails();
         tripDetails.setBusNo("20");
@@ -77,12 +78,13 @@ public class TripsFragment extends Fragment{
         tripDetails.setTripId("23");
         tripDetails.setSourceCoordinates(new Coordinates(37.3382,-121.8863));
         tripDetails.setDestinationCoordinates(new Coordinates(37.3382,-121.8863));
-        tripDetails.setTimestamp(System.currentTimeMillis()+"");
+        String timestamp = System.currentTimeMillis()+"";
+        tripDetails.setTimestamp(timestamp);
 
         previousTripRef
                 .child(FirebaseUtil.getCurrentUserId())
-                .child(System.currentTimeMillis()+"")
-                .setValue(tripDetails);*/
+                .child(timestamp)
+                .setValue(tripDetails);
 
 
     }
