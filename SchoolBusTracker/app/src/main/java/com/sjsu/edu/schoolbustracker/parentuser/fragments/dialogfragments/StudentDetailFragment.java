@@ -1,29 +1,38 @@
-package com.sjsu.edu.schoolbustracker.parentuser.fragments;
+package com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatButton;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Student;
 
+import java.io.File;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -39,9 +48,15 @@ public class StudentDetailFragment extends DialogFragment {
     private CircleImageView mStudentPicture;
     private DatabaseReference mStudentReference;
     private Bundle args;
-    private Student student;
+    private Student student,newStudent;
+    private String mPhotoFilePath = null;
+    private final String TAG = "StudentDetailFragment";
+    private static final int REQUEST_DATE = 0;
+    private UploadTask mUploadTask;
+    private DatabaseReference parentStudentReference;
+    private ProgressDialog progressDialog;
 
-    static StudentDetailFragment newInstance(String studentId){
+    public static StudentDetailFragment newInstance(String studentId){
         StudentDetailFragment studentDetailFragment = new StudentDetailFragment();
         Bundle args = new Bundle();
         args.putString("studentid",studentId);
@@ -71,6 +86,15 @@ public class StudentDetailFragment extends DialogFragment {
         mSchoolName = (TextInputEditText) v.findViewById(R.id.school_name);
         mSchoolAddress = (TextInputEditText) v.findViewById(R.id.school_address);
         mStudentPicture = (CircleImageView) v.findViewById(R.id.student_picture);
+
+        mStudentPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PhotoPickerFragment photoPickerFragment = PhotoPickerFragment.newInstance();
+                photoPickerFragment.setTargetFragment(StudentDetailFragment.this,REQUEST_DATE);
+                photoPickerFragment.show(getFragmentManager(),"Photo Picker");
+            }
+        });
 
         args = getArguments();
         String studentId = args.getString("studentid");
@@ -109,13 +133,40 @@ public class StudentDetailFragment extends DialogFragment {
     }
 
     private void createNewStudent(){
-        DatabaseReference parentStudentReference = FirebaseUtil.getStudentsRef();
-        Student newStudent = new Student();
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setTitle("Adding Student");
+        progressDialog.show();
+        parentStudentReference = FirebaseUtil.getStudentsRef();
+        newStudent = new Student();
         newStudent.setSchoolAddress(mSchoolAddress.getText().toString());
         newStudent.setSchoolName(mSchoolName.getText().toString());
         newStudent.setStudentName(mStudentName.getText().toString());
         newStudent.setStudentUUID(mStudentId.getText().toString());
-        parentStudentReference.child(mStudentId.getText().toString()).setValue(newStudent);
+        if(mPhotoFilePath!=null){
+            Uri file = Uri.fromFile(new File(mPhotoFilePath));
+            StorageReference photoRef = FirebaseUtil.getStudentPhotoRef(file.getLastPathSegment());
+            newStudent.setStudentPicName(file.getLastPathSegment());
+            mUploadTask = photoRef.putFile(file);
+            mUploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                    Log.e(TAG,"File upload failed");
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                    //Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    Log.d(TAG,"File upload successfully");
+                    parentStudentReference.child(mStudentId.getText().toString()).setValue(newStudent);
+                    progressDialog.dismiss();
+                }
+            });
+        }
+
+
+
 
     }
 
@@ -162,5 +213,20 @@ public class StudentDetailFragment extends DialogFragment {
 
             }
         });
+    }
+
+    @Override
+    public void setTargetFragment(Fragment fragment, int requestCode) {
+        super.setTargetFragment(fragment, requestCode);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) return;
+        if (requestCode == REQUEST_DATE) {
+            mPhotoFilePath = data.getExtras().getString("photopath");
+            Log.d(TAG,"photo path--> "+mPhotoFilePath);
+            mStudentPicture.setImageURI(Uri.fromFile(new File(mPhotoFilePath)));
+        }
     }
 }

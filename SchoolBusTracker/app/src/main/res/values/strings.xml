@@ -59,6 +59,10 @@
     <string name="school_name_label">School Name</string>
     <string name="student_address_label">School Address</string>
     <string name="cancel_text">Cancel</string>
+    <string name="camera_txt">Camera</string>
+    <string name="gallery_txt">Gallery</string>
+    <string name="pick_photo">Pick Photo</string>
+    <string name="confirm_txt">Confirm</string>
 
 
 </resources>
