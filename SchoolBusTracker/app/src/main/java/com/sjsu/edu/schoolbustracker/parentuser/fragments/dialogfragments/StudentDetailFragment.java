@@ -49,7 +49,7 @@ public class StudentDetailFragment extends DialogFragment {
     private DatabaseReference mStudentReference;
     private Bundle args;
     private Student student,newStudent;
-    private String mPhotoFilePath = null;
+    private Uri mPhotoFilePath = null;
     private final String TAG = "StudentDetailFragment";
     private static final int REQUEST_DATE = 0;
     private UploadTask mUploadTask;
@@ -143,7 +143,7 @@ public class StudentDetailFragment extends DialogFragment {
         newStudent.setStudentName(mStudentName.getText().toString());
         newStudent.setStudentUUID(mStudentId.getText().toString());
         if(mPhotoFilePath!=null){
-            Uri file = Uri.fromFile(new File(mPhotoFilePath));
+            Uri file = mPhotoFilePath;
             StorageReference photoRef = FirebaseUtil.getStudentPhotoRef(file.getLastPathSegment());
             newStudent.setStudentPicName(file.getLastPathSegment());
             mUploadTask = photoRef.putFile(file);
@@ -224,9 +224,9 @@ public class StudentDetailFragment extends DialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) return;
         if (requestCode == REQUEST_DATE) {
-            mPhotoFilePath = data.getExtras().getString("photopath");
+            mPhotoFilePath = (Uri) data.getExtras().get("photopath");
             Log.d(TAG,"photo path--> "+mPhotoFilePath);
-            mStudentPicture.setImageURI(Uri.fromFile(new File(mPhotoFilePath)));
+            mStudentPicture.setImageURI(mPhotoFilePath);
         }
     }
 }

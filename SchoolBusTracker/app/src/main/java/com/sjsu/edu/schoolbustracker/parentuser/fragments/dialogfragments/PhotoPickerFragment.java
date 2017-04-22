@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,8 +41,9 @@ public class PhotoPickerFragment extends DialogFragment {
     private LinearLayout mPickerLayout,mConfirmationLayout;
     private CircleImageView mCircleImageView;
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    private String mCurrentPhotoPath;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int IMG_RESULT = 2;
+    private Uri mCurrentPhotoPath=null;
 
     private final String TAG="PhotoPickerFragment";
     public PhotoPickerFragment() {
@@ -65,6 +67,15 @@ public class PhotoPickerFragment extends DialogFragment {
         mPickerLayout = (LinearLayout) v.findViewById(R.id.photo_selection_view);
         mConfirmationLayout = (LinearLayout) v.findViewById(R.id.photo_conf_view);
         mCircleImageView = (CircleImageView) v.findViewById(R.id.photo_confirm_iv);
+        mGalleryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+                startActivityForResult(intent, IMG_RESULT);
+            }
+        });
         mCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -82,8 +93,11 @@ public class PhotoPickerFragment extends DialogFragment {
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendData(Activity.RESULT_OK);
-                dismiss();
+                if(mCurrentPhotoPath!=null){
+                    sendData(Activity.RESULT_OK);
+                    dismiss();
+                }
+
             }
         });
         alertDialog.setTitle(R.string.pick_photo);
@@ -114,10 +128,19 @@ public class PhotoPickerFragment extends DialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            Log.d(TAG,mCurrentPhotoPath);
+            Log.d(TAG,"From Camera "+mCurrentPhotoPath);
             mPickerLayout.setVisibility(View.GONE);
             mConfirmationLayout.setVisibility(View.VISIBLE);
-            mCircleImageView.setImageURI(Uri.fromFile(new File(mCurrentPhotoPath)));
+            mCircleImageView.setImageURI(mCurrentPhotoPath);
+        }
+        else if(requestCode == IMG_RESULT && resultCode == Activity.RESULT_OK){
+            Uri selectedImageUri = data.getData();
+            mCurrentPhotoPath = selectedImageUri;
+            Log.d(TAG,"From Gallery "+mCurrentPhotoPath);
+            Log.d(TAG,"From Gallery "+selectedImageUri.getPath());
+            mPickerLayout.setVisibility(View.GONE);
+            mConfirmationLayout.setVisibility(View.VISIBLE);
+            mCircleImageView.setImageURI(selectedImageUri);
         }
 
 
@@ -134,7 +157,7 @@ public class PhotoPickerFragment extends DialogFragment {
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
+        mCurrentPhotoPath = Uri.fromFile(image);
         return image;
     }
 
