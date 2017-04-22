@@ -3,7 +3,6 @@ package com.sjsu.edu.schoolbustracker.parentuser.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -23,11 +22,20 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class StudentFirebaseRecyclerAdapter extends FirebaseRecyclerAdapter<Student,StudentFirebaseRecyclerAdapter.StudentHolder>{
 
     Context mContext;
+    private static OnItemClickListener listener;
 
     public StudentFirebaseRecyclerAdapter(DatabaseReference databaseReference,Context context){
         super(Student.class, R.layout.student_recycler_view,StudentHolder.class,databaseReference);
         this.mContext = context;
 
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(String studentId);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.listener=listener;
     }
 
     @Override
@@ -47,23 +55,30 @@ public class StudentFirebaseRecyclerAdapter extends FirebaseRecyclerAdapter<Stud
         public StudentHolder(View itemView) {
             super(itemView);
             mStudentImage = (CircleImageView) itemView.findViewById(R.id.student_image_holder);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-
-                }
-            });
         }
 
-        void bindView(Student student, Context context){
+        void bindView(final Student student, Context context){
 
-            StorageReference photoReference = FirebaseUtil.getStudentPhotoRef(student.getStudentPicName());
+            if(student.getStudentPicName()!=null){
+                StorageReference photoReference = FirebaseUtil.getStudentPhotoRef(student.getStudentPicName());
 
-            Glide.with(context /* context */)
-                    .using(new FirebaseImageLoader())
-                    .load(photoReference)
-                    .into(mStudentImage);
+                Glide.with(context /* context */)
+                        .using(new FirebaseImageLoader())
+                        .load(photoReference)
+                        .into(mStudentImage);
+            }
+            else{
+                mStudentImage.setImageResource(R.drawable.ic_person_black_24dp);
+            }
+
+
+
+            mStudentImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onItemClick(student.getStudentUUID());
+                }
+            });
 
         }
     }

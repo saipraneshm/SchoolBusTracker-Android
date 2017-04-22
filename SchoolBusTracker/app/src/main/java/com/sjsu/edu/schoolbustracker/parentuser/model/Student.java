@@ -15,7 +15,7 @@ public class Student {
     private String mSchoolAddress;
     private ParentUsers mParentUsers;
 
-    Student(){} //Needed for firebase
+    public Student(){} //Needed for firebase
 
     public String getStudentName() {
         return mStudentName;

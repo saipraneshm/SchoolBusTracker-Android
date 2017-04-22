@@ -1,18 +1,23 @@
 package com.sjsu.edu.schoolbustracker.parentuser.activity;
 
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
+import android.transition.Slide;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.sjsu.edu.schoolbustracker.R;
+
+import static android.view.Gravity.BOTTOM;
 
 public class UserRegistration extends AppCompatActivity {
 
@@ -28,6 +33,10 @@ public class UserRegistration extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+            getWindow().setEnterTransition(new Slide(BOTTOM));
+        }
         setContentView(R.layout.activity_user_registration);
 
         mAuth = FirebaseAuth.getInstance();
@@ -81,4 +90,9 @@ public class UserRegistration extends AppCompatActivity {
         return 0;
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
 }

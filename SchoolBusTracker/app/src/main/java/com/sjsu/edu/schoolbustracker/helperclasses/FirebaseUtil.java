@@ -82,6 +82,7 @@ public class FirebaseUtil {
         return null;
     }
 
+    //Fetches the Storage reference to students photos
     public static StorageReference getStudentPhotoRef(String fileName){
 
         if(fileName!=null){

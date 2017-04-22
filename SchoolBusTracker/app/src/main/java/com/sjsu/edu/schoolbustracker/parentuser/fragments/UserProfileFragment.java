@@ -6,9 +6,11 @@ import android.content.Intent;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 
 import android.support.v4.app.FragmentManager;
@@ -103,6 +105,7 @@ public class UserProfileFragment extends Fragment {
     private DatabaseReference mStudentReference;
     private String mUserUID;
     private ParentUsers parentUser;
+    private CircleImageView mNewStudentButton;
 
 
     public UserProfileFragment() {
@@ -209,6 +212,15 @@ public class UserProfileFragment extends Fragment {
         /*mDemoCollectionPagerAdapter =
                 new CollectionPagerAdapter(
                         getChildFragmentManager());*/
+        mNewStudentButton = (CircleImageView) view.findViewById(R.id.iv_add_new_student);
+        mNewStudentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment newStudentFragment = StudentDetailFragment.newInstance(null);
+                newStudentFragment.show(getFragmentManager(),"New Student");
+
+            }
+        });
         mTabLayout = (TabLayout) view.findViewById(R.id.tab_layout);
         mViewPager = (ViewPager) view.findViewById(R.id.profile_view_pager);
         setupViewPager(mViewPager);
@@ -246,6 +258,15 @@ public class UserProfileFragment extends Fragment {
         mChildImageLayout.setLayoutManager(new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.HORIZONTAL,false));
         mAdapter = new StudentFirebaseRecyclerAdapter(mStudentReference,getActivity());
+        mAdapter.setOnItemClickListener(new StudentFirebaseRecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(String studentId) {
+                DialogFragment studentDetailFragment = StudentDetailFragment.newInstance(studentId);
+                studentDetailFragment.show(getFragmentManager(),"Student Detail");
+
+            }
+        });
+
         mChildImageLayout.setAdapter(mAdapter);
         return view;
     }
@@ -320,4 +341,11 @@ public class UserProfileFragment extends Fragment {
         viewPager.setAdapter(adapter);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mAdapter != null) {
+            mAdapter.cleanup();
+        }
+    }
 }
