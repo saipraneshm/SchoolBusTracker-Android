@@ -51,6 +51,5 @@ public class MainActivity extends SingleFragmentActivity implements
             getWindow().setExitTransition(new Slide());
         }*/
 
-
     }
 }

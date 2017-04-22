@@ -1,7 +1,6 @@
 package com.sjsu.edu.schoolbustracker.driver.services;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,20 +13,20 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
+
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Coordinates;
 
-import java.util.Date;
+
 
 /**
  * Created by sai pranesh on 21-Apr-17.
  * This is service is responsible for providing location updates
  * in a timely manner.
+ * Doesn't work until the thread time has been increased, which is quite inefficient
  */
 
 public class CustomLocationService extends IntentService implements GoogleApiClient.ConnectionCallbacks,

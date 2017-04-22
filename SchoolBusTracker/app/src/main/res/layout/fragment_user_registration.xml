@@ -2,9 +2,9 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+                                             android:id="@+id/user_registration_cl"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".parentuser.activity.UserRegistration">
+    android:layout_height="match_parent">
 
 
     <android.support.v7.widget.AppCompatEditText
@@ -61,7 +61,7 @@
         tools:layout_conversion_absoluteX="8dp"
         tools:layout_conversion_absoluteY="243dp" />
 
-    <android.support.v7.widget.AppCompatButton
+<!--    <android.support.v7.widget.AppCompatButton
         android:layout_width="88dp"
         android:layout_height="wrap_content"
         android:id="@+id/RegisterCancel"
@@ -80,6 +80,6 @@
         android:layout_marginLeft="62dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="32dp"
-        app:layout_constraintTop_toBottomOf="@+id/RegisterConfirmPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/RegisterConfirmPassword" />-->
 
 </android.support.constraint.ConstraintLayout>

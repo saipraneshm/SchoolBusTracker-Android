@@ -1,18 +1,14 @@
 package com.sjsu.edu.schoolbustracker.parentuser.fragments;
 
-import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import android.support.annotation.Nullable;
-
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.util.Log;
@@ -53,10 +49,9 @@ import com.google.firebase.database.DatabaseReference;
 
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.BottomNavigationActivity;
-import com.sjsu.edu.schoolbustracker.parentuser.activity.UserRegistration;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.UserRegistrationDialogFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Profile;
 import com.sjsu.edu.schoolbustracker.parentuser.model.UserSettings;
@@ -136,7 +131,8 @@ public class UserLoginFragment extends Fragment {
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                             ParentUsers existingParent = dataSnapshot.getValue(ParentUsers.class);
-                                            Log.d("ProfileExists", existingParent.getEmailId() + " email from existing parent");
+                                            if(existingParent != null)
+                                                Log.d("ProfileExists", existingParent.getEmailId() + " email from existing parent");
                                         }
 
                                         @Override
@@ -183,11 +179,7 @@ public class UserLoginFragment extends Fragment {
                     if(UserLoginFragment.this.isAdded()){
                         Intent intent =new Intent(getActivity(),BottomNavigationActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_NEW_TASK);
-                       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
-                        }else{*/
                             startActivity(intent);
-                        //}
                     }
 
 
@@ -310,8 +302,17 @@ public class UserLoginFragment extends Fragment {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent registerNewUserActivity = new Intent(getActivity(),UserRegistration.class);
-                startActivity(registerNewUserActivity);
+                //Intent registerNewUserActivity = new Intent(getActivity(),UserRegistration.class);
+              //  startActivity(registerNewUserActivity);
+               /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    startActivity(registerNewUserActivity, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
+                }else{
+                    startActivity(registerNewUserActivity);
+                    // getActivity().finish();
+                }*/
+                FragmentManager manager = getFragmentManager();
+                UserRegistrationDialogFragment dialog = new UserRegistrationDialogFragment();
+                dialog.show(manager, "DIALOG_TEST");
             }
         });
 

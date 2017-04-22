@@ -14,6 +14,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import android.transition.Slide;
+import android.transition.TransitionInflater;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.TextView;
@@ -84,7 +86,6 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_navigation);
 
-
         ActivityHelper.initialize(this);
         mActivityTitles = getResources().getStringArray(R.array.parent_fragment_titles);
         mHandler = new Handler();
@@ -147,10 +148,6 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
     protected void onStart() {
         super.onStart();
         ActivityHelper.saveUID(this, FirebaseUtil.getCurrentUserId());
-       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-            getWindow().setEnterTransition(new Slide(BOTTOM));
-        }*/
 
     }
 

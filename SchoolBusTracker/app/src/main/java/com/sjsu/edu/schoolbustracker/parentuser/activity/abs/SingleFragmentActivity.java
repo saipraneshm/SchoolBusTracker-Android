@@ -1,9 +1,15 @@
 package com.sjsu.edu.schoolbustracker.parentuser.activity.abs;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.transition.Fade;
+import android.transition.Slide;
+import android.transition.TransitionInflater;
+import android.view.Gravity;
 
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
@@ -17,10 +23,19 @@ public abstract class SingleFragmentActivity extends FragmentActivity {
 
     protected abstract Fragment createFragment();
 
+    @LayoutRes
+    protected int getLayoutResId(){
+        return R.layout.activity_main;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(getLayoutResId());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setAllowEnterTransitionOverlap(true);
+            setupWindowAnimations();
+        }
         ActivityHelper.initialize(this);
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.fragment_container);
@@ -30,5 +45,12 @@ public abstract class SingleFragmentActivity extends FragmentActivity {
             fm.beginTransaction().add(R.id.fragment_container, fragment).commit();
         }
 
+    }
+
+    protected void setupWindowAnimations(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Fade fade = (Fade) TransitionInflater.from(this).inflateTransition(R.transition.fade);
+            getWindow().setExitTransition(fade);
+        }
     }
 }
