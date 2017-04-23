@@ -9,13 +9,9 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.sjsu.edu.schoolbustracker.R;
 
@@ -45,7 +41,7 @@ public class UserRegistrationDialogFragment extends DialogFragment {
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View dialogView = inflater.inflate(R.layout.fragment_user_registration, null);
+        View dialogView = inflater.inflate(R.layout.activity_user_registration, null);
         dialog.setView(dialogView);
         dialog.setTitle("Sign Up");
         dialog.setPositiveButton(android.R.string.ok, null);
@@ -54,7 +50,7 @@ public class UserRegistrationDialogFragment extends DialogFragment {
         mAuth = FirebaseAuth.getInstance();
 
         mCL =(ConstraintLayout) dialogView.findViewById(R.id.user_registration_cl);
-        userID = (AppCompatEditText) dialogView.findViewById(R.id.RegisterUserEmail);
+        userID = (AppCompatEditText) dialogView.findViewById(R.id.RegisterUserName);
         userPassword = (AppCompatEditText) dialogView.findViewById(R.id.RegisterUserPassword);
 
 /*        cancel = (AppCompatButton) dialogView.findViewById(R.id.RegisterCancel);

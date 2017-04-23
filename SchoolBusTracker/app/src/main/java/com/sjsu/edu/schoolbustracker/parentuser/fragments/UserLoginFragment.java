@@ -1,9 +1,11 @@
 package com.sjsu.edu.schoolbustracker.parentuser.fragments;
 
+import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
@@ -51,6 +53,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.BottomNavigationActivity;
+import com.sjsu.edu.schoolbustracker.parentuser.activity.UserRegistrationActivity;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.UserRegistrationDialogFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Profile;
@@ -302,17 +305,17 @@ public class UserLoginFragment extends Fragment {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent registerNewUserActivity = new Intent(getActivity(),UserRegistration.class);
+                Intent registerNewUserActivity = new Intent(getActivity(),UserRegistrationActivity.class);
               //  startActivity(registerNewUserActivity);
-               /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     startActivity(registerNewUserActivity, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
                 }else{
                     startActivity(registerNewUserActivity);
                     // getActivity().finish();
-                }*/
-                FragmentManager manager = getFragmentManager();
+                }
+                /*FragmentManager manager = getFragmentManager();
                 UserRegistrationDialogFragment dialog = new UserRegistrationDialogFragment();
-                dialog.show(manager, "DIALOG_TEST");
+                dialog.show(manager, "DIALOG_TEST");*/
             }
         });
 

@@ -16,6 +16,7 @@
         <activity android:name=".parentuser.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -56,8 +57,12 @@
         </activity>
         <activity android:name=".parentuser.activity.PolyActivity">
         </activity>
+
         <service android:name=".driver.services.CustomLocationService"/>
         <service android:name=".driver.services.LocationUpdateService"/>
+
+        <activity android:name=".parentuser.activity.UserRegistrationActivity">
+        </activity>
     </application>
 
 </manifest>
