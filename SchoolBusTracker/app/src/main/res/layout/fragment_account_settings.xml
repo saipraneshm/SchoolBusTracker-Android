@@ -8,7 +8,14 @@
     <android.support.v7.widget.AppCompatButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/disable_account_text"/>
+        android:text="@string/disable_account_text"
+        android:id="@+id/disable_account_btn"/>
+    <android.support.v7.widget.AppCompatButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enable_account_text"
+        android:id="@+id/enable_account_btn"
+        android:visibility="gone"/>
     <android.support.v7.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,16 +23,14 @@
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
-        <RadioButton android:id="@+id/radio_pirates"
+        <RadioButton android:id="@+id/radio_mobile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/mobile_phone_text"
-            android:onClick="onRadioButtonClicked"/>
-        <RadioButton android:id="@+id/radio_ninjas"
+            android:text="@string/mobile_phone_text"/>
+        <RadioButton android:id="@+id/radio_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/email_text"
-            android:onClick="onRadioButtonClicked"/>
+            android:text="@string/email_text"/>
     </RadioGroup>
 
 </LinearLayout>

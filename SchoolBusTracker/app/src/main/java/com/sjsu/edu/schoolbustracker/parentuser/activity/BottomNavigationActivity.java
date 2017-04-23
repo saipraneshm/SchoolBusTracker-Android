@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 
 import android.util.Log;
@@ -38,7 +40,8 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
         ,UserProfileFragment.OnFragmentInteractionListener,
         ProfileInfoFragment.OnFragmentInteractionListener,
         AccountSettingsFragment.OnFragmentInteractionListener,
-        NotificationSettingsFragment.OnFragmentInteractionListener{
+        NotificationSettingsFragment.OnFragmentInteractionListener,
+        GoogleApiClient.OnConnectionFailedListener{
 
 
     private TextView mTextMessage;
@@ -198,4 +201,8 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
 
     }
 
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+    }
 }

@@ -9,13 +9,13 @@ import java.util.UUID;
 public class Student {
 
     private String mStudentName ;
-    private String mStudentId;
-
-    //For student image and for uniquely identifying
-    private UUID mStudentUUID;
+    private String mStudentPicName; //For student image and for uniquely identifying
+    private String mStudentUUID; //Unique Student ID
     private String mSchoolName;
     private String mSchoolAddress;
     private ParentUsers mParentUsers;
+
+    public Student(){} //Needed for firebase
 
     public String getStudentName() {
         return mStudentName;
@@ -25,19 +25,19 @@ public class Student {
         mStudentName = studentName;
     }
 
-    public String getStudentId() {
-        return mStudentId;
+    public String getStudentPicName() {
+        return mStudentPicName;
     }
 
-    public void setStudentId(String studentId) {
-        mStudentId = studentId;
+    public void setStudentPicName(String studentId) {
+        mStudentPicName = studentId;
     }
 
-    public UUID getStudentUUID() {
+    public String getStudentUUID() {
         return mStudentUUID;
     }
 
-    public void setStudentUUID(UUID studentUUID) {
+    public void setStudentUUID(String studentUUID) {
         mStudentUUID = studentUUID;
     }
 

@@ -6,25 +6,32 @@ import android.content.Intent;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
 
 import com.google.firebase.database.DataSnapshot;
@@ -34,15 +41,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.CustomFragmentPagerAdapter;
+import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.MainActivity;
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
+import com.sjsu.edu.schoolbustracker.parentuser.adapter.StudentFirebaseRecyclerAdapter;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.AccountSettingsFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.NotificationSettingsFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.ProfileInfoFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.StudentDetailFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
 
-import java.util.ArrayList;
-import java.util.List;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 /**
@@ -71,6 +80,10 @@ public class UserProfileFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private final String TAG = "UserProfileFragment";
+    private GoogleApiClient mGoogleApiClient;
+    private CircleImageView mParentImageView;
+    private RecyclerView mChildImageLayout;
+    private StudentFirebaseRecyclerAdapter mAdapter;
 
     //CollectionPagerAdapter mDemoCollectionPagerAdapter;
     ViewPager mViewPager;
@@ -81,8 +94,10 @@ public class UserProfileFragment extends Fragment {
 
     private DatabaseReference mDatabaseReference;
     private DatabaseReference parentProfileRef;
+    private DatabaseReference mStudentReference;
     private String mUserUID;
     private ParentUsers parentUser;
+    private CircleImageView mNewStudentButton;
 
 
     public UserProfileFragment() {
@@ -145,6 +160,36 @@ public class UserProfileFragment extends Fragment {
                     case R.id.logout_btn:
                         LoginManager.getInstance().logOut();
                         mAuth.signOut();
+                        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                .requestIdToken(getString(R.string.default_web_client_id))
+                                .requestEmail()
+                                .build();
+                        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                                .enableAutoManage(getActivity() /* FragmentActivity */, (GoogleApiClient.OnConnectionFailedListener) getActivity() /* OnConnectionFailedListener */)
+                                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                                .build();
+                        mGoogleApiClient.connect();
+                        mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                            @Override
+                            public void onConnected(@Nullable Bundle bundle) {
+                                if(mGoogleApiClient.isConnected()){
+                                    Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
+                                        @Override
+                                        public void onResult(@NonNull Status status) {
+                                            if (status.isSuccess()) {
+                                                Log.d(TAG, "User Logged out");
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onConnectionSuspended(int i) {
+
+                            }
+                        });
+
                         Intent intent =new Intent(getActivity(),MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
@@ -159,6 +204,15 @@ public class UserProfileFragment extends Fragment {
         /*mDemoCollectionPagerAdapter =
                 new CollectionPagerAdapter(
                         getChildFragmentManager());*/
+        mNewStudentButton = (CircleImageView) view.findViewById(R.id.iv_add_new_student);
+        mNewStudentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment newStudentFragment = StudentDetailFragment.newInstance(null);
+                newStudentFragment.show(getFragmentManager(),"New Student");
+
+            }
+        });
         mTabLayout = (TabLayout) view.findViewById(R.id.tab_layout);
         mViewPager = (ViewPager) view.findViewById(R.id.profile_view_pager);
         setupViewPager(mViewPager);
@@ -187,6 +241,25 @@ public class UserProfileFragment extends Fragment {
                 startActivity(intent);
             }
         });*/
+
+        mParentImageView = (CircleImageView) view.findViewById(R.id.parent_profile_pic);
+        mChildImageLayout = (RecyclerView) view.findViewById(R.id.student_list_view);
+
+        mStudentReference = FirebaseUtil.getStudentsRef();
+
+        mChildImageLayout.setLayoutManager(new LinearLayoutManager(getActivity(),
+                LinearLayoutManager.HORIZONTAL,false));
+        mAdapter = new StudentFirebaseRecyclerAdapter(mStudentReference,getActivity());
+        mAdapter.setOnItemClickListener(new StudentFirebaseRecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(String studentId) {
+                DialogFragment studentDetailFragment = StudentDetailFragment.newInstance(studentId);
+                studentDetailFragment.show(getFragmentManager(),"Student Detail");
+
+            }
+        });
+
+        mChildImageLayout.setAdapter(mAdapter);
         return view;
     }
 
@@ -209,6 +282,7 @@ public class UserProfileFragment extends Fragment {
     private void setUpDataInUI(ParentUsers parentUser) {
         mProfileNumber.setText(parentUser.getPhone());
         mProfileName.setText(parentUser.getName());
+        Glide.with(this).load(parentUser.getPhotoUri()).into(mParentImageView);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -259,4 +333,11 @@ public class UserProfileFragment extends Fragment {
         viewPager.setAdapter(adapter);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mAdapter != null) {
+            mAdapter.cleanup();
+        }
+    }
 }

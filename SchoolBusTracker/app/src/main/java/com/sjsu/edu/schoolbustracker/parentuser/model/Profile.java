@@ -1,5 +1,7 @@
 package com.sjsu.edu.schoolbustracker.parentuser.model;
 
+import android.net.Uri;
+
 /**
  * Created by sai pranesh on 12-Apr-17.
  */
@@ -9,6 +11,16 @@ public class Profile {
     private String mName;
     private String mUUID;
     private String mEmailId;
+
+    public String getPhotoUri() {
+        return mPhotoUri;
+    }
+
+    public void setPhotoUri(String photoUri) {
+        mPhotoUri = photoUri;
+    }
+
+    private String mPhotoUri;
 
     Profile(){}
 
