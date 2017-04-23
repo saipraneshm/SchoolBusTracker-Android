@@ -17,6 +17,7 @@ import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
@@ -53,8 +54,10 @@ public class StudentDetailFragment extends DialogFragment {
     private final String TAG = "StudentDetailFragment";
     private static final int REQUEST_DATE = 0;
     private UploadTask mUploadTask;
-    private DatabaseReference parentStudentReference;
+    private DatabaseReference parentStudentReference,studentRef;
     private ProgressDialog progressDialog;
+    private Boolean isPhotoUpdated=false;
+    private FrameLayout mFrameLayout;
 
     public static StudentDetailFragment newInstance(String studentId){
         StudentDetailFragment studentDetailFragment = new StudentDetailFragment();
@@ -86,16 +89,16 @@ public class StudentDetailFragment extends DialogFragment {
         mSchoolName = (TextInputEditText) v.findViewById(R.id.school_name);
         mSchoolAddress = (TextInputEditText) v.findViewById(R.id.school_address);
         mStudentPicture = (CircleImageView) v.findViewById(R.id.student_picture);
-
-        mStudentPicture.setOnClickListener(new View.OnClickListener() {
+        mFrameLayout = (FrameLayout) v.findViewById(R.id.student_picture_frame);
+        mFrameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 PhotoPickerFragment photoPickerFragment = PhotoPickerFragment.newInstance();
                 photoPickerFragment.setTargetFragment(StudentDetailFragment.this,REQUEST_DATE);
                 photoPickerFragment.show(getFragmentManager(),"Photo Picker");
+
             }
         });
-
         args = getArguments();
         String studentId = args.getString("studentid");
         if(studentId !=null){
@@ -171,14 +174,42 @@ public class StudentDetailFragment extends DialogFragment {
     }
 
     private void updateDataToFireBase(String studentId){
-        DatabaseReference studentRef = FirebaseUtil.getStudentsRef().child(studentId);
-        Student updateStudent = student;
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Updating Student. Please wait...");
+        progressDialog.show();
+        studentRef = FirebaseUtil.getStudentsRef().child(studentId);
+        final Student updateStudent = student;
         updateStudent.setSchoolAddress(mSchoolAddress.getText().toString());
         updateStudent.setSchoolName(mSchoolName.getText().toString());
         updateStudent.setStudentName(mStudentName.getText().toString());
         updateStudent.setStudentUUID(mStudentId.getText().toString());
 
-        studentRef.setValue(updateStudent);
+        if(isPhotoUpdated){
+            if(mPhotoFilePath!=null){
+                Uri file = mPhotoFilePath;
+                StorageReference photoRef = FirebaseUtil.getStudentPhotoRef(file.getLastPathSegment());
+                updateStudent.setStudentPicName(file.getLastPathSegment());
+                mUploadTask = photoRef.putFile(file);
+                mUploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                        Log.e(TAG,"File upload failed");
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                        //Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        Log.d(TAG,"File upload successfully");
+                        studentRef.setValue(updateStudent);
+                        progressDialog.dismiss();
+                    }
+                });
+            }
+
+
+        }
 
     }
 
@@ -227,6 +258,7 @@ public class StudentDetailFragment extends DialogFragment {
             mPhotoFilePath = (Uri) data.getExtras().get("photopath");
             Log.d(TAG,"photo path--> "+mPhotoFilePath);
             mStudentPicture.setImageURI(mPhotoFilePath);
+            isPhotoUpdated=true;
         }
     }
 }
