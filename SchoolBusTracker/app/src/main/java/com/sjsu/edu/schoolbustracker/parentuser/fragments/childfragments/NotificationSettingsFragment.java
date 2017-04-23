@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
+import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.model.UserSettings;
 
 
@@ -97,11 +98,9 @@ public class NotificationSettingsFragment extends Fragment {
 
         mUserUID = ActivityHelper.getUID(getActivity());
         Log.d(TAG,"User UID -->"+ mUserUID);
-        userSettingsReference = mDatabaseReference
-                .child(getString(R.string.firebase_settings_node))
-                .child(mUserUID);
+        userSettingsReference = FirebaseUtil.getUserAppSettingRef();
 
-        setupSwitchButtonStates();
+        ifUserSettingsExists();
 
         saveSettings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,6 +116,35 @@ public class NotificationSettingsFragment extends Fragment {
             }
         });
         return v;
+    }
+
+    private void ifUserSettingsExists(){
+        DatabaseReference userAppSettingRef = FirebaseUtil.getAppSettingRef();
+        userAppSettingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(FirebaseUtil.getCurrentUserId())){
+                    Log.d(TAG,"User settings exists");
+                    setupSwitchButtonStates();
+                }
+                else{
+                    Log.d(TAG,"User settings DOES NOT exists");
+                    UserSettings newSettings = new UserSettings();
+                    newSettings.setEmailNotification(true);
+                    newSettings.setPushNotification(true);
+                    newSettings.setTextNotification(true);
+                    newSettings.setAccountEnabled(true);
+                    newSettings.setContactPreference("Mobile");
+                    userSettingsReference.setValue(newSettings);
+                    setupSwitchButtonStates();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void setupSwitchButtonStates() {

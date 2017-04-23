@@ -22,6 +22,7 @@ public class FirebaseUtil {
     private static final String PARENT_USER = "ParentUser";
     private static final String BUS_HISTORY = "BusHistory";
     private static final String STUDENTS = "Students";
+    private static final String APP_SETTINGS = "AppSettings";
 
     public static DatabaseReference getBaseRef(){
         return FirebaseDatabase.getInstance().getReference();
@@ -80,6 +81,20 @@ public class FirebaseUtil {
             return getBaseRef().child(STUDENTS).child(userId).getRef();
         }
         return null;
+    }
+
+    //Fetches References to App Settings
+    public static DatabaseReference getAppSettingRef(){
+        return getBaseRef().child(APP_SETTINGS);
+    }
+    //Fetches References to a User's App Settings
+    public static DatabaseReference getUserAppSettingRef(){
+        String userId = getCurrentUserId();
+        if(userId!=null){
+            return getBaseRef().child(APP_SETTINGS).child(userId).getRef();
+        }
+        return null;
+
     }
 
     //Fetches the Storage reference to students photos
