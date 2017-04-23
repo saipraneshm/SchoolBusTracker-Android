@@ -63,7 +63,10 @@
         <service android:name=".driver.services.CustomLocationService"/>
         <service android:name=".driver.services.LocationUpdateService"/>
 
-        <activity android:name=".parentuser.activity.UserRegistrationActivity">
+        <activity android:name=".parentuser.activity.UserRegistrationActivity"
+            android:parentActivityName=".parentuser.activity.MainActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".parentuser.activity.MainActivity"/>
         </activity>
         <provider
             android:name="android.support.v4.content.FileProvider"
