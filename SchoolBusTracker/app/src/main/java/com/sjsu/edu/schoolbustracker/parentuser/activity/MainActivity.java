@@ -22,6 +22,7 @@ public class MainActivity extends SingleFragmentActivity implements
 
     private static final String TAG = "MainActivity";
 
+
     @Override
     protected Fragment createFragment() {
         return new UserLoginFragment();
@@ -44,9 +45,5 @@ public class MainActivity extends SingleFragmentActivity implements
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
 
-    }
 }

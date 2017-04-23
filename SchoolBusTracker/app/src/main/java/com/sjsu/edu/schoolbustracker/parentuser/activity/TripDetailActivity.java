@@ -14,6 +14,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
@@ -34,7 +36,7 @@ public class TripDetailActivity extends AppCompatActivity implements OnMapReadyC
     private DatabaseReference mCurrentTripRef;
     private TripDetails mCurrentTripDetail;
     private static final String TAG  = "TripDetailActivity";
-    private MapView mMapView;
+    private UiSettings mUiSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,19 +46,24 @@ public class TripDetailActivity extends AppCompatActivity implements OnMapReadyC
         if(getSupportActionBar()!= null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mMapView = (MapView) findViewById(R.id.google_map_view);
+       // mMapView = (MapView) findViewById(R.id.google_map_view);
+        final SupportMapFragment mapFragment= (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.google_map_fragment);
+
+
+
         mDateTextView = (TextView) findViewById(R.id.date_tv);
         mSourceTextView = (TextView) findViewById(R.id.source_address_tv);
         mDestinationTextView = (TextView) findViewById(R.id.destination_address_tv);
         mTripTimestamp = getIntent().getStringExtra(TRIP_TIMESTAMP);
         mCurrentTripRef = FirebaseUtil.getExisitingPreviousTripsRef().child(mTripTimestamp).getRef();
+
         mCurrentTripRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mCurrentTripDetail = dataSnapshot.getValue(TripDetails.class);
                 if(mCurrentTripDetail != null){
-                    mMapView.onCreate(null);
-                    mMapView.getMapAsync(TripDetailActivity.this);
+                    mapFragment.getView().setClickable(false);
+                    mapFragment.getMapAsync(TripDetailActivity.this);
                     mDateTextView.setText(mCurrentTripDetail.getDate());
                     mSourceTextView.setText(mCurrentTripDetail.getSource());
                     mDestinationTextView.setText(mCurrentTripDetail.getDestination());
@@ -80,7 +87,9 @@ public class TripDetailActivity extends AppCompatActivity implements OnMapReadyC
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        MapsInitializer.initialize(this);
+        mUiSettings = googleMap.getUiSettings();
+        mUiSettings.setAllGesturesEnabled(false);
+        mUiSettings.setMapToolbarEnabled(false);
         LatLng currentLatLng = new LatLng(mCurrentTripDetail.getSourceCoordinates().getLat(), mCurrentTripDetail.getSourceCoordinates().getLng());
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom( currentLatLng , 13));
         googleMap.addMarker(new MarkerOptions().position(currentLatLng));

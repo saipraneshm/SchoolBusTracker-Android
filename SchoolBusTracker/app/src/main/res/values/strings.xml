@@ -63,6 +63,13 @@
     <string name="gallery_txt">Gallery</string>
     <string name="pick_photo">Pick Photo</string>
     <string name="confirm_txt">Confirm</string>
+    <string name="user_full_name">Full name</string>
+    <string name="user_email">Your email address</string>
+    <string name="user_password">Your password</string>
+    <string name="plus_one">+1</string>
+    <string name="user_phone_number">Phone # (opional)</string>
+    <string name="done_button">Done</string>
+    <string name="back_button">Back</string>
 
 
 </resources>

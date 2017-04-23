@@ -40,8 +40,7 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
         ,UserProfileFragment.OnFragmentInteractionListener,
         ProfileInfoFragment.OnFragmentInteractionListener,
         AccountSettingsFragment.OnFragmentInteractionListener,
-        NotificationSettingsFragment.OnFragmentInteractionListener,
-        GoogleApiClient.OnConnectionFailedListener{
+        NotificationSettingsFragment.OnFragmentInteractionListener{
 
 
     private TextView mTextMessage;
@@ -81,7 +80,6 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_navigation);
-
 
         ActivityHelper.initialize(this);
         mActivityTitles = getResources().getStringArray(R.array.parent_fragment_titles);
@@ -201,8 +199,5 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
 
     }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
-    }
+
 }
