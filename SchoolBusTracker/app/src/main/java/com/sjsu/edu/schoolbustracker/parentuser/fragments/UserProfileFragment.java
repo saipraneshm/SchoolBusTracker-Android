@@ -151,7 +151,7 @@ public class UserProfileFragment extends Fragment {
 
         mToolbar = (Toolbar) view.findViewById(R.id.profile_toolbar);
         mToolbar.setTitle("Profile");
-        mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.cardview_light_background, null));
+        mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.black, null));
         mToolbar.inflateMenu(R.menu.appbar_menu);
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override

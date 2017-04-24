@@ -67,7 +67,7 @@ public class ContactCardFragment extends Fragment {
 
         mToolbar = (Toolbar) view.findViewById(R.id.contacts_toolbar);
         mToolbar.setTitle("Contacts");
-        mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.cardview_light_background, null));
+        mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.black, null));
 
         driver_call = (AppCompatButton) view.findViewById(R.id.driver_call_button);
         driver_msg = (AppCompatButton) view.findViewById(R.id.driver_msg_button);

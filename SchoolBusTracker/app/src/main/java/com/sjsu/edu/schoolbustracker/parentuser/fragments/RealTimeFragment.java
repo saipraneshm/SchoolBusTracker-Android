@@ -11,6 +11,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
@@ -56,7 +57,7 @@ public class RealTimeFragment extends Fragment {
 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(ContextCompat.checkSelfPermission(getActivity(), ACCESS_FINE_LOCATION)
+        /*if(ContextCompat.checkSelfPermission(getActivity(), ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(getActivity(), ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED){
@@ -66,7 +67,7 @@ public class RealTimeFragment extends Fragment {
 
         }else{
             getActivity().startService(new Intent(getActivity(), LocationUpdateService.class));
-        }
+        }*/
 
     }
 
@@ -95,6 +96,7 @@ public class RealTimeFragment extends Fragment {
         mViewPager = (ViewPager) view.findViewById(R.id.real_time_view_pager);
         mToolbar = (Toolbar) view.findViewById(R.id.real_time_toolbar);
         mToolbar.setTitle("Real-Time Tracking");
+        mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.black, null));
         setUpViewPager(mViewPager);
         mTabLayout.setupWithViewPager(mViewPager);
 
