@@ -70,6 +70,12 @@
     <string name="user_phone_number">Phone # (opional)</string>
     <string name="done_button">Done</string>
     <string name="back_button">Back</string>
+    <string name="invalid_email">Invalid email address</string>
+    <string name="invalid_phone">Invalid phone number</string>
+    <string name="sign_up_complete">Account created, Please sign in.</string>
+    <string name="dismiss">DISMISS</string>
+    <string name="sign_up_incomplete">Something wrong. Please try again.</string>
+    <string name="create_account_msg">Creating Accout, Please wait...</string>
 
 
 </resources>

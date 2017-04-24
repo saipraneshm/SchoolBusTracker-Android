@@ -50,8 +50,8 @@ public class UserRegistrationDialogFragment extends DialogFragment {
         mAuth = FirebaseAuth.getInstance();
 
         mCL =(ConstraintLayout) dialogView.findViewById(R.id.user_registration_cl);
-        userID = (AppCompatEditText) dialogView.findViewById(R.id.RegisterUserName);
-        userPassword = (AppCompatEditText) dialogView.findViewById(R.id.RegisterUserPassword);
+        userID = (AppCompatEditText) dialogView.findViewById(R.id.reg_user_name_et);
+        userPassword = (AppCompatEditText) dialogView.findViewById(R.id.reg_user_email_et);
 
 /*        cancel = (AppCompatButton) dialogView.findViewById(R.id.RegisterCancel);
         submit = (AppCompatButton) dialogView.findViewById(R.id.RegisterSubmit);*/

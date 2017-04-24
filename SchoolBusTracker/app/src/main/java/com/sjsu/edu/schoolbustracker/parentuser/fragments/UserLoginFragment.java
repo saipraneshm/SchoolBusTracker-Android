@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatButton;
@@ -51,7 +52,9 @@ import com.google.firebase.database.DatabaseReference;
 
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
+import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
+import com.sjsu.edu.schoolbustracker.helperclasses.QueryPreferences;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.BottomNavigationActivity;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.UserRegistrationActivity;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.UserRegistrationDialogFragment;
@@ -72,16 +75,13 @@ public class UserLoginFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
-
-    private DatabaseReference mDatabase, mCheckUserTypeRef, mProfileRef,userSettingsReference;
-
-
     private LoginButton mFbLoginButton;
     private CallbackManager callbackManager;
     private AppCompatEditText loginUserID,loginPassword;
-    private AppCompatButton loginButton,signUpButton,signOutButton,testButton;
+    private AppCompatButton loginButton,signUpButton,signOutButton;
     public ProgressDialog mProgressDialog;
-
+    private static int singupCount = 0;
+    FirebaseUser user = null;
 
     //Google Auth
     GoogleApiClient mGoogleApiClient;
@@ -103,101 +103,17 @@ public class UserLoginFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
 
-        mAuthStateListener = new FirebaseAuth.AuthStateListener(){
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                final FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid() + " " + user.getEmail());
 
+    }
 
-                    mCheckUserTypeRef = FirebaseUtil.getCheckUserRef();
-
-                    mCheckUserTypeRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            boolean doesProfileExists = dataSnapshot.hasChild(user.getUid());
-                            if(doesProfileExists){
-                                Log.d("ProfileExists", user.getEmail() + " profile exists in the database" );
-
-                                Boolean isDriver = dataSnapshot.child(user.getUid()).child("isDriver").getValue(Boolean.class);
-                                Log.d("ProfileExists", isDriver.toString());
-                                if(isDriver){
-
-                                    mProfileRef = FirebaseUtil.getDriverRef();
-
-                                }else{
-                                    mProfileRef = FirebaseUtil.getParentUserRef().child(user.getUid()).getRef();
-
-                                    mProfileRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            ParentUsers existingParent = dataSnapshot.getValue(ParentUsers.class);
-                                            if(existingParent != null)
-                                                Log.d("ProfileExists", existingParent.getEmailId() + " email from existing parent");
-                                        }
-
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-
-                                        }
-                                    });
-                                }
-
-                            }else{
-                                Log.d("ProfileExists", user.getEmail() + " profile doesn't exist in the database" );
-                                mCheckUserTypeRef.child(user.getUid()).child("isDriver").setValue(false);
-
-                                userSettingsReference = FirebaseUtil.getBaseRef()
-                                        .child(getString(R.string.firebase_settings_node))
-                                        .child(user.getUid());
-                               
-
-                                UserSettings newSettings = new UserSettings();
-                                newSettings.setEmailNotification(true);
-                                newSettings.setPushNotification(true);
-                                newSettings.setTextNotification(true);
-                                newSettings.setAccountEnabled(true);
-                                newSettings.setContactPreference("Mobile");
-
-                                userSettingsReference.setValue(newSettings);
-
-                                Profile newParent = new ParentUsers();
-                                newParent.setUUID(user.getUid());
-                                newParent.setName(user.getDisplayName());
-                                newParent.setEmailId(user.getEmail());
-                                newParent.setPhotoUri(user.getPhotoUrl().toString());
-                                FirebaseUtil.getParentUserRef()
-                                        .child(newParent.getUUID())
-                                        .setValue(newParent);
-
-
-
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
-
-                    if(UserLoginFragment.this.isAdded()){
-                        Intent intent =new Intent(getActivity(),BottomNavigationActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    }
-                    Log.d(TAG,user.getPhotoUrl().toString());
-
-
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
-            }
-        };
+    private void startBottomNavigationActivity() {
+        if(UserLoginFragment.this.isAdded()){
+            //QueryPreferences.setSignUpPref(getActivity(),false);
+            Intent intent =new Intent(getActivity(),BottomNavigationActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    |Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -211,8 +127,125 @@ public class UserLoginFragment extends Fragment {
         signUpButton = (AppCompatButton) view.findViewById(R.id.SignUpButton);
         signOutButton = (AppCompatButton) view.findViewById(R.id.sign_out_button);
 
+/*
+        if(isAdded() && QueryPreferences.getSignUpPref(getActivity())){
+            QueryPreferences.setTripDetailsNavRef(getActivity(),false);
+            final Snackbar snackbar = Snackbar.make(view, R.string.sign_up_complete, Snackbar.LENGTH_INDEFINITE)
+                    .setActionTextColor(getResources().getColor(R.color.colorPrimary));
+            snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    snackbar.dismiss();
+                }
+            });
+            snackbar.show();
+        }*/
+
+        mAuthStateListener = new FirebaseAuth.AuthStateListener(){
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                user = firebaseAuth.getCurrentUser();
+                boolean signUpref = QueryPreferences.getSignUpPref(getActivity());
+                if (user != null) {
+                    QueryPreferences.setSignUpPref(getActivity(),false);
+                        if(!signUpref){
+                            String classname = this.getClass().getName();
+                            Log.d(TAG,classname + " is the classname from which it has been called");
+                            Profile newParent = new ParentUsers();
+                            newParent.setUUID(user.getUid());
+                            newParent.setName(user.getDisplayName());
+                            newParent.setEmailId(user.getEmail());
+                            if(user.getPhotoUrl() != null)
+                                newParent.setPhotoUri(user.getPhotoUrl().toString());
+                            FirebaseUtil.setUpInitialProfile(getActivity(),newParent);
+                            startBottomNavigationActivity();
+                        }
 
 
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+            }
+        };
+
+        //Facebook Authentication
+        setUpFacebookLogin();
+        // Inflate the layout for this fragment
+
+        //Google Authentication
+        setUpGoogleLogin(view);
+
+        //Email Password Login using Firebase
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAuth.signInWithEmailAndPassword(loginUserID.getText().toString(),
+                        loginPassword.getText().toString())
+                        .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+
+                                // If sign in fails, display a message to the user. If sign in succeeds
+                                // the auth state listener will be notified and logic to handle the
+                                // signed in user can be handled in the listener.
+                                if (!task.isSuccessful()) {
+                                    Log.w(TAG, "signInWithEmail:failed", task.getException());
+                                    Toast.makeText(getActivity() , R.string.auth_failed,
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                                else{
+                                    Log.w(TAG, "signInWithEmail:successful");
+                                    // Start the Landing Activity
+                                }
+
+                                // ...
+                            }
+                        });
+            }
+        });
+
+        //Start Activity to Register New User
+        signUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent registerNewUserActivity = new Intent(getActivity(),
+                        UserRegistrationActivity.class);
+              //  startActivity(registerNewUserActivity);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    startActivity(registerNewUserActivity,
+                            ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
+                }else{
+                    startActivity(registerNewUserActivity);
+                    // getActivity().finish();
+                }
+            }
+        });
+
+
+        return view;
+    }
+
+    private void setUpGoogleLogin(View view) {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .enableAutoManage(getActivity() /* FragmentActivity */, (GoogleApiClient.OnConnectionFailedListener) getActivity() /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        view.findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signIn();
+            }
+        });
+    }
+
+    private void setUpFacebookLogin() {
         mFbLoginButton.setReadPermissions("email", "public_profile");
         // If using in a fragment
         mFbLoginButton.setFragment(this);
@@ -259,89 +292,6 @@ public class UserLoginFragment extends Fragment {
                     }
 
                 });
-        // Inflate the layout for this fragment
-
-        //Google Authentication
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                .enableAutoManage(getActivity() /* FragmentActivity */, (GoogleApiClient.OnConnectionFailedListener) getActivity() /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-
-        view.findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signIn();
-            }
-        });
-
-        //Email Password Login using Firebase
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mAuth.signInWithEmailAndPassword(loginUserID.getText().toString(), loginPassword.getText().toString())
-                        .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
-                                // If sign in fails, display a message to the user. If sign in succeeds
-                                // the auth state listener will be notified and logic to handle the
-                                // signed in user can be handled in the listener.
-                                if (!task.isSuccessful()) {
-                                    Log.w(TAG, "signInWithEmail:failed", task.getException());
-                                    Toast.makeText(getActivity() , R.string.auth_failed,
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                                else{
-                                    Log.w(TAG, "signInWithEmail:successful");
-                                    // Start the Landing Activity
-                                }
-
-                                // ...
-                            }
-                        });
-            }
-        });
-
-        //Start Activity to Register New User
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent registerNewUserActivity = new Intent(getActivity(),UserRegistrationActivity.class);
-              //  startActivity(registerNewUserActivity);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    startActivity(registerNewUserActivity, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
-                }else{
-                    startActivity(registerNewUserActivity);
-                    // getActivity().finish();
-                }
-                /*FragmentManager manager = getFragmentManager();
-                UserRegistrationDialogFragment dialog = new UserRegistrationDialogFragment();
-                dialog.show(manager, "DIALOG_TEST");*/
-            }
-        });
-
-        //Sign Out of Google
-        signOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                        new ResultCallback<Status>() {
-                            @Override
-                            public void onResult(Status status) {
-                                // [START_EXCLUDE]
-                              //  updateUI(false);
-                                // [END_EXCLUDE]
-                            }
-                        });
-            }
-        });
-
-        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -371,6 +321,9 @@ public class UserLoginFragment extends Fragment {
         super.onDetach();
         Log.d("ULF","On Detach has been called");
         mListener = null;
+        if (mAuthStateListener != null) {
+            mAuth.removeAuthStateListener(mAuthStateListener);
+        }
     }
 
 
@@ -499,15 +452,15 @@ public class UserLoginFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("ULF"," on stop has been called");
         if (mAuthStateListener != null) {
             mAuth.removeAuthStateListener(mAuthStateListener);
         }
     }
-
 
     @Override
     public void onStart() {
