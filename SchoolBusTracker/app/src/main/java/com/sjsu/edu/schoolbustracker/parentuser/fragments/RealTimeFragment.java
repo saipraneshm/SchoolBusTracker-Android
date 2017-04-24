@@ -19,8 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.location.LocationRequest;
-import com.sjsu.edu.schoolbustracker.Manifest;
+
 import com.sjsu.edu.schoolbustracker.R;
 
 import com.sjsu.edu.schoolbustracker.driver.services.CustomLocationService;
@@ -56,7 +55,7 @@ public class RealTimeFragment extends Fragment {
 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(ContextCompat.checkSelfPermission(getActivity(), ACCESS_FINE_LOCATION)
+/*        if(ContextCompat.checkSelfPermission(getActivity(), ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(getActivity(), ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED){
@@ -66,7 +65,7 @@ public class RealTimeFragment extends Fragment {
 
         }else{
             getActivity().startService(new Intent(getActivity(), LocationUpdateService.class));
-        }
+        }*/
 
     }
 
@@ -78,7 +77,7 @@ public class RealTimeFragment extends Fragment {
                // Log.d(TAG, "request came to requestPermissionResult");
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                   //  Log.d(TAG, "permission for accessing location granted by the user");
-                    getActivity().startService(new Intent(getActivity(), LocationUpdateService.class));
+                   getActivity().startService(new Intent(getActivity(), LocationUpdateService.class));
                 }
                 return;
             }
