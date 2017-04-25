@@ -40,7 +40,8 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
         ,UserProfileFragment.OnFragmentInteractionListener,
         ProfileInfoFragment.OnFragmentInteractionListener,
         AccountSettingsFragment.OnFragmentInteractionListener,
-        NotificationSettingsFragment.OnFragmentInteractionListener{
+        NotificationSettingsFragment.OnFragmentInteractionListener,
+        GoogleApiClient.OnConnectionFailedListener{
 
 
     private TextView mTextMessage;
@@ -200,4 +201,8 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
     }
 
 
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
 }

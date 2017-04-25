@@ -27,6 +27,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.sjsu.edu.schoolbustracker.R;
@@ -137,7 +138,9 @@ public class StudentDetailFragment extends DialogFragment {
 
     private void createNewStudent(){
         progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setTitle("Adding Student");
+        progressDialog.setMessage("Adding Student. Please wait...");
+        progressDialog.setIndeterminate(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.show();
         parentStudentReference = FirebaseUtil.getStudentsRef();
         newStudent = new Student();
@@ -155,6 +158,16 @@ public class StudentDetailFragment extends DialogFragment {
                 public void onFailure(@NonNull Exception exception) {
                     // Handle unsuccessful uploads
                     Log.e(TAG,"File upload failed");
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    @SuppressWarnings("VisibleForTests")
+                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.
+                            getTotalByteCount();
+                    Log.d(TAG,"Upload is " + progress + "% done");
+                    progressDialog.setProgress((int) progress);
+
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -176,6 +189,8 @@ public class StudentDetailFragment extends DialogFragment {
     private void updateDataToFireBase(String studentId){
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Updating Student. Please wait...");
+        progressDialog.setIndeterminate(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.show();
         studentRef = FirebaseUtil.getStudentsRef().child(studentId);
         final Student updateStudent = student;
@@ -196,10 +211,19 @@ public class StudentDetailFragment extends DialogFragment {
                         // Handle unsuccessful uploads
                         Log.e(TAG,"File upload failed");
                     }
+                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        @SuppressWarnings("VisibleForTests")
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) /
+                                taskSnapshot.getTotalByteCount();
+                        Log.d(TAG,"Upload is " + progress + "% done");
+                        progressDialog.setProgress((int) progress);
+
+                    }
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                         //Uri downloadUrl = taskSnapshot.getDownloadUrl();
                         Log.d(TAG,"File upload successfully");
                         studentRef.setValue(updateStudent);
