@@ -36,11 +36,7 @@ import com.sjsu.edu.schoolbustracker.parentuser.fragments.UserProfileFragment;
 
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 
-public class BottomNavigationActivity extends AppCompatActivity implements ContactCardFragment.OnFragmentInteractionListener
-        ,UserProfileFragment.OnFragmentInteractionListener,
-        ProfileInfoFragment.OnFragmentInteractionListener,
-        AccountSettingsFragment.OnFragmentInteractionListener,
-        NotificationSettingsFragment.OnFragmentInteractionListener,
+public class BottomNavigationActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener{
 
 
@@ -194,12 +190,7 @@ public class BottomNavigationActivity extends AppCompatActivity implements Conta
         super.onBackPressed();
 
     }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
+    
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
