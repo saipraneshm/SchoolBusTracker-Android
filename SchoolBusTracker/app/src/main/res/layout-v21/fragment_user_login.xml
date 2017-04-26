@@ -121,7 +121,7 @@
         android:layout_height="120dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:srcCompat="@mipmap/ic_bus_logo"
+        android:src="@mipmap/ic_bus_logo"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintTop_toTopOf="parent"
         android:transitionName="@string/school_transition"

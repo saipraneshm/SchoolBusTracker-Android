@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SchoolBusTracker</string>
+    <string name="app_name">Schooler</string>
     <string name="facebook_app_id">1945952535635642</string>
     <string name="fb_login_protocol_scheme">fb1945952535635642</string>
     <string name="auth_failed">Authentication Failed</string>
@@ -76,6 +76,12 @@
     <string name="dismiss">DISMISS</string>
     <string name="sign_up_incomplete">Something wrong. Please try again.</string>
     <string name="create_account_msg">Creating Accout, Please wait...</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="app_name_logo">Schooler</string>
+    <string name="school_transition">School_transition</string>
 
 
 </resources>

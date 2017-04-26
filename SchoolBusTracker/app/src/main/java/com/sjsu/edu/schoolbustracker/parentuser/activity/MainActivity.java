@@ -45,5 +45,9 @@ public class MainActivity extends SingleFragmentActivity implements
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

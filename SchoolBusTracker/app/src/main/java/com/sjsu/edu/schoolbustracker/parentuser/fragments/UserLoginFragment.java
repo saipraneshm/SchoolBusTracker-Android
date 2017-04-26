@@ -9,11 +9,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +24,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 
+import com.facebook.login.LoginBehavior;
 import com.facebook.login.LoginManager;
 
 import com.facebook.login.LoginResult;
@@ -33,9 +33,8 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -44,23 +43,14 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 
 
-
-import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
-import com.sjsu.edu.schoolbustracker.helperclasses.QueryPreferences;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.BottomNavigationActivity;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.UserRegistrationActivity;
-import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.UserRegistrationDialogFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Profile;
-import com.sjsu.edu.schoolbustracker.parentuser.model.UserSettings;
 
 
 public class UserLoginFragment extends Fragment {
@@ -80,12 +70,13 @@ public class UserLoginFragment extends Fragment {
     private AppCompatEditText loginUserID,loginPassword;
     private AppCompatButton loginButton,signUpButton,signOutButton;
     public ProgressDialog mProgressDialog;
+
     private static int singupCount = 0;
     FirebaseUser user = null;
 
     //Google Auth
     GoogleApiClient mGoogleApiClient;
-
+    private SignInButton mGoogleSignInBtn;
     // TODO: Rename and change types of parameters
 
 
@@ -119,36 +110,24 @@ public class UserLoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        callbackManager = CallbackManager.Factory.create();
         View view = inflater.inflate(R.layout.fragment_user_login, container, false);
         mFbLoginButton = (LoginButton) view.findViewById(R.id.login_button);
         loginUserID =  (AppCompatEditText) view.findViewById(R.id.LoginUserEmail);
-        loginPassword =  (AppCompatEditText) view.findViewById(R.id.LoginUserPassword);
+        loginPassword =  (AppCompatEditText) view.findViewById(R.id.login_user_button);
         loginButton = (AppCompatButton) view.findViewById(R.id.LoginButton);
         signUpButton = (AppCompatButton) view.findViewById(R.id.SignUpButton);
         signOutButton = (AppCompatButton) view.findViewById(R.id.sign_out_button);
-
-/*
-        if(isAdded() && QueryPreferences.getSignUpPref(getActivity())){
-            QueryPreferences.setTripDetailsNavRef(getActivity(),false);
-            final Snackbar snackbar = Snackbar.make(view, R.string.sign_up_complete, Snackbar.LENGTH_INDEFINITE)
-                    .setActionTextColor(getResources().getColor(R.color.colorPrimary));
-            snackbar.setAction(R.string.dismiss, new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    snackbar.dismiss();
-                }
-            });
-            snackbar.show();
-        }*/
+        mGoogleSignInBtn = (SignInButton) view.findViewById(R.id.sign_in_button);
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener(){
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 user = firebaseAuth.getCurrentUser();
-                boolean signUpref = QueryPreferences.getSignUpPref(getActivity());
+               // boolean signUpref = QueryPreferences.getSignUpPref(getActivity());
                 if (user != null) {
-                    QueryPreferences.setSignUpPref(getActivity(),false);
-                        if(!signUpref){
+                   /* QueryPreferences.setSignUpPref(getActivity(),false);
+                        if(!signUpref){*/
                             String classname = this.getClass().getName();
                             Log.d(TAG,classname + " is the classname from which it has been called");
                             Profile newParent = new ParentUsers();
@@ -159,7 +138,7 @@ public class UserLoginFragment extends Fragment {
                                 newParent.setPhotoUri(user.getPhotoUrl().toString());
                             FirebaseUtil.setUpInitialProfile(getActivity(),newParent);
                             startBottomNavigationActivity();
-                        }
+                        //}
 
 
                 } else {
@@ -237,7 +216,8 @@ public class UserLoginFragment extends Fragment {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        view.findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
+        mGoogleSignInBtn.setSize(SignInButton.SIZE_WIDE);
+        mGoogleSignInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 signIn();
@@ -251,7 +231,8 @@ public class UserLoginFragment extends Fragment {
         mFbLoginButton.setFragment(this);
         // Other app specific specialization
 
-        callbackManager = CallbackManager.Factory.create();
+        mFbLoginButton.setLoginBehavior(LoginBehavior.WEB_ONLY);
+        //mFbLoginButton.setToolTipMode(LoginButton.ToolTi);
 
 
         mFbLoginButton.setOnClickListener(new View.OnClickListener() {
@@ -259,8 +240,10 @@ public class UserLoginFragment extends Fragment {
             public void onClick(View view) {
 
                 if(mFbLoginButton.getText()
-                        .equals(getResources().getString(R.string.com_facebook_loginview_log_in_button_continue)))
+                        .equals(getResources().getString(R.string.com_facebook_loginview_log_in_button_continue))){
                     showProgressDialog();
+                }
+
             }
         });
 
@@ -423,8 +406,8 @@ public class UserLoginFragment extends Fragment {
 
                         }
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
                         hideProgressDialog();
+
 
 
                     }

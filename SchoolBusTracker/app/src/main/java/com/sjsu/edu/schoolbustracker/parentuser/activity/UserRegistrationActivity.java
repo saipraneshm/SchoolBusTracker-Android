@@ -81,6 +81,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
                 if (!isValidEmail)
                     userEmail.setError(getResources().getString(R.string.invalid_email));
                 else{
+                    mAuth.signOut();
                     mProgressDialog.setMessage(getResources().getString(R.string.create_account_msg));
                     mProgressDialog.show();
                     fetchAndStoreDetails(view);
@@ -99,6 +100,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
                 //Getting the current user after successful sign up
                 user = firebaseAuth.getCurrentUser();
                 if(user!=null) {
+                    updateUI(mCl);
                     UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                             .setDisplayName(userName.getText().toString())
                             .setPhotoUri(null)
@@ -107,7 +109,6 @@ public class UserRegistrationActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                // updateUI(view);
                                 Log.d(TAG,"update profile calling");
                                 updateProfile(mCl);
                             }
@@ -132,6 +133,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
         super.onStop();
         if(mAuth!=null)
             mAuth.removeAuthStateListener(mAuthStateListener);
+        mProgressDialog.cancel();
     }
 
     private void setupWindowAnimations() {
@@ -192,7 +194,6 @@ public class UserRegistrationActivity extends AppCompatActivity {
 
 
 
-
             }
         });
 
@@ -218,45 +219,44 @@ public class UserRegistrationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 snackbar.dismiss();
+                mAuth.signOut();
                 finish();
             }
         });
-        snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
-            @Override
-            public void onShown(Snackbar transientBottomBar) {
-                super.onShown(transientBottomBar);
-              //  updateUI(view);
-            }
-        });
         snackbar.show();
+       // updateUI();
     }
 
 
     //This method will be called after successful sign up
-   /* private void updateUI(View view){
+    private void updateUI(View view){
 
         userName = (AppCompatEditText) view.findViewById(R.id.reg_user_name_et);
         userEmail = (AppCompatEditText) view.findViewById(R.id.reg_user_email_et);
         userPassword = (AppCompatEditText) view.findViewById(R.id.reg_user_pass_et);
         userPhoneNo = (AppCompatEditText) view.findViewById(R.id.reg_user_phone_no_et);
-        back = (AppCompatButton) view.findViewById(R.id.cancel_button);
+        back = (AppCompatButton) view.findViewById(R.id.back_button);
         done = (AppCompatButton) view.findViewById(R.id.done_button);
         sign_in = (AppCompatButton) view.findViewById(R.id.sign_in_btn);
-        userName.setClickable(false);
-        userEmail.setClickable(false);
-        userPassword.setClickable(false);
-        userPhoneNo.setClickable(false);
+
+
+        userName.setEnabled(false);
+        userEmail.setEnabled(false);
+        userPassword.setEnabled(false);
+        userPhoneNo.setEnabled(false);
         back.setVisibility(View.GONE);
         done.setVisibility(View.GONE);
         sign_in.setVisibility(View.VISIBLE);
         sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mAuth.signOut();
                 finish();
             }
         });
-    }*/
 
+
+    }
 }
 
 

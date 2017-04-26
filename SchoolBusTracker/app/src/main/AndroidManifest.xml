@@ -3,8 +3,12 @@
           package="com.sjsu.edu.schoolbustracker">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true"/>
+
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
@@ -16,11 +20,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".parentuser.activity.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
         </activity>
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -63,11 +62,14 @@
         <service android:name=".driver.services.CustomLocationService"/>
         <service android:name=".driver.services.LocationUpdateService"/>
 
-        <activity android:name=".parentuser.activity.UserRegistrationActivity"
+        <activity
+            android:name=".parentuser.activity.UserRegistrationActivity"
             android:parentActivityName=".parentuser.activity.MainActivity">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
                 android:value=".parentuser.activity.MainActivity"/>
         </activity>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.sjsu.edu.schoolbustracker.fileprovider"
@@ -75,8 +77,19 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+                android:resource="@xml/file_paths"/>
         </provider>
+
+        <activity
+            android:name=".parentuser.activity.FullscreenActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/FullscreenTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
