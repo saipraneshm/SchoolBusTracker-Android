@@ -25,4 +25,9 @@
         <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
         <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
     </style>
+
+   <!-- <style name="FacebookButtonTheme" parent="ButtonTheme">
+        <item name="android:colorButtonNormal">@color/com_facebook_blue</item>
+    </style>-->
+
 </resources>

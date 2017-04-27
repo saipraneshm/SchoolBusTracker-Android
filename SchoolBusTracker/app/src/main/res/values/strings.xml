@@ -82,6 +82,11 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="app_name_logo">Schooler</string>
     <string name="school_transition">School_transition</string>
+    <string name="google_sign_in">Sign in with Google</string>
+    <string name="sign_up_btn">Sign Up with Email</string>
+    <string name="login_btn_txt">Log In</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="click_here"><u>Click Here!</u></string>
 
 
 </resources>

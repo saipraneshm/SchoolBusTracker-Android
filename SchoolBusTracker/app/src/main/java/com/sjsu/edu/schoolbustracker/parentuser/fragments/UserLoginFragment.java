@@ -12,11 +12,11 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -65,10 +65,9 @@ public class UserLoginFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
-    private LoginButton mFbLoginButton;
+    private AppCompatButton mFbLoginButton;
     private CallbackManager callbackManager;
-    private AppCompatEditText loginUserID,loginPassword;
-    private AppCompatButton loginButton,signUpButton,signOutButton;
+    private TextView signUpTv, loginTv;
     public ProgressDialog mProgressDialog;
 
     private static int singupCount = 0;
@@ -76,7 +75,7 @@ public class UserLoginFragment extends Fragment {
 
     //Google Auth
     GoogleApiClient mGoogleApiClient;
-    private SignInButton mGoogleSignInBtn;
+    private AppCompatButton mGoogleSignInBtn;
     // TODO: Rename and change types of parameters
 
 
@@ -112,13 +111,10 @@ public class UserLoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         callbackManager = CallbackManager.Factory.create();
         View view = inflater.inflate(R.layout.fragment_user_login, container, false);
-        mFbLoginButton = (LoginButton) view.findViewById(R.id.login_button);
-        loginUserID =  (AppCompatEditText) view.findViewById(R.id.LoginUserEmail);
-        loginPassword =  (AppCompatEditText) view.findViewById(R.id.login_user_button);
-        loginButton = (AppCompatButton) view.findViewById(R.id.LoginButton);
-        signUpButton = (AppCompatButton) view.findViewById(R.id.SignUpButton);
-        signOutButton = (AppCompatButton) view.findViewById(R.id.sign_out_button);
-        mGoogleSignInBtn = (SignInButton) view.findViewById(R.id.sign_in_button);
+        mFbLoginButton = (AppCompatButton) view.findViewById(R.id.fb_login_btn);
+        loginTv = (TextView) view.findViewById(R.id.login_txt);
+        signUpTv = (TextView) view.findViewById(R.id.sign_up_txt);
+        mGoogleSignInBtn = (AppCompatButton) view.findViewById(R.id.google_login_button);
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener(){
             @Override
@@ -149,14 +145,14 @@ public class UserLoginFragment extends Fragment {
         };
 
         //Facebook Authentication
-        setUpFacebookLogin();
+      //  setUpFacebookLogin();
         // Inflate the layout for this fragment
 
         //Google Authentication
-        setUpGoogleLogin(view);
+     //   setUpGoogleLogin(view);
 
         //Email Password Login using Firebase
-        loginButton.setOnClickListener(new View.OnClickListener() {
+       /* loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mAuth.signInWithEmailAndPassword(loginUserID.getText().toString(),
@@ -183,10 +179,10 @@ public class UserLoginFragment extends Fragment {
                             }
                         });
             }
-        });
+        });*/
 
         //Start Activity to Register New User
-        signUpButton.setOnClickListener(new View.OnClickListener() {
+        signUpTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent registerNewUserActivity = new Intent(getActivity(),
@@ -216,7 +212,7 @@ public class UserLoginFragment extends Fragment {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        mGoogleSignInBtn.setSize(SignInButton.SIZE_WIDE);
+      //  mGoogleSignInBtn.setSize(SignInButton.SIZE_WIDE);
         mGoogleSignInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -225,7 +221,7 @@ public class UserLoginFragment extends Fragment {
         });
     }
 
-    private void setUpFacebookLogin() {
+    /*private void setUpFacebookLogin() {
         mFbLoginButton.setReadPermissions("email", "public_profile");
         // If using in a fragment
         mFbLoginButton.setFragment(this);
@@ -275,7 +271,7 @@ public class UserLoginFragment extends Fragment {
                     }
 
                 });
-    }
+    }*/
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

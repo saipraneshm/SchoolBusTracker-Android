@@ -4,13 +4,11 @@ import android.app.ProgressDialog;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
-import android.transition.Explode;
 import android.transition.Slide;
 import android.transition.TransitionInflater;
 import android.util.Log;
@@ -24,18 +22,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.helperclasses.QueryPreferences;
 import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
-import com.sjsu.edu.schoolbustracker.parentuser.model.Profile;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class UserRegistrationActivity extends AppCompatActivity {
 
@@ -71,7 +62,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
         userPassword = (AppCompatEditText) findViewById(R.id.reg_user_pass_et);
         userPhoneNo = (AppCompatEditText) findViewById(R.id.reg_user_phone_no_et);
         back = (AppCompatButton) findViewById(R.id.cancel_button);
-        done = (AppCompatButton) findViewById(R.id.done_button);
+        done = (AppCompatButton) findViewById(R.id.fb_login_btn);
         sign_in = (AppCompatButton) findViewById(R.id.sign_in_btn);
 
         done.setOnClickListener(new View.OnClickListener() {
@@ -236,7 +227,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
         userPassword = (AppCompatEditText) view.findViewById(R.id.reg_user_pass_et);
         userPhoneNo = (AppCompatEditText) view.findViewById(R.id.reg_user_phone_no_et);
         back = (AppCompatButton) view.findViewById(R.id.back_button);
-        done = (AppCompatButton) view.findViewById(R.id.done_button);
+        done = (AppCompatButton) view.findViewById(R.id.fb_login_btn);
         sign_in = (AppCompatButton) view.findViewById(R.id.sign_in_btn);
 
 
