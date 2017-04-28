@@ -10,13 +10,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +56,7 @@ import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.BottomNavigationActivity;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.UserRegistrationActivity;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.LoginFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Profile;
 
@@ -64,6 +70,7 @@ public class UserLoginFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "UserLoginFragment";
     private static final int RC_SIGN_IN = 9001;
+    private static final int RC_LOGIN_FRAGMENT = 9002;
 
     //Firebase
     private FirebaseAuth mAuth;
@@ -74,6 +81,9 @@ public class UserLoginFragment extends Fragment {
     private TextView signUpTv, loginTv, mAppNameTxt;
     public ProgressDialog mProgressDialog;
     private LoginManager mLoginManager;
+    private View view;
+    private LinearLayout mLoginll;
+    private FrameLayout mLoginFrameLayout;
 
     private static int singupCount = 0;
     FirebaseUser user = null;
@@ -142,12 +152,22 @@ public class UserLoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_user_login, container, false);
+        view = inflater.inflate(R.layout.fragment_user_login, container, false);
         mFbLoginButton = (AppCompatButton) view.findViewById(R.id.fb_login_btn);
         loginTv = (TextView) view.findViewById(R.id.login_txt);
         signUpTv = (TextView) view.findViewById(R.id.sign_up_txt);
         mGoogleSignInBtn = (AppCompatButton) view.findViewById(R.id.google_login_button);
         mAppNameTxt = (TextView) view.findViewById(R.id.app_name_txt);
+        mLoginll  = (LinearLayout) view.findViewById(R.id.login_ll);
+        mLoginFrameLayout = (FrameLayout) view.findViewById(R.id.login_frame_layout);
+
+        loginTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showLoginFragment();
+            }
+        });
+
 
         Typeface typeface = Typeface.createFromAsset(getActivity().getAssets(),"font/SERIO___.TTF");
         mAppNameTxt.setTypeface(typeface);
@@ -185,10 +205,10 @@ public class UserLoginFragment extends Fragment {
         // Inflate the layout for this fragment
 
         //Google Authentication
-        setUpGoogleLogin(view);
+        setUpGoogleLogin();
 
         //Email Password Login using Firebase
-       /* loginButton.setOnClickListener(new View.OnClickListener() {
+       /*loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mAuth.signInWithEmailAndPassword(loginUserID.getText().toString(),
@@ -238,7 +258,14 @@ public class UserLoginFragment extends Fragment {
         return view;
     }
 
-    private void setUpGoogleLogin(View view) {
+    private void showLoginFragment() {
+        LoginFragment loginFragment = LoginFragment.newInstance();
+        FragmentManager fragmentManager = getChildFragmentManager();
+        loginFragment.setTargetFragment(this,RC_LOGIN_FRAGMENT);
+        loginFragment.show(fragmentManager, TAG);
+    }
+
+    private void setUpGoogleLogin() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -343,6 +370,11 @@ public class UserLoginFragment extends Fragment {
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
+        }else if( requestCode == RC_LOGIN_FRAGMENT){
+            boolean loginResult = data.getBooleanExtra(LoginFragment.LOGIN_RESULT,false);
+            if(!loginResult){
+                showSnackBar(Action.LOG_IN, Message.LOG_IN_FAIL);
+            }
         }
     }
 
@@ -472,6 +504,42 @@ public class UserLoginFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         hideProgressDialog();
+    }
+
+    private void showSnackBar(final String msg, final String action){
+        if(view != null){
+            final Snackbar snackbar = Snackbar.make(mLoginFrameLayout, msg , Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction(action, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Log.d(TAG,"you have clicked the snack bar" + action + " " + msg);
+                            showLoginFragment();
+                            switch (action){
+                                case Action.DISMISS: snackbar.dismiss();
+                                                    break;
+                                case Action.TRY_AGAIN: break;
+                                case Action.LOG_IN: showLoginFragment();
+                                                    break;
+
+                            }
+                        }
+                    }).show();
+        }
+
+    }
+
+    private static class Action{
+        public static final String TRY_AGAIN = "TRY AGAIN";
+        public static final String DISMISS = "DISMISS";
+        public static final String LOG_IN = "LOG IN";
+    }
+
+    private static class Message{
+        public static final String TRY_AGAIN = "Something went wrong. Please try again";
+        public static final String NETWORK_ISSUE = "Not connected to internet. Please connect to network";
+        public static final String LOG_OUT = "Logout successful";
+        public static final String LOG_IN_FAIL = "Please check username and password.";
+
     }
 
 }

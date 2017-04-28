@@ -88,6 +88,7 @@
     <string name="forgot_password">Forgot Password?</string>
     <string name="click_here"><u>Click Here!</u></string>
     <string name="tag_line">Getting kids to bus on time</string>
+    <string name="signin_please_wait">Signing you in. Please wait...</string>
 
 
 </resources>
