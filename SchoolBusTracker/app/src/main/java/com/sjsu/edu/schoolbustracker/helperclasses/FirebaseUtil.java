@@ -108,8 +108,15 @@ public class FirebaseUtil {
     }
 
     //Fetches the Database reference to Schools
-    public static DatabaseReference getSchoolsRef(){
+    public static DatabaseReference getAllSchoolsRef(){
         return getBaseRef().child(SCHOOLS);
+    }
+
+    public static DatabaseReference getSchoolRef(String schoolId){
+        if(schoolId!=null){
+            return getAllSchoolsRef().child(schoolId);
+        }
+        return null;
     }
 
 

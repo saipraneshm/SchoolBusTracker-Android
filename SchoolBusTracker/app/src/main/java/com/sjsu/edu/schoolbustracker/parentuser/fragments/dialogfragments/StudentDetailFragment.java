@@ -18,6 +18,7 @@ import android.support.v7.widget.AppCompatSpinner;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 
@@ -37,10 +38,8 @@ import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.model.School;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Student;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -69,6 +68,7 @@ public class StudentDetailFragment extends DialogFragment {
     private AppCompatSpinner mSchoolSpinner;
     private Map<String,School> schoolMap;
     private ArrayList<String> schools;
+    private ArrayList<String> schoolIds;
 
     public static StudentDetailFragment newInstance(String studentId){
         StudentDetailFragment studentDetailFragment = new StudentDetailFragment();
@@ -102,6 +102,18 @@ public class StudentDetailFragment extends DialogFragment {
         mStudentPicture = (CircleImageView) v.findViewById(R.id.student_picture);
         mFrameLayout = (FrameLayout) v.findViewById(R.id.student_picture_frame);
         mSchoolSpinner = (AppCompatSpinner) v.findViewById(R.id.school_spinner);
+        mSchoolSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mSchoolName.setText(schoolMap.get(schoolIds.get(i)).getSchoolName());
+                mSchoolAddress.setText(schoolMap.get(schoolIds.get(i)).getSchoolAddress());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         mFrameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -111,8 +123,10 @@ public class StudentDetailFragment extends DialogFragment {
 
             }
         });
+        args = getArguments();
         schoolMap = new HashMap<>();
         schools = new ArrayList<>();
+        schoolIds = new ArrayList<>();
         fetchAllSchools();
 
 
@@ -141,7 +155,7 @@ public class StudentDetailFragment extends DialogFragment {
     }
 
     private void fetchAllSchools() {
-        DatabaseReference schoolsRef = FirebaseUtil.getSchoolsRef();
+        DatabaseReference schoolsRef = FirebaseUtil.getAllSchoolsRef();
         schoolsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -150,13 +164,13 @@ public class StudentDetailFragment extends DialogFragment {
                     Log.d(TAG,data.getKey());
                     School school = data.getValue(School.class);
                     Log.d(TAG,school.getSchoolName());
-                    schools.add(data.getKey());
-                    schoolMap.put(data.getKey(),school);
+                    schools.add(school.getSchoolName());
+                    schoolIds.add(school.getSchoolId());
+                    schoolMap.put(school.getSchoolId(),school);
 
                 }
                 ArrayAdapter<String> schoolsAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item,schools);
                 mSchoolSpinner.setAdapter(schoolsAdapter);
-                args = getArguments();
                 String studentId = args.getString("studentid");
                 if(studentId !=null){
                     mStudentReference = FirebaseUtil.getStudentsRef().child(studentId);
@@ -187,6 +201,7 @@ public class StudentDetailFragment extends DialogFragment {
         newStudent.setSchoolName(mSchoolName.getText().toString());
         newStudent.setStudentName(mStudentName.getText().toString());
         newStudent.setStudentUUID(mStudentId.getText().toString());
+        newStudent.setSchoolId(schoolMap.get(schoolIds.get(mSchoolSpinner.getSelectedItemPosition())).getSchoolId());
         if(mPhotoFilePath!=null){
             Uri file = mPhotoFilePath;
             StorageReference photoRef = FirebaseUtil.getStudentPhotoRef(file.getLastPathSegment());
@@ -215,6 +230,7 @@ public class StudentDetailFragment extends DialogFragment {
                     //Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     Log.d(TAG,"File upload successfully");
                     parentStudentReference.child(mStudentId.getText().toString()).setValue(newStudent);
+                    addStudentToSchool(newStudent.getSchoolId(),newStudent.getStudentUUID());
                     progressDialog.dismiss();
                 }
             });
@@ -230,16 +246,16 @@ public class StudentDetailFragment extends DialogFragment {
         progressDialog.setMessage("Updating Student. Please wait...");
         progressDialog.setIndeterminate(false);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.show();
         studentRef = FirebaseUtil.getStudentsRef().child(studentId);
         final Student updateStudent = student;
         updateStudent.setSchoolAddress(mSchoolAddress.getText().toString());
         updateStudent.setSchoolName(mSchoolName.getText().toString());
         updateStudent.setStudentName(mStudentName.getText().toString());
         updateStudent.setStudentUUID(mStudentId.getText().toString());
-
+        updateStudent.setSchoolId(schoolMap.get(schoolIds.get(mSchoolSpinner.getSelectedItemPosition())).getSchoolId());
         if(isPhotoUpdated){
             if(mPhotoFilePath!=null){
+                progressDialog.show();
                 Uri file = mPhotoFilePath;
                 StorageReference photoRef = FirebaseUtil.getStudentPhotoRef(file.getLastPathSegment());
                 updateStudent.setStudentPicName(file.getLastPathSegment());
@@ -273,6 +289,9 @@ public class StudentDetailFragment extends DialogFragment {
 
 
         }
+        else {
+            studentRef.setValue(updateStudent);
+        }
 
     }
 
@@ -284,7 +303,7 @@ public class StudentDetailFragment extends DialogFragment {
                 student = dataSnapshot.getValue(Student.class);
                 mStudentName.setText(student.getStudentName());
                 mStudentId.setText(student.getStudentUUID());
-                mSchoolSpinner.setSelection(schools.indexOf(student.getSchoolId()));
+                mSchoolSpinner.setSelection(schoolIds.indexOf(student.getSchoolId()));
                 //Set School details and Student picture using Glide.
                 mSchoolAddress.setText(student.getSchoolAddress());
                 mSchoolName.setText(student.getSchoolName());
@@ -308,6 +327,32 @@ public class StudentDetailFragment extends DialogFragment {
 
             }
         });
+    }
+
+    private void updateStudentSchool(String oldSchoolId,String newSchoolId,final String studentId){
+        final DatabaseReference oldSchoolRef = FirebaseUtil.getSchoolRef(oldSchoolId);
+        final DatabaseReference newSchoolRef = FirebaseUtil.getSchoolRef(newSchoolId);
+    }
+
+    private void addStudentToSchool(String schoolId, final String studentId){
+        final DatabaseReference schoolRef = FirebaseUtil.getSchoolRef(schoolId);
+        schoolRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                School school = dataSnapshot.getValue(School.class);
+                Map<String,String>  students = school.getRegisteredStudents();
+                Log.d(TAG,students.keySet().toString());
+                students.put(studentId,studentId);
+                school.setRegisteredStudents(students);
+                schoolRef.setValue(school);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     @Override
