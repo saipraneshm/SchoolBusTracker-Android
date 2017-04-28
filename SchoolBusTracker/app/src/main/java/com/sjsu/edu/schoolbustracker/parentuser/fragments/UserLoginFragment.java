@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -52,6 +54,8 @@ import com.sjsu.edu.schoolbustracker.parentuser.activity.UserRegistrationActivit
 import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Profile;
 
+import java.util.Arrays;
+
 
 public class UserLoginFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -67,8 +71,9 @@ public class UserLoginFragment extends Fragment {
 
     private AppCompatButton mFbLoginButton;
     private CallbackManager callbackManager;
-    private TextView signUpTv, loginTv;
+    private TextView signUpTv, loginTv, mAppNameTxt;
     public ProgressDialog mProgressDialog;
+    private LoginManager mLoginManager;
 
     private static int singupCount = 0;
     FirebaseUser user = null;
@@ -91,8 +96,36 @@ public class UserLoginFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        callbackManager = CallbackManager.Factory.create();
         mAuth = FirebaseAuth.getInstance();
+        mLoginManager = LoginManager.getInstance();
+        // Callback registration
+        mLoginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
 
+                Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                handleFacebookAccessToken(loginResult.getAccessToken());
+
+            }
+
+            @Override
+            public void onCancel() {
+
+                hideProgressDialog();
+
+                Log.d(TAG, "Facebook cancelled the login process");
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+
+                hideProgressDialog();
+
+                Log.e(TAG,"Facebook exception", new Exception());
+            }
+
+        });
 
     }
 
@@ -109,12 +142,15 @@ public class UserLoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        callbackManager = CallbackManager.Factory.create();
         View view = inflater.inflate(R.layout.fragment_user_login, container, false);
         mFbLoginButton = (AppCompatButton) view.findViewById(R.id.fb_login_btn);
         loginTv = (TextView) view.findViewById(R.id.login_txt);
         signUpTv = (TextView) view.findViewById(R.id.sign_up_txt);
         mGoogleSignInBtn = (AppCompatButton) view.findViewById(R.id.google_login_button);
+        mAppNameTxt = (TextView) view.findViewById(R.id.app_name_txt);
+
+        Typeface typeface = Typeface.createFromAsset(getActivity().getAssets(),"font/SERIO___.TTF");
+        mAppNameTxt.setTypeface(typeface);
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener(){
             @Override
@@ -145,11 +181,11 @@ public class UserLoginFragment extends Fragment {
         };
 
         //Facebook Authentication
-      //  setUpFacebookLogin();
+        setUpFacebookLogin();
         // Inflate the layout for this fragment
 
         //Google Authentication
-     //   setUpGoogleLogin(view);
+        setUpGoogleLogin(view);
 
         //Email Password Login using Firebase
        /* loginButton.setOnClickListener(new View.OnClickListener() {
@@ -212,7 +248,6 @@ public class UserLoginFragment extends Fragment {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-      //  mGoogleSignInBtn.setSize(SignInButton.SIZE_WIDE);
         mGoogleSignInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -221,57 +256,36 @@ public class UserLoginFragment extends Fragment {
         });
     }
 
-    /*private void setUpFacebookLogin() {
-        mFbLoginButton.setReadPermissions("email", "public_profile");
+    private void setUpFacebookLogin() {
+
+       /* AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
+
+            }
+        };*/
         // If using in a fragment
-        mFbLoginButton.setFragment(this);
+       // mFbLoginButton.setFragment(this);
         // Other app specific specialization
 
-        mFbLoginButton.setLoginBehavior(LoginBehavior.WEB_ONLY);
+      //  mFbLoginButton.setLoginBehavior(LoginBehavior.WEB_ONLY);
         //mFbLoginButton.setToolTipMode(LoginButton.ToolTi);
 
 
         mFbLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if(mFbLoginButton.getText()
-                        .equals(getResources().getString(R.string.com_facebook_loginview_log_in_button_continue))){
-                    showProgressDialog();
+                showProgressDialog();
+                if(AccessToken.getCurrentAccessToken() != null){
+                    mLoginManager.logOut();
+                }else{
+                    mLoginManager.setLoginBehavior(LoginBehavior.WEB_ONLY);
+                    mLoginManager.logInWithReadPermissions(UserLoginFragment.this,Arrays.asList("public_profile","email"));
                 }
-
             }
         });
 
-
-        // Callback registration
-        mFbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-
-                        Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                        handleFacebookAccessToken(loginResult.getAccessToken());
-
-                    }
-
-                    @Override
-                    public void onCancel() {
-
-                        hideProgressDialog();
-
-                        Log.d(TAG, "Facebook cancelled the login process");
-                    }
-
-                    @Override
-                    public void onError(FacebookException exception) {
-
-                        hideProgressDialog();
-
-                        Log.e(TAG,"Facebook exception", new Exception());
-                    }
-
-                });
-    }*/
+    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

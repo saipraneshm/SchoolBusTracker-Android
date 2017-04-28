@@ -81,7 +81,7 @@
         </provider>
 
         <activity
-            android:name=".parentuser.activity.FullscreenActivity"
+            android:name=".parentuser.activity.SplashScreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/FullscreenTheme">
             <intent-filter>

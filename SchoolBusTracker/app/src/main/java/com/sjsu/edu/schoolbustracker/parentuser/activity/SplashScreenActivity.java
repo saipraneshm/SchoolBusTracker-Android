@@ -2,15 +2,10 @@ package com.sjsu.edu.schoolbustracker.parentuser.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,7 +22,7 @@ import com.sjsu.edu.schoolbustracker.R;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class FullscreenActivity extends AppCompatActivity {
+public class SplashScreenActivity extends AppCompatActivity {
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -46,7 +41,7 @@ public class FullscreenActivity extends AppCompatActivity {
      */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
-    private TextView mContentView;
+    private TextView mContentView, mTagLine;
     private ImageView mSchoolBusLogo;
     private LinearLayout mLinearLayout;
     private final Runnable mHidePart2Runnable = new Runnable() {
@@ -112,6 +107,7 @@ public class FullscreenActivity extends AppCompatActivity {
         mContentView = (TextView) findViewById(R.id.fullscreen_content);
         mSchoolBusLogo = (ImageView) findViewById(R.id.school_bus_logo);
         mLinearLayout = (LinearLayout) findViewById(R.id.initial_screen_LL);
+        mTagLine = (TextView)findViewById(R.id.tag_line_text);
 
         mSchoolBusLogo.setTranslationX(-1000f);
         mSchoolBusLogo.animate()
@@ -138,14 +134,14 @@ public class FullscreenActivity extends AppCompatActivity {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        Intent i = new Intent(FullscreenActivity.this, MainActivity.class);
+                        Intent i = new Intent(SplashScreenActivity.this, MainActivity.class);
                         View sharedView = mSchoolBusLogo;
                         String transition = getString(R.string.school_transition);
 
                         if (android.os.Build.VERSION.SDK_INT >=
                                 android.os.Build.VERSION_CODES.LOLLIPOP) {
                             ActivityOptions transitionOptions = ActivityOptions
-                                    .makeSceneTransitionAnimation(FullscreenActivity.this,
+                                    .makeSceneTransitionAnimation(SplashScreenActivity.this,
                                             sharedView, transition);
                             startActivity(i, transitionOptions.toBundle());
                             //finish();
@@ -157,9 +153,12 @@ public class FullscreenActivity extends AppCompatActivity {
        Typeface typeface = Typeface.createFromAsset(getAssets(),"font/SERIO___.TTF");
         if(typeface != null){
             mContentView.setTypeface(typeface);
+            mTagLine.setTypeface(typeface);
         }
         mContentView.setAlpha(0f);
         mContentView.animate().alphaBy(1f).setDuration(4000);
+        mTagLine.setTranslationY(5000f);
+        mTagLine.animate().translationYBy(-5000f).setDuration(2000);
 
         // Set up the user interaction to manually show or hide the system UI.
        /* mContentView.setOnClickListener(new View.OnClickListener() {

@@ -62,7 +62,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
         userPassword = (AppCompatEditText) findViewById(R.id.reg_user_pass_et);
         userPhoneNo = (AppCompatEditText) findViewById(R.id.reg_user_phone_no_et);
         back = (AppCompatButton) findViewById(R.id.cancel_button);
-        done = (AppCompatButton) findViewById(R.id.fb_login_btn);
+        done = (AppCompatButton) findViewById(R.id.done_button);
         sign_in = (AppCompatButton) findViewById(R.id.sign_in_btn);
 
         done.setOnClickListener(new View.OnClickListener() {
@@ -133,6 +133,9 @@ public class UserRegistrationActivity extends AppCompatActivity {
             slide.setSlideEdge(Gravity.BOTTOM);
             getWindow().setEnterTransition(slide);
 
+            Slide returnSlide = (Slide) TransitionInflater.from(this).inflateTransition(R.transition.slide);
+            returnSlide.setSlideEdge(Gravity.BOTTOM);
+            getWindow().setReturnTransition(slide);
             /*Explode explode = new Explode();
             explode.setDuration(1000);
             getWindow().setReturnTransition(explode);*/
