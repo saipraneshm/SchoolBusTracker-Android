@@ -23,6 +23,7 @@ public class FirebaseUtil {
     private static final String BUS_HISTORY = "BusHistory";
     private static final String STUDENTS = "Students";
     private static final String APP_SETTINGS = "AppSettings";
+    private static final String SCHOOLS = "Schools";
 
     public static DatabaseReference getBaseRef(){
         return FirebaseDatabase.getInstance().getReference();
@@ -106,6 +107,10 @@ public class FirebaseUtil {
         return null;
     }
 
+    //Fetches the Database reference to Schools
+    public static DatabaseReference getSchoolsRef(){
+        return getBaseRef().child(SCHOOLS);
+    }
 
 
 }

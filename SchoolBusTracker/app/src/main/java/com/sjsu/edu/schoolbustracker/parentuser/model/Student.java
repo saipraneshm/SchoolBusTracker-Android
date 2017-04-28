@@ -11,6 +11,16 @@ public class Student {
     private String mStudentName ;
     private String mStudentPicName; //For student image and for uniquely identifying
     private String mStudentUUID; //Unique Student ID
+    private String mSchoolId;
+
+    public String getSchoolId() {
+        return mSchoolId;
+    }
+
+    public void setSchoolId(String schoolId) {
+        mSchoolId = schoolId;
+    }
+
     private String mSchoolName;
     private String mSchoolAddress;
     private ParentUsers mParentUsers;

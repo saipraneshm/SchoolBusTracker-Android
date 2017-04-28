@@ -190,7 +190,7 @@ public class BottomNavigationActivity extends AppCompatActivity implements
         super.onBackPressed();
 
     }
-    
+
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

@@ -14,9 +14,11 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatSpinner;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
@@ -32,9 +34,14 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
+import com.sjsu.edu.schoolbustracker.parentuser.model.School;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Student;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -59,6 +66,9 @@ public class StudentDetailFragment extends DialogFragment {
     private ProgressDialog progressDialog;
     private Boolean isPhotoUpdated=false;
     private FrameLayout mFrameLayout;
+    private AppCompatSpinner mSchoolSpinner;
+    private Map<String,School> schoolMap;
+    private ArrayList<String> schools;
 
     public static StudentDetailFragment newInstance(String studentId){
         StudentDetailFragment studentDetailFragment = new StudentDetailFragment();
@@ -91,6 +101,7 @@ public class StudentDetailFragment extends DialogFragment {
         mSchoolAddress = (TextInputEditText) v.findViewById(R.id.school_address);
         mStudentPicture = (CircleImageView) v.findViewById(R.id.student_picture);
         mFrameLayout = (FrameLayout) v.findViewById(R.id.student_picture_frame);
+        mSchoolSpinner = (AppCompatSpinner) v.findViewById(R.id.school_spinner);
         mFrameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,16 +111,9 @@ public class StudentDetailFragment extends DialogFragment {
 
             }
         });
-        args = getArguments();
-        String studentId = args.getString("studentid");
-        if(studentId !=null){
-            mStudentReference = FirebaseUtil.getStudentsRef().child(studentId);
-            setupUI(mStudentReference);
-        }
-        else{
-            String studentUUID = UUID.randomUUID().toString();
-            mStudentId.setText(studentUUID);
-        }
+        schoolMap = new HashMap<>();
+        schools = new ArrayList<>();
+        fetchAllSchools();
 
 
         alertDialog.setView(v)
@@ -134,6 +138,41 @@ public class StudentDetailFragment extends DialogFragment {
                 });
 
         return alertDialog.create();
+    }
+
+    private void fetchAllSchools() {
+        DatabaseReference schoolsRef = FirebaseUtil.getSchoolsRef();
+        schoolsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> d =dataSnapshot.getChildren();
+                for (DataSnapshot data:d) {
+                    Log.d(TAG,data.getKey());
+                    School school = data.getValue(School.class);
+                    Log.d(TAG,school.getSchoolName());
+                    schools.add(data.getKey());
+                    schoolMap.put(data.getKey(),school);
+
+                }
+                ArrayAdapter<String> schoolsAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item,schools);
+                mSchoolSpinner.setAdapter(schoolsAdapter);
+                args = getArguments();
+                String studentId = args.getString("studentid");
+                if(studentId !=null){
+                    mStudentReference = FirebaseUtil.getStudentsRef().child(studentId);
+                    setupUI(mStudentReference);
+                }
+                else{
+                    String studentUUID = UUID.randomUUID().toString();
+                    mStudentId.setText(studentUUID);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void createNewStudent(){
@@ -245,6 +284,7 @@ public class StudentDetailFragment extends DialogFragment {
                 student = dataSnapshot.getValue(Student.class);
                 mStudentName.setText(student.getStudentName());
                 mStudentId.setText(student.getStudentUUID());
+                mSchoolSpinner.setSelection(schools.indexOf(student.getSchoolId()));
                 //Set School details and Student picture using Glide.
                 mSchoolAddress.setText(student.getSchoolAddress());
                 mSchoolName.setText(student.getSchoolName());
