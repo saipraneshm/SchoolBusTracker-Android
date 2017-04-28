@@ -252,7 +252,12 @@ public class StudentDetailFragment extends DialogFragment {
         updateStudent.setSchoolName(mSchoolName.getText().toString());
         updateStudent.setStudentName(mStudentName.getText().toString());
         updateStudent.setStudentUUID(mStudentId.getText().toString());
+        Log.d(TAG,"before set old school-->"+student.getSchoolId());
+        Log.d(TAG,"before set new school-->"+updateStudent.getSchoolId());
+        final String oldSchoolId = updateStudent.getSchoolId();
         updateStudent.setSchoolId(schoolMap.get(schoolIds.get(mSchoolSpinner.getSelectedItemPosition())).getSchoolId());
+        Log.d(TAG,"before update old school-->"+oldSchoolId);
+        Log.d(TAG,"before update new school-->"+updateStudent.getSchoolId());
         if(isPhotoUpdated){
             if(mPhotoFilePath!=null){
                 progressDialog.show();
@@ -282,6 +287,7 @@ public class StudentDetailFragment extends DialogFragment {
                         //Uri downloadUrl = taskSnapshot.getDownloadUrl();
                         Log.d(TAG,"File upload successfully");
                         studentRef.setValue(updateStudent);
+                        updateStudentSchool(oldSchoolId,updateStudent.getSchoolId(),updateStudent.getStudentUUID());
                         progressDialog.dismiss();
                     }
                 });
@@ -291,6 +297,8 @@ public class StudentDetailFragment extends DialogFragment {
         }
         else {
             studentRef.setValue(updateStudent);
+            updateStudentSchool(oldSchoolId,updateStudent.getSchoolId(),updateStudent.getStudentUUID());
+
         }
 
     }
@@ -329,9 +337,54 @@ public class StudentDetailFragment extends DialogFragment {
         });
     }
 
-    private void updateStudentSchool(String oldSchoolId,String newSchoolId,final String studentId){
+    private void updateStudentSchool(final String oldSchoolId, final String newSchoolId, final String studentId){
+        Log.d(TAG,"new schoolid ---> "+newSchoolId);
+        Log.d(TAG,"old schoolid ---> "+oldSchoolId);
         final DatabaseReference oldSchoolRef = FirebaseUtil.getSchoolRef(oldSchoolId);
         final DatabaseReference newSchoolRef = FirebaseUtil.getSchoolRef(newSchoolId);
+        oldSchoolRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                School school = dataSnapshot.getValue(School.class);
+                Map<String,String>  students = school.getRegisteredStudents();
+                Log.d(TAG,"/*** Old School ***/");
+                if(students!=null){
+                    Log.d(TAG,"Removing old School-->"+oldSchoolId);
+                    students.remove(studentId);
+                    school.setRegisteredStudents(students);
+                    oldSchoolRef.setValue(school);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        newSchoolRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                School school = dataSnapshot.getValue(School.class);
+                Map<String,String>  students = school.getRegisteredStudents();
+                if(students!=null){
+                    Log.d(TAG,"Adding new School-->"+newSchoolId);
+                    students.put(studentId,studentId);
+                    school.setRegisteredStudents(students);
+                    newSchoolRef.setValue(school);
+                }
+                else{
+                    students = new HashMap<String, String>();
+                    students.put(studentId, studentId);
+                    school.setRegisteredStudents(students);
+                    newSchoolRef.setValue(school);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void addStudentToSchool(String schoolId, final String studentId){
@@ -341,10 +394,18 @@ public class StudentDetailFragment extends DialogFragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 School school = dataSnapshot.getValue(School.class);
                 Map<String,String>  students = school.getRegisteredStudents();
-                Log.d(TAG,students.keySet().toString());
-                students.put(studentId,studentId);
-                school.setRegisteredStudents(students);
-                schoolRef.setValue(school);
+                if(students!=null) {
+                    Log.d(TAG, students.keySet().toString());
+                    students.put(studentId, studentId);
+                    school.setRegisteredStudents(students);
+                    schoolRef.setValue(school);
+                }
+                else{
+                    students = new HashMap<String, String>();
+                    students.put(studentId, studentId);
+                    school.setRegisteredStudents(students);
+                    schoolRef.setValue(school);
+                }
             }
 
             @Override
