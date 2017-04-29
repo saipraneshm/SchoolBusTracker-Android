@@ -12,6 +12,15 @@ public class School {
     private String mSchoolName;
     private String mSchoolAddress;
     private String mSchoolId;
+    private TransportCoordinator mTransportCoordinator;
+
+    public TransportCoordinator getTransportCoordinator() {
+        return mTransportCoordinator;
+    }
+
+    public void setTransportCoordinator(TransportCoordinator transportCoordinator) {
+        mTransportCoordinator = transportCoordinator;
+    }
 
     public Map<String, String> getRegisteredStudents() {
         return mRegisteredStudents;

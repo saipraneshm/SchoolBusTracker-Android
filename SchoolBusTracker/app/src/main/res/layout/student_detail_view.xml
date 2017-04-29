@@ -60,15 +60,28 @@
                 android:id="@+id/student_id"
                 android:enabled="false"/>
         </android.support.design.widget.TextInputLayout>
-        <android.support.v7.widget.AppCompatSpinner
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/school_spinner">
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/school_text"
+                android:textSize="@dimen/regular_text_size"/>
+            <android.support.v7.widget.AppCompatSpinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/school_spinner">
 
-        </android.support.v7.widget.AppCompatSpinner>
+            </android.support.v7.widget.AppCompatSpinner>
+
+        </LinearLayout>
+
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <android.support.design.widget.TextInputEditText
                 android:layout_width="match_parent"

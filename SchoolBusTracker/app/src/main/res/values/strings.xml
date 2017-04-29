@@ -70,6 +70,7 @@
     <string name="user_phone_number">Phone # (opional)</string>
     <string name="done_button">Done</string>
     <string name="back_button">Back</string>
+    <string name="school_text">School:</string>
 
 
 </resources>

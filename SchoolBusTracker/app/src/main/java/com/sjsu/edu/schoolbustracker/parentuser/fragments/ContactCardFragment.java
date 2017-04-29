@@ -6,13 +6,28 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
+import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
+import com.sjsu.edu.schoolbustracker.parentuser.model.Student;
+import com.sjsu.edu.schoolbustracker.parentuser.model.TransportCoordinator;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class ContactCardFragment extends Fragment {
@@ -24,6 +39,9 @@ public class ContactCardFragment extends Fragment {
     private AppCompatButton driver_call,driver_msg,school_call,school_msg;
     private AppCompatTextView driver_name,driver_phone,school_coordinator_name,school_coordinator_phone;
     private Toolbar mToolbar;
+    private AppCompatSpinner mSchoolSelectorSpinner;
+    private ArrayList<String> schoolIds,schoolNames;
+    private final String TAG = "ContactCardFragment";
 
     public ContactCardFragment() {
         // Required empty public constructor
@@ -56,6 +74,21 @@ public class ContactCardFragment extends Fragment {
         driver_phone = (AppCompatTextView) view.findViewById(R.id.driver_phnumber);
         school_coordinator_name = (AppCompatTextView) view.findViewById(R.id.school_coordinator_name);
         school_coordinator_phone = (AppCompatTextView) view.findViewById(R.id.school_coordinator_phnumber);
+
+        mSchoolSelectorSpinner = (AppCompatSpinner) view.findViewById(R.id.school_contact_selector);
+        mSchoolSelectorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                fetchDataForSelectedSchool(schoolIds.get(i));
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         //SET phone and name values from firebase
 
@@ -99,7 +132,62 @@ public class ContactCardFragment extends Fragment {
             }
         });
 
+
+        populateSpinnerFromFireBase();
         return view;
     }
+
+    private void fetchDataForSelectedSchool(String s) {
+        DatabaseReference transportCoordinatorRef = FirebaseUtil.getTransportCoordinator(s);
+        transportCoordinatorRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                TransportCoordinator transportCoordinator = dataSnapshot.getValue(TransportCoordinator.class);
+                school_coordinator_name.setText(transportCoordinator.getCoordinatorName());
+                school_coordinator_phone.setText(transportCoordinator.getCoordinatorPhone());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void populateSpinnerFromFireBase() {
+
+        Log.d(TAG,"/*** Fetching Applicable Schools ***/");
+        DatabaseReference studentsRef = FirebaseUtil.getStudentsRef();
+        final Map<String,String> schoolsMap = new HashMap<>();
+        studentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot studentSnapshot:dataSnapshot.getChildren()){
+                    Student student = studentSnapshot.getValue(Student.class);
+                    Log.d(TAG,student.getSchoolId());
+                    schoolsMap.put(student.getSchoolId(),student.getSchoolName());
+                }
+
+                Log.d(TAG,"/*** Setting Spinner Up ***/");
+                schoolIds = new ArrayList<>();
+                schoolNames = new ArrayList<>();
+
+                for(String key:schoolsMap.keySet()){
+                    schoolIds.add(key);
+                    schoolNames.add(schoolsMap.get(key));
+                }
+                Log.d(TAG,schoolNames.toString());
+                ArrayAdapter<String> schoolArrayAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item,schoolNames);
+                mSchoolSelectorSpinner.setAdapter(schoolArrayAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 
 }

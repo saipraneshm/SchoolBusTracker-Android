@@ -24,6 +24,7 @@ public class FirebaseUtil {
     private static final String STUDENTS = "Students";
     private static final String APP_SETTINGS = "AppSettings";
     private static final String SCHOOLS = "Schools";
+    private static final String TRANSPORT_COORDINATOR = "transportCoordinator";
 
     public static DatabaseReference getBaseRef(){
         return FirebaseDatabase.getInstance().getReference();
@@ -117,6 +118,10 @@ public class FirebaseUtil {
             return getAllSchoolsRef().child(schoolId);
         }
         return null;
+    }
+
+    public static DatabaseReference getTransportCoordinator(String schoolId){
+        return getSchoolRef(schoolId).child(TRANSPORT_COORDINATOR);
     }
 
 
