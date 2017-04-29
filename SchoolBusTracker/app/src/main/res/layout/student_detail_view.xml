@@ -101,6 +101,23 @@
                 android:inputType="textPersonName"
                 android:id="@+id/school_address"/>
         </android.support.design.widget.TextInputLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/route_text"
+                android:textSize="@dimen/regular_text_size"/>
+            <android.support.v7.widget.AppCompatSpinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/route_spinner">
+
+            </android.support.v7.widget.AppCompatSpinner>
+
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

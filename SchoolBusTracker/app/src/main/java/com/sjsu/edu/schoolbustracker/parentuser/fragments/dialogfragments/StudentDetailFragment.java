@@ -65,10 +65,11 @@ public class StudentDetailFragment extends DialogFragment {
     private ProgressDialog progressDialog;
     private Boolean isPhotoUpdated=false;
     private FrameLayout mFrameLayout;
-    private AppCompatSpinner mSchoolSpinner;
+    private AppCompatSpinner mSchoolSpinner,mRouteSpinner;
     private Map<String,School> schoolMap;
-    private ArrayList<String> schools;
-    private ArrayList<String> schoolIds;
+    private ArrayList<String> schools,routeNumbers;
+    private ArrayList<String> schoolIds,routeIds;
+    private Map<String,String> routeMap;
 
     public static StudentDetailFragment newInstance(String studentId){
         StudentDetailFragment studentDetailFragment = new StudentDetailFragment();
@@ -101,12 +102,27 @@ public class StudentDetailFragment extends DialogFragment {
         mSchoolAddress = (TextInputEditText) v.findViewById(R.id.school_address);
         mStudentPicture = (CircleImageView) v.findViewById(R.id.student_picture);
         mFrameLayout = (FrameLayout) v.findViewById(R.id.student_picture_frame);
+        mRouteSpinner = (AppCompatSpinner) v.findViewById(R.id.route_spinner);
         mSchoolSpinner = (AppCompatSpinner) v.findViewById(R.id.school_spinner);
         mSchoolSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 mSchoolName.setText(schoolMap.get(schoolIds.get(i)).getSchoolName());
                 mSchoolAddress.setText(schoolMap.get(schoolIds.get(i)).getSchoolAddress());
+                routeMap = schoolMap.get(schoolIds.get(i)).getRegisteredRoutes();
+                routeIds = new ArrayList<>();
+                routeNumbers = new ArrayList<>();
+                if(routeMap!=null){
+                    for(String key:routeMap.keySet()){
+                        routeIds.add(key);
+                        routeNumbers.add(routeMap.get(key));
+                    }
+                }
+                ArrayAdapter<String> routeArrayAdapter = new ArrayAdapter<>(getActivity(),
+                        android.R.layout.simple_spinner_dropdown_item,routeNumbers);
+                mRouteSpinner.setAdapter(routeArrayAdapter);
+                mRouteSpinner.setSelection(routeIds.indexOf(student.getRouteId()));
+
             }
 
             @Override
@@ -202,6 +218,8 @@ public class StudentDetailFragment extends DialogFragment {
         newStudent.setStudentName(mStudentName.getText().toString());
         newStudent.setStudentUUID(mStudentId.getText().toString());
         newStudent.setSchoolId(schoolMap.get(schoolIds.get(mSchoolSpinner.getSelectedItemPosition())).getSchoolId());
+        newStudent.setRouteId(routeIds.get(mRouteSpinner.getSelectedItemPosition()));
+        newStudent.setRouteNumber(routeNumbers.get(mRouteSpinner.getSelectedItemPosition()));
         if(mPhotoFilePath!=null){
             Uri file = mPhotoFilePath;
             StorageReference photoRef = FirebaseUtil.getStudentPhotoRef(file.getLastPathSegment());
@@ -252,6 +270,8 @@ public class StudentDetailFragment extends DialogFragment {
         updateStudent.setSchoolName(mSchoolName.getText().toString());
         updateStudent.setStudentName(mStudentName.getText().toString());
         updateStudent.setStudentUUID(mStudentId.getText().toString());
+        updateStudent.setRouteId(routeIds.get(mRouteSpinner.getSelectedItemPosition()));
+        updateStudent.setRouteNumber(routeNumbers.get(mRouteSpinner.getSelectedItemPosition()));
         Log.d(TAG,"before set old school-->"+student.getSchoolId());
         Log.d(TAG,"before set new school-->"+updateStudent.getSchoolId());
         final String oldSchoolId = updateStudent.getSchoolId();

@@ -71,6 +71,7 @@
     <string name="done_button">Done</string>
     <string name="back_button">Back</string>
     <string name="school_text">School:</string>
+    <string name="route_text">Route:</string>
 
 
 </resources>

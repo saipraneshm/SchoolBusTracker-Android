@@ -9,10 +9,19 @@ import java.util.Map;
 public class School {
 
     private Map<String,String> mRegisteredStudents;
+    private Map<String,String> mRegisteredRoutes;
     private String mSchoolName;
     private String mSchoolAddress;
     private String mSchoolId;
     private TransportCoordinator mTransportCoordinator;
+
+    public Map<String, String> getRegisteredRoutes() {
+        return mRegisteredRoutes;
+    }
+
+    public void setRegisteredRoutes(Map<String, String> registeredRoutes) {
+        mRegisteredRoutes = registeredRoutes;
+    }
 
     public TransportCoordinator getTransportCoordinator() {
         return mTransportCoordinator;
