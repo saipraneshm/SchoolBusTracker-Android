@@ -1,0 +1,50 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="#ffc400"
+             tools:context="com.sjsu.edu.schoolbustracker.parentuser.activity.SplashScreenActivity">
+
+    <!-- The primary full-screen view. This can be replaced with whatever view
+         is needed to present your content, e.g. VideoView, SurfaceView,
+         TextureView, etc. -->
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="vertical"
+       android:id="@+id/initial_screen_LL"
+       android:gravity="center_vertical|center_horizontal">
+       <ImageView
+           android:id="@+id/school_bus_logo"
+           android:layout_width="150dp"
+           android:layout_height="150dp"
+           android:elevation="15dp"
+           android:transitionName="@string/school_transition"
+           android:layout_marginBottom="8dp"
+           android:src="@mipmap/ic_bus_logo"/>
+       <TextView
+           android:id="@+id/fullscreen_content"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:gravity="center"
+           android:keepScreenOn="true"
+           android:text="@string/app_name_logo"
+           android:textColor="#d50000"
+           android:textSize="50sp"
+           android:textStyle="bold"/>
+       <TextView
+           android:id="@+id/tag_line_text"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:gravity="center"
+           android:keepScreenOn="true"
+           android:text="@string/tag_line"
+           android:textColor="#d50000"
+           android:textSize="20sp"
+           android:textStyle="bold"/>
+   </LinearLayout>
+
+
+
+</FrameLayout>

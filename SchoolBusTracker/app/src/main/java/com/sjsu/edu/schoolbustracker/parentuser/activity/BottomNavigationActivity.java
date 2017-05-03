@@ -35,13 +35,16 @@ import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.Profile
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.UserProfileFragment;
 
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.PhotoPickerFragment;
 
 public class BottomNavigationActivity extends AppCompatActivity implements
         ContactCardFragment.OnFragmentInteractionListener
         ,UserProfileFragment.OnFragmentInteractionListener,
         ProfileInfoFragment.OnFragmentInteractionListener,
         AccountSettingsFragment.OnFragmentInteractionListener,
-        NotificationSettingsFragment.OnFragmentInteractionListener,GoogleApiClient.OnConnectionFailedListener{
+        NotificationSettingsFragment.OnFragmentInteractionListener,
+        GoogleApiClient.OnConnectionFailedListener,
+        PhotoPickerFragment.OnPhotoPickerPathListener{
 
 
     private TextView mTextMessage;
@@ -203,6 +206,11 @@ public class BottomNavigationActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void setCurrentPhotoPath(Uri photoPath) {
 
     }
 }

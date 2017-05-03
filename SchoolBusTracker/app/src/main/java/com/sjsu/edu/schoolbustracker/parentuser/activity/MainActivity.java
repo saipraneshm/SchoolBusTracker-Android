@@ -16,8 +16,7 @@ import com.sjsu.edu.schoolbustracker.parentuser.fragments.UserLoginFragment;
 
 import static android.view.Gravity.BOTTOM;
 
-public class MainActivity extends SingleFragmentActivity implements
-        UserLoginFragment.OnFragmentInteractionListener, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends SingleFragmentActivity implements GoogleApiClient.OnConnectionFailedListener {
 
 
     private static final String TAG = "MainActivity";
@@ -26,11 +25,6 @@ public class MainActivity extends SingleFragmentActivity implements
     @Override
     protected Fragment createFragment() {
         return new UserLoginFragment();
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 
     @Override
@@ -45,5 +39,9 @@ public class MainActivity extends SingleFragmentActivity implements
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }
