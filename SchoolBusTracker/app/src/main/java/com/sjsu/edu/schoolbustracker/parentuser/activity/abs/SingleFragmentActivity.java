@@ -54,6 +54,10 @@ public abstract class SingleFragmentActivity extends FragmentActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Fade fade = (Fade) TransitionInflater.from(this).inflateTransition(R.transition.fade);
             getWindow().setExitTransition(fade);
+
+            Slide slide = (Slide) TransitionInflater.from(this).inflateTransition(R.transition.slide);
+            slide.setSlideEdge(BOTTOM);
+            getWindow().setReenterTransition(slide);
         }
     }
 }
