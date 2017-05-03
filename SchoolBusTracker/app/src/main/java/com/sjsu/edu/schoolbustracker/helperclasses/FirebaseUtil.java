@@ -30,10 +30,15 @@ public class FirebaseUtil {
     private static final String PARENT_USER = "ParentUser";
     private static final String BUS_HISTORY = "BusHistory";
     private static final String STUDENTS = "Students";
+    private static final String APP_SETTINGS = "AppSettings";
+    private static final String SCHOOLS = "Schools";
+    private static final String TRANSPORT_COORDINATOR = "transportCoordinator";
+
     private static DatabaseReference mDatabase;
     private static DatabaseReference mCheckUserTypeRef;
     private static DatabaseReference mProfileRef;
     private static DatabaseReference userSettingsReference;
+
 
     public static DatabaseReference getBaseRef(){
         return FirebaseDatabase.getInstance().getReference();
@@ -94,6 +99,20 @@ public class FirebaseUtil {
         return null;
     }
 
+    //Fetches References to App Settings
+    public static DatabaseReference getAppSettingRef(){
+        return getBaseRef().child(APP_SETTINGS);
+    }
+    //Fetches References to a User's App Settings
+    public static DatabaseReference getUserAppSettingRef(){
+        String userId = getCurrentUserId();
+        if(userId!=null){
+            return getBaseRef().child(APP_SETTINGS).child(userId).getRef();
+        }
+        return null;
+
+    }
+
     //Fetches the Storage reference to students photos
     public static StorageReference getStudentPhotoRef(String fileName){
 
@@ -103,12 +122,27 @@ public class FirebaseUtil {
         return null;
     }
 
+
+    //Fetches the Database reference to Schools
+    public static DatabaseReference getAllSchoolsRef(){
+        return getBaseRef().child(SCHOOLS);
+    }
+
+    public static DatabaseReference getSchoolRef(String schoolId){
+        if(schoolId!=null){
+            return getAllSchoolsRef().child(schoolId);
+
     public static StorageReference getParentUsersPhotoRef(String fileName){
         if(fileName != null){
             return getBaseStorageReference().child(PARENT_USER).child(fileName);
+
         }
         return null;
     }
+
+
+    public static DatabaseReference getTransportCoordinator(String schoolId){
+        return getSchoolRef(schoolId).child(TRANSPORT_COORDINATOR);
 
 
     public static void setUpInitialProfile(final Context context , final Profile user){

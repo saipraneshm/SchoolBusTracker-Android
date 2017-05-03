@@ -5,6 +5,6 @@
     <color name="colorAccent">#e53935</color>
     <color name="disabled_color">#000000</color>
     <color name="background_material_light">#dfdbc3</color>
-
+    <color name="black">#000000</color>
     <color name="black_overlay">#66000000</color>
 </resources>

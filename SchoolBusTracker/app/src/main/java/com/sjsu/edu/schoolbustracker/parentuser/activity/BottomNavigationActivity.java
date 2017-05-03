@@ -38,11 +38,6 @@ import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.PhotoPickerFragment;
 
 public class BottomNavigationActivity extends AppCompatActivity implements
-        ContactCardFragment.OnFragmentInteractionListener
-        ,UserProfileFragment.OnFragmentInteractionListener,
-        ProfileInfoFragment.OnFragmentInteractionListener,
-        AccountSettingsFragment.OnFragmentInteractionListener,
-        NotificationSettingsFragment.OnFragmentInteractionListener,
         GoogleApiClient.OnConnectionFailedListener,
         PhotoPickerFragment.OnPhotoPickerPathListener{
 
@@ -198,16 +193,12 @@ public class BottomNavigationActivity extends AppCompatActivity implements
 
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
 
     @Override
     public void setCurrentPhotoPath(Uri photoPath) {

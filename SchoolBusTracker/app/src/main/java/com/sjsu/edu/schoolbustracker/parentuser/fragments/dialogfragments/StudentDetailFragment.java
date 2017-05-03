@@ -14,9 +14,12 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatSpinner;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
@@ -27,13 +30,17 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
+import com.sjsu.edu.schoolbustracker.parentuser.model.School;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Student;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -58,6 +65,11 @@ public class StudentDetailFragment extends DialogFragment {
     private ProgressDialog progressDialog;
     private Boolean isPhotoUpdated=false;
     private FrameLayout mFrameLayout;
+    private AppCompatSpinner mSchoolSpinner,mRouteSpinner;
+    private Map<String,School> schoolMap;
+    private ArrayList<String> schools,routeNumbers;
+    private ArrayList<String> schoolIds,routeIds;
+    private Map<String,String> routeMap;
 
     public static StudentDetailFragment newInstance(String studentId){
         StudentDetailFragment studentDetailFragment = new StudentDetailFragment();
@@ -90,6 +102,34 @@ public class StudentDetailFragment extends DialogFragment {
         mSchoolAddress = (TextInputEditText) v.findViewById(R.id.school_address);
         mStudentPicture = (CircleImageView) v.findViewById(R.id.student_picture);
         mFrameLayout = (FrameLayout) v.findViewById(R.id.student_picture_frame);
+        mRouteSpinner = (AppCompatSpinner) v.findViewById(R.id.route_spinner);
+        mSchoolSpinner = (AppCompatSpinner) v.findViewById(R.id.school_spinner);
+        mSchoolSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mSchoolName.setText(schoolMap.get(schoolIds.get(i)).getSchoolName());
+                mSchoolAddress.setText(schoolMap.get(schoolIds.get(i)).getSchoolAddress());
+                routeMap = schoolMap.get(schoolIds.get(i)).getRegisteredRoutes();
+                routeIds = new ArrayList<>();
+                routeNumbers = new ArrayList<>();
+                if(routeMap!=null){
+                    for(String key:routeMap.keySet()){
+                        routeIds.add(key);
+                        routeNumbers.add(routeMap.get(key));
+                    }
+                }
+                ArrayAdapter<String> routeArrayAdapter = new ArrayAdapter<>(getActivity(),
+                        android.R.layout.simple_spinner_dropdown_item,routeNumbers);
+                mRouteSpinner.setAdapter(routeArrayAdapter);
+                mRouteSpinner.setSelection(routeIds.indexOf(student.getRouteId()));
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         mFrameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,15 +140,10 @@ public class StudentDetailFragment extends DialogFragment {
             }
         });
         args = getArguments();
-        String studentId = args.getString("studentid");
-        if(studentId !=null){
-            mStudentReference = FirebaseUtil.getStudentsRef().child(studentId);
-            setupUI(mStudentReference);
-        }
-        else{
-            String studentUUID = UUID.randomUUID().toString();
-            mStudentId.setText(studentUUID);
-        }
+        schoolMap = new HashMap<>();
+        schools = new ArrayList<>();
+        schoolIds = new ArrayList<>();
+        fetchAllSchools();
 
 
         alertDialog.setView(v)
@@ -135,9 +170,46 @@ public class StudentDetailFragment extends DialogFragment {
         return alertDialog.create();
     }
 
+    private void fetchAllSchools() {
+        DatabaseReference schoolsRef = FirebaseUtil.getAllSchoolsRef();
+        schoolsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> d =dataSnapshot.getChildren();
+                for (DataSnapshot data:d) {
+                    Log.d(TAG,data.getKey());
+                    School school = data.getValue(School.class);
+                    Log.d(TAG,school.getSchoolName());
+                    schools.add(school.getSchoolName());
+                    schoolIds.add(school.getSchoolId());
+                    schoolMap.put(school.getSchoolId(),school);
+
+                }
+                ArrayAdapter<String> schoolsAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item,schools);
+                mSchoolSpinner.setAdapter(schoolsAdapter);
+                String studentId = args.getString("studentid");
+                if(studentId !=null){
+                    mStudentReference = FirebaseUtil.getStudentsRef().child(studentId);
+                    setupUI(mStudentReference);
+                }
+                else{
+                    String studentUUID = UUID.randomUUID().toString();
+                    mStudentId.setText(studentUUID);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void createNewStudent(){
         progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setTitle("Adding Student");
+        progressDialog.setMessage("Adding Student. Please wait...");
+        progressDialog.setIndeterminate(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.show();
         parentStudentReference = FirebaseUtil.getStudentsRef();
         newStudent = new Student();
@@ -145,6 +217,9 @@ public class StudentDetailFragment extends DialogFragment {
         newStudent.setSchoolName(mSchoolName.getText().toString());
         newStudent.setStudentName(mStudentName.getText().toString());
         newStudent.setStudentUUID(mStudentId.getText().toString());
+        newStudent.setSchoolId(schoolMap.get(schoolIds.get(mSchoolSpinner.getSelectedItemPosition())).getSchoolId());
+        newStudent.setRouteId(routeIds.get(mRouteSpinner.getSelectedItemPosition()));
+        newStudent.setRouteNumber(routeNumbers.get(mRouteSpinner.getSelectedItemPosition()));
         if(mPhotoFilePath!=null){
             Uri file = mPhotoFilePath;
             StorageReference photoRef = FirebaseUtil.getStudentPhotoRef(file.getLastPathSegment());
@@ -156,6 +231,16 @@ public class StudentDetailFragment extends DialogFragment {
                     // Handle unsuccessful uploads
                     Log.e(TAG,"File upload failed");
                 }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    @SuppressWarnings("VisibleForTests")
+                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.
+                            getTotalByteCount();
+                    Log.d(TAG,"Upload is " + progress + "% done");
+                    progressDialog.setProgress((int) progress);
+
+                }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -163,6 +248,7 @@ public class StudentDetailFragment extends DialogFragment {
                     //Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     Log.d(TAG,"File upload successfully");
                     parentStudentReference.child(mStudentId.getText().toString()).setValue(newStudent);
+                    addStudentToSchool(newStudent.getSchoolId(),newStudent.getStudentUUID());
                     progressDialog.dismiss();
                 }
             });
@@ -176,16 +262,25 @@ public class StudentDetailFragment extends DialogFragment {
     private void updateDataToFireBase(String studentId){
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Updating Student. Please wait...");
-        progressDialog.show();
+        progressDialog.setIndeterminate(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         studentRef = FirebaseUtil.getStudentsRef().child(studentId);
         final Student updateStudent = student;
         updateStudent.setSchoolAddress(mSchoolAddress.getText().toString());
         updateStudent.setSchoolName(mSchoolName.getText().toString());
         updateStudent.setStudentName(mStudentName.getText().toString());
         updateStudent.setStudentUUID(mStudentId.getText().toString());
-
+        updateStudent.setRouteId(routeIds.get(mRouteSpinner.getSelectedItemPosition()));
+        updateStudent.setRouteNumber(routeNumbers.get(mRouteSpinner.getSelectedItemPosition()));
+        Log.d(TAG,"before set old school-->"+student.getSchoolId());
+        Log.d(TAG,"before set new school-->"+updateStudent.getSchoolId());
+        final String oldSchoolId = updateStudent.getSchoolId();
+        updateStudent.setSchoolId(schoolMap.get(schoolIds.get(mSchoolSpinner.getSelectedItemPosition())).getSchoolId());
+        Log.d(TAG,"before update old school-->"+oldSchoolId);
+        Log.d(TAG,"before update new school-->"+updateStudent.getSchoolId());
         if(isPhotoUpdated){
             if(mPhotoFilePath!=null){
+                progressDialog.show();
                 Uri file = mPhotoFilePath;
                 StorageReference photoRef = FirebaseUtil.getStudentPhotoRef(file.getLastPathSegment());
                 updateStudent.setStudentPicName(file.getLastPathSegment());
@@ -196,18 +291,33 @@ public class StudentDetailFragment extends DialogFragment {
                         // Handle unsuccessful uploads
                         Log.e(TAG,"File upload failed");
                     }
+                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        @SuppressWarnings("VisibleForTests")
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) /
+                                taskSnapshot.getTotalByteCount();
+                        Log.d(TAG,"Upload is " + progress + "% done");
+                        progressDialog.setProgress((int) progress);
+
+                    }
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                         //Uri downloadUrl = taskSnapshot.getDownloadUrl();
                         Log.d(TAG,"File upload successfully");
                         studentRef.setValue(updateStudent);
+                        updateStudentSchool(oldSchoolId,updateStudent.getSchoolId(),updateStudent.getStudentUUID());
                         progressDialog.dismiss();
                     }
                 });
             }
 
+
+        }
+        else {
+            studentRef.setValue(updateStudent);
+            updateStudentSchool(oldSchoolId,updateStudent.getSchoolId(),updateStudent.getStudentUUID());
 
         }
 
@@ -221,6 +331,7 @@ public class StudentDetailFragment extends DialogFragment {
                 student = dataSnapshot.getValue(Student.class);
                 mStudentName.setText(student.getStudentName());
                 mStudentId.setText(student.getStudentUUID());
+                mSchoolSpinner.setSelection(schoolIds.indexOf(student.getSchoolId()));
                 //Set School details and Student picture using Glide.
                 mSchoolAddress.setText(student.getSchoolAddress());
                 mSchoolName.setText(student.getSchoolName());
@@ -244,6 +355,85 @@ public class StudentDetailFragment extends DialogFragment {
 
             }
         });
+    }
+
+    private void updateStudentSchool(final String oldSchoolId, final String newSchoolId, final String studentId){
+        Log.d(TAG,"new schoolid ---> "+newSchoolId);
+        Log.d(TAG,"old schoolid ---> "+oldSchoolId);
+        final DatabaseReference oldSchoolRef = FirebaseUtil.getSchoolRef(oldSchoolId);
+        final DatabaseReference newSchoolRef = FirebaseUtil.getSchoolRef(newSchoolId);
+        oldSchoolRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                School school = dataSnapshot.getValue(School.class);
+                Map<String,String>  students = school.getRegisteredStudents();
+                Log.d(TAG,"/*** Old School ***/");
+                if(students!=null){
+                    Log.d(TAG,"Removing old School-->"+oldSchoolId);
+                    students.remove(studentId);
+                    school.setRegisteredStudents(students);
+                    oldSchoolRef.setValue(school);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        newSchoolRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                School school = dataSnapshot.getValue(School.class);
+                Map<String,String>  students = school.getRegisteredStudents();
+                if(students!=null){
+                    Log.d(TAG,"Adding new School-->"+newSchoolId);
+                    students.put(studentId,studentId);
+                    school.setRegisteredStudents(students);
+                    newSchoolRef.setValue(school);
+                }
+                else{
+                    students = new HashMap<String, String>();
+                    students.put(studentId, studentId);
+                    school.setRegisteredStudents(students);
+                    newSchoolRef.setValue(school);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void addStudentToSchool(String schoolId, final String studentId){
+        final DatabaseReference schoolRef = FirebaseUtil.getSchoolRef(schoolId);
+        schoolRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                School school = dataSnapshot.getValue(School.class);
+                Map<String,String>  students = school.getRegisteredStudents();
+                if(students!=null) {
+                    Log.d(TAG, students.keySet().toString());
+                    students.put(studentId, studentId);
+                    school.setRegisteredStudents(students);
+                    schoolRef.setValue(school);
+                }
+                else{
+                    students = new HashMap<String, String>();
+                    students.put(studentId, studentId);
+                    school.setRegisteredStudents(students);
+                    schoolRef.setValue(school);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     @Override

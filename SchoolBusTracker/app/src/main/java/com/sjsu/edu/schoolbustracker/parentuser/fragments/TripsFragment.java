@@ -97,7 +97,7 @@ public class TripsFragment extends Fragment{
 
         mToolbar = (Toolbar) view.findViewById(R.id.trips_toolbar);
         mToolbar.setTitle("Trips");
-        mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.cardview_light_background, null));
+        mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.black, null));
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_trips);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         DatabaseReference reference = FirebaseUtil.getExisitingPreviousTripsRef();
