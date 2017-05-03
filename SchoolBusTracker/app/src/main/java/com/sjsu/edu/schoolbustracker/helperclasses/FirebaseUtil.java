@@ -128,9 +128,12 @@ public class FirebaseUtil {
         return getBaseRef().child(SCHOOLS);
     }
 
-    public static DatabaseReference getSchoolRef(String schoolId){
-        if(schoolId!=null){
+    public static DatabaseReference getSchoolRef(String schoolId) {
+        if (schoolId != null) {
             return getAllSchoolsRef().child(schoolId);
+        }
+        return null;
+    }
 
     public static StorageReference getParentUsersPhotoRef(String fileName){
         if(fileName != null){
@@ -141,8 +144,9 @@ public class FirebaseUtil {
     }
 
 
-    public static DatabaseReference getTransportCoordinator(String schoolId){
+    public static DatabaseReference getTransportCoordinator(String schoolId) {
         return getSchoolRef(schoolId).child(TRANSPORT_COORDINATOR);
+    }
 
 
     public static void setUpInitialProfile(final Context context , final Profile user){
