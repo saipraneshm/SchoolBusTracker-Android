@@ -5,17 +5,16 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatEditText;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +22,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -35,12 +32,10 @@ import com.facebook.login.LoginBehavior;
 import com.facebook.login.LoginManager;
 
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -57,6 +52,7 @@ import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.BottomNavigationActivity;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.UserRegistrationActivity;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.LoginFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.ResetDialogFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Profile;
 
@@ -64,53 +60,47 @@ import java.util.Arrays;
 
 
 public class UserLoginFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
     private static final String TAG = "UserLoginFragment";
     private static final int RC_SIGN_IN = 9001;
     private static final int RC_LOGIN_FRAGMENT = 9002;
+    private static final int RC_RESET_DIALOG = 9003;
 
     //Firebase
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
     private AppCompatButton mFbLoginButton;
-    private CallbackManager callbackManager;
-    private TextView signUpTv, loginTv, mAppNameTxt;
+    private CallbackManager mCallbackManager;
+    private TextView mSignUpTv, mLoginTv, mAppNameTxt, mForgotPassword;
     public ProgressDialog mProgressDialog;
     private LoginManager mLoginManager;
     private View view;
     private LinearLayout mLoginll;
     private FrameLayout mLoginFrameLayout;
-
-    private static int singupCount = 0;
     FirebaseUser user = null;
 
+
+    //For retry logic
+    private static String sTryAgain;
     //Google Auth
     GoogleApiClient mGoogleApiClient;
     private AppCompatButton mGoogleSignInBtn;
     // TODO: Rename and change types of parameters
 
 
-
-    private OnFragmentInteractionListener mListener;
-
     public UserLoginFragment() {
         // Required empty public constructor
     }
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        callbackManager = CallbackManager.Factory.create();
+        mCallbackManager = CallbackManager.Factory.create();
         mAuth = FirebaseAuth.getInstance();
         mLoginManager = LoginManager.getInstance();
         // Callback registration
-        mLoginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        mLoginManager.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
 
@@ -139,9 +129,10 @@ public class UserLoginFragment extends Fragment {
 
     }
 
+
+    //This is used to start the next activity
     private void startBottomNavigationActivity() {
         if(UserLoginFragment.this.isAdded()){
-            //QueryPreferences.setSignUpPref(getActivity(),false);
             Intent intent =new Intent(getActivity(),BottomNavigationActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK
                     |Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -154,17 +145,36 @@ public class UserLoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_user_login, container, false);
         mFbLoginButton = (AppCompatButton) view.findViewById(R.id.fb_login_btn);
-        loginTv = (TextView) view.findViewById(R.id.login_txt);
-        signUpTv = (TextView) view.findViewById(R.id.sign_up_txt);
+        mLoginTv = (TextView) view.findViewById(R.id.login_txt);
+        mSignUpTv = (TextView) view.findViewById(R.id.sign_up_txt);
         mGoogleSignInBtn = (AppCompatButton) view.findViewById(R.id.google_login_button);
         mAppNameTxt = (TextView) view.findViewById(R.id.app_name_txt);
         mLoginll  = (LinearLayout) view.findViewById(R.id.login_ll);
         mLoginFrameLayout = (FrameLayout) view.findViewById(R.id.login_frame_layout);
+        mForgotPassword = (TextView) view.findViewById(R.id.click_here_txt);
 
-        loginTv.setOnClickListener(new View.OnClickListener() {
+        mLoginTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showLoginFragment();
+            }
+        });
+
+        mForgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fm = getChildFragmentManager();
+                ResetDialogFragment resetDialogFragment = ResetDialogFragment.newInstance();
+                resetDialogFragment.setTargetFragment(UserLoginFragment.this, RC_RESET_DIALOG);
+                resetDialogFragment.show(fm,"ForgotPassword");
+                /*if(mAuth.getCurrentUser() != null && mAuth.getCurrentUser().getEmail() != null)
+                    mAuth.sendPasswordResetEmail(mAuth.getCurrentUser().getEmail())
+                            .addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    showSnackBar(Message.RESET_MESSAGE, Action.DISMISS);
+                                }
+                            });*/
             }
         });
 
@@ -172,14 +182,15 @@ public class UserLoginFragment extends Fragment {
         Typeface typeface = Typeface.createFromAsset(getActivity().getAssets(),"font/SERIO___.TTF");
         mAppNameTxt.setTypeface(typeface);
 
+
+        //On Auth state changed, if the user log's in successfully then we create a new Parent user
+        // and then call the setUpInitialProfile which adds the data to the firebase database, after
+        //which we call the next activity
         mAuthStateListener = new FirebaseAuth.AuthStateListener(){
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 user = firebaseAuth.getCurrentUser();
-               // boolean signUpref = QueryPreferences.getSignUpPref(getActivity());
                 if (user != null) {
-                   /* QueryPreferences.setSignUpPref(getActivity(),false);
-                        if(!signUpref){*/
                             String classname = this.getClass().getName();
                             Log.d(TAG,classname + " is the classname from which it has been called");
                             Profile newParent = new ParentUsers();
@@ -190,9 +201,6 @@ public class UserLoginFragment extends Fragment {
                                 newParent.setPhotoUri(user.getPhotoUrl().toString());
                             FirebaseUtil.setUpInitialProfile(getActivity(),newParent);
                             startBottomNavigationActivity();
-                        //}
-
-
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -202,54 +210,24 @@ public class UserLoginFragment extends Fragment {
 
         //Facebook Authentication
         setUpFacebookLogin();
-        // Inflate the layout for this fragment
 
         //Google Authentication
         setUpGoogleLogin();
 
-        //Email Password Login using Firebase
-       /*loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mAuth.signInWithEmailAndPassword(loginUserID.getText().toString(),
-                        loginPassword.getText().toString())
-                        .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
-                                // If sign in fails, display a message to the user. If sign in succeeds
-                                // the auth state listener will be notified and logic to handle the
-                                // signed in user can be handled in the listener.
-                                if (!task.isSuccessful()) {
-                                    Log.w(TAG, "signInWithEmail:failed", task.getException());
-                                    Toast.makeText(getActivity() , R.string.auth_failed,
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                                else{
-                                    Log.w(TAG, "signInWithEmail:successful");
-                                    // Start the Landing Activity
-                                }
-
-                                // ...
-                            }
-                        });
-            }
-        });*/
 
         //Start Activity to Register New User
-        signUpTv.setOnClickListener(new View.OnClickListener() {
+        mSignUpTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent registerNewUserActivity = new Intent(getActivity(),
                         UserRegistrationActivity.class);
-              //  startActivity(registerNewUserActivity);
+
+                //Transitions only work above LOLLIPOP
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     startActivity(registerNewUserActivity,
                             ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
                 }else{
                     startActivity(registerNewUserActivity);
-                    // getActivity().finish();
                 }
             }
         });
@@ -258,6 +236,18 @@ public class UserLoginFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        //Displaying the appropriate information, when the network isn't available or connected.
+        if(!isNetworkAvailableAndConnected()){
+            showSnackBar(Message.NETWORK_ISSUE, Action.DISMISS);
+        }
+    }
+
+    //This method is used to display the dialog login fragment, which is responsible to take
+    //email and password as inputs and authenticates them.
     private void showLoginFragment() {
         LoginFragment loginFragment = LoginFragment.newInstance();
         FragmentManager fragmentManager = getChildFragmentManager();
@@ -265,6 +255,7 @@ public class UserLoginFragment extends Fragment {
         loginFragment.show(fragmentManager, TAG);
     }
 
+    //Responsible for setting up the initializing parameters required for google sign in.
     private void setUpGoogleLogin() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -283,56 +274,36 @@ public class UserLoginFragment extends Fragment {
         });
     }
 
+
+    //Set's a listener to the custom button and calls initializeFacebookLoginManager
     private void setUpFacebookLogin() {
-
-       /* AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
-            @Override
-            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
-
-            }
-        };*/
-        // If using in a fragment
-       // mFbLoginButton.setFragment(this);
-        // Other app specific specialization
-
-      //  mFbLoginButton.setLoginBehavior(LoginBehavior.WEB_ONLY);
-        //mFbLoginButton.setToolTipMode(LoginButton.ToolTi);
-
 
         mFbLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showProgressDialog();
-                if(AccessToken.getCurrentAccessToken() != null){
-                    mLoginManager.logOut();
-                }else{
-                    mLoginManager.setLoginBehavior(LoginBehavior.WEB_ONLY);
-                    mLoginManager.logInWithReadPermissions(UserLoginFragment.this,Arrays.asList("public_profile","email"));
-                }
+                initializeFacebookLoginManager();
             }
         });
 
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    //Responsible to handle the permissions required for login into facebook.
+    private void initializeFacebookLoginManager() {
+        showProgressDialog();
+        if(AccessToken.getCurrentAccessToken() != null){
+            mLoginManager.logOut();
+        }else{
+            mLoginManager.setLoginBehavior(LoginBehavior.WEB_ONLY);
+            mLoginManager.logInWithReadPermissions(UserLoginFragment.this, Arrays.asList("public_profile","email"));
         }
     }
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
-
 
 
 
@@ -340,7 +311,7 @@ public class UserLoginFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         Log.d("ULF","On Detach has been called");
-        mListener = null;
+        // un-registering the listener before the fragment get's detached from the activity
         if (mAuthStateListener != null) {
             mAuth.removeAuthStateListener(mAuthStateListener);
         }
@@ -348,37 +319,40 @@ public class UserLoginFragment extends Fragment {
 
 
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode,resultCode,data);
+        mCallbackManager.onActivityResult(requestCode,resultCode,data);
+
+        //This handles the google sign in result
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
-        }else if( requestCode == RC_LOGIN_FRAGMENT){
+        }//Handles login fragment result of authentication status (Success or failure)
+        else if( requestCode == RC_LOGIN_FRAGMENT){
             boolean loginResult = data.getBooleanExtra(LoginFragment.LOGIN_RESULT,false);
+            //Display's snackbar only when authentication fails.
             if(!loginResult){
-                showSnackBar(Action.LOG_IN, Message.LOG_IN_FAIL);
+                sTryAgain = Login.Email;
+                showSnackBar(Message.AUTHENTICATION_FAILURE, Action.TRY_AGAIN);
+            }
+        }else if( requestCode == RC_RESET_DIALOG){
+            String email = data.getStringExtra(ResetDialogFragment.EMAIL_ADDRESS);
+            if(email!= null){
+                mAuth.sendPasswordResetEmail(email)
+                        .addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                showSnackBar(Message.RESET_MESSAGE, Action.DISMISS);
+                            }
+                        });
             }
         }
     }
 
 
+    //Handling the google authentication
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
         // [START_EXCLUDE silent]
@@ -397,9 +371,9 @@ public class UserLoginFragment extends Fragment {
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
+                            sTryAgain = Login.Google;
                             Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(getActivity(), "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            showSnackBar(Message.AUTHENTICATION_FAILURE, Action.TRY_AGAIN);
                         }
                         // [START_EXCLUDE]
                         hideProgressDialog();
@@ -408,22 +382,19 @@ public class UserLoginFragment extends Fragment {
                 });
     }
 
+    //handles the result for the google sign in result
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-            //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-           // updateUI(true);
             firebaseAuthWithGoogle(acct);
-
-            Log.d(TAG, "auth successful:");
         } else {
-            // Signed out, show unauthenticated UI.
-           // updateUI(false);
+
         }
     }
 
+    //Handles facebook auth token
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
@@ -432,45 +403,37 @@ public class UserLoginFragment extends Fragment {
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
-
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-
+                            sTryAgain = Login.Facebook;
                             LoginManager.getInstance().logOut();
                             Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(getActivity(), "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            showSnackBar(Message.AUTHENTICATION_FAILURE, Action.TRY_AGAIN);
 
                         }
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
                         hideProgressDialog();
-
-
-
                     }
                 });
     }
 
+
+    //Displays the progress dialog to the user when an operation is being handled in the background.
     public void showProgressDialog() {
-
         if (mProgressDialog == null && this.isAdded()) {
-
             mProgressDialog = new ProgressDialog(getActivity());
             mProgressDialog.setMessage(getString(R.string.loading));
             mProgressDialog.setIndeterminate(true);
         }
-
-
         if(mProgressDialog != null)
             mProgressDialog.show();
 
     }
 
+    //Hides the progress dialog when called.
     public void hideProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
@@ -506,27 +469,40 @@ public class UserLoginFragment extends Fragment {
         hideProgressDialog();
     }
 
+
+    //A convenient method to display appropriate text to the users.
     private void showSnackBar(final String msg, final String action){
         if(view != null){
             final Snackbar snackbar = Snackbar.make(mLoginFrameLayout, msg , Snackbar.LENGTH_INDEFINITE);
-                    snackbar.setAction(action, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Log.d(TAG,"you have clicked the snack bar" + action + " " + msg);
-                            showLoginFragment();
-                            switch (action){
-                                case Action.DISMISS: snackbar.dismiss();
+            snackbar.setActionTextColor(getResources().getColor(R.color.colorPrimary))
+                    .setAction(action , new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d(TAG,"you have clicked the snack bar" + action + " " + msg);
+                    switch (action){
+                        case Action.DISMISS: snackbar.dismiss();
+                            break;
+                        case Action.TRY_AGAIN:
+                            switch (sTryAgain){
+                                case Login.Facebook : initializeFacebookLoginManager();
                                                     break;
-                                case Action.TRY_AGAIN: break;
-                                case Action.LOG_IN: showLoginFragment();
+                                case Login.Email : showLoginFragment();
                                                     break;
-
+                                case Login.Google: signIn();
+                                                    break;
                             }
-                        }
-                    }).show();
+
+                            break;
+                        case Action.LOG_IN: showLoginFragment();
+                            break;
+                    }
+                }
+            }).show();
+
         }
 
     }
+
 
     private static class Action{
         public static final String TRY_AGAIN = "TRY AGAIN";
@@ -536,10 +512,26 @@ public class UserLoginFragment extends Fragment {
 
     private static class Message{
         public static final String TRY_AGAIN = "Something went wrong. Please try again";
-        public static final String NETWORK_ISSUE = "Not connected to internet. Please connect to network";
+        public static final String NETWORK_ISSUE = "Not connected to internet.";
         public static final String LOG_OUT = "Logout successful";
         public static final String LOG_IN_FAIL = "Please check username and password.";
+        public static final String AUTHENTICATION_FAILURE = "Authentication failure. Please try again";
+        public static final String RESET_MESSAGE = "Reset email has been sent";
+    }
 
+    private static class Login{
+        public static final String Facebook = "Facebook";
+        public static final String Google ="Google";
+        public static final String Email = "Email";
+    }
+
+    //method to check whether the network is connected or not.
+    private boolean isNetworkAvailableAndConnected(){
+        ConnectivityManager cm  = (ConnectivityManager) getActivity()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        boolean isNetworkAvailable = cm.getActiveNetworkInfo() != null;
+        return isNetworkAvailable && cm.getActiveNetworkInfo().isConnected();
     }
 
 }

@@ -90,20 +90,13 @@ public class LoginFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        alertDialog.setView(view);
-        AlertDialog loginDialog = alertDialog.create();
-
-        return loginDialog;
+        AlertDialog.Builder loginDialog = new AlertDialog.Builder(getActivity());
+        loginDialog.setView(view);
+        return loginDialog.create();
     }
 
-    public final static boolean isValidEmail(CharSequence target) {
-        if (target == null) {
-            return false;
-        } else {
-            return Patterns.EMAIL_ADDRESS.matcher(target).matches();
-        }
+    public static boolean isValidEmail(CharSequence target) {
+        return (target!=null && Patterns.EMAIL_ADDRESS.matcher(target).matches());
     }
 
     private void sendResult(int resultCode, boolean loginResult){

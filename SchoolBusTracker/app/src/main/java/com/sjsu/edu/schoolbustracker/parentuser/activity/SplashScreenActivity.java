@@ -117,18 +117,6 @@ public class SplashScreenActivity extends AppCompatActivity {
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                       // super.onAnimationEnd(animation);
-                        /*mSchoolBusLogo.animate()
-                                .alpha(0f)
-                                .setDuration(1000).setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                //super.onAnimationEnd(animation);
-                                mSchoolBusLogo.animate()
-                                        .alpha(1f)
-                                        .setDuration(1000);
-                            }
-                        });*/
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {

@@ -1,8 +1,10 @@
 package com.sjsu.edu.schoolbustracker.parentuser.activity;
 
 import android.app.ProgressDialog;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.UiThread;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,25 +17,41 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.helperclasses.QueryPreferences;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.PhotoPickerFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.StudentDetailFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
 
-public class UserRegistrationActivity extends AppCompatActivity {
+import java.util.UUID;
+
+public class UserRegistrationActivity extends AppCompatActivity implements View.OnClickListener,
+        PhotoPickerFragment.OnPhotoPickerPathListener{
 
 
+    private static final int REQUEST_PHOTO = 4561;
+    private static final String PHOTO_PICKER_TAG = "PhotoPicker" ;
     private AppCompatEditText userName, userEmail, userPassword, userPhoneNo;
     private AppCompatButton back, done ,sign_in;
     private ConstraintLayout mCl;
+    private ImageView mProfileImageView, mCameraImageView;
+    private Uri mParentPhotoUri;
 
     //FireBase
     private FirebaseAuth mAuth;
@@ -61,9 +79,13 @@ public class UserRegistrationActivity extends AppCompatActivity {
         userEmail = (AppCompatEditText) findViewById(R.id.reg_user_email_et);
         userPassword = (AppCompatEditText) findViewById(R.id.reg_user_pass_et);
         userPhoneNo = (AppCompatEditText) findViewById(R.id.reg_user_phone_no_et);
-        back = (AppCompatButton) findViewById(R.id.cancel_button);
+        back = (AppCompatButton) findViewById(R.id.back_button);
         done = (AppCompatButton) findViewById(R.id.done_button);
         sign_in = (AppCompatButton) findViewById(R.id.sign_in_btn);
+        mProfileImageView = (ImageView) findViewById(R.id.user_profile_image_view) ;
+        mCameraImageView = (ImageView) findViewById(R.id.camera_image_view);
+
+       mProfileImageView.setOnClickListener(this);
 
         done.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,20 +113,36 @@ public class UserRegistrationActivity extends AppCompatActivity {
                 //Getting the current user after successful sign up
                 user = firebaseAuth.getCurrentUser();
                 if(user!=null) {
-                    updateUI(mCl);
-                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                            .setDisplayName(userName.getText().toString())
-                            .setPhotoUri(null)
-                            .build();
-                    user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                    //wrong place to upload the photo
+                    StorageReference parentStorageRef = FirebaseUtil
+                            .getParentUsersPhotoRef(mParentPhotoUri.getLastPathSegment());
+                    parentStorageRef.putFile(mParentPhotoUri)
+                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                Log.d(TAG,"update profile calling");
-                                updateProfile(mCl);
-                            }
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            mParentPhotoUri =  taskSnapshot.getDownloadUrl();
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(userName.getText().toString())
+                                    .setPhotoUri(mParentPhotoUri == null ? null : mParentPhotoUri)
+                                    .build();
+                            user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Log.d(TAG,"update profile calling");
+                                        updateProfile(mCl);
+                                    }
+                                }
+                            });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e(TAG,"failure to upload photo " , e);
                         }
                     });
+
 
                 }
             }
@@ -158,7 +196,9 @@ public class UserRegistrationActivity extends AppCompatActivity {
         String user_phone = String.valueOf(userPhoneNo.getText());
         newParent = new ParentUsers();
         newParent.setPhone(user_phone);
-
+        if(mParentPhotoUri!= null){
+            newParent.setPhotoUri(mParentPhotoUri.toString());
+        }
         mAuth.createUserWithEmailAndPassword(user_email,user_password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -202,8 +242,10 @@ public class UserRegistrationActivity extends AppCompatActivity {
         newParent.setUUID(user.getUid());
         newParent.setName(user.getDisplayName());
         newParent.setEmailId(user.getEmail());
-        if(user.getPhotoUrl() != null)
-            newParent.setPhotoUri(user.getPhotoUrl().toString());
+        if(mParentPhotoUri != null)
+            newParent.setPhotoUri(mParentPhotoUri.toString());
+        /*if(user.getPhotoUrl() != null)
+            newParent.setPhotoUri(user.getPhotoUrl().toString());*/
         FirebaseUtil.setUpInitialProfile(UserRegistrationActivity.this, newParent);
       //  QueryPreferences.setSignUpPref(UserRegistrationActivity.this,true);
         mProgressDialog.hide();
@@ -218,21 +260,12 @@ public class UserRegistrationActivity extends AppCompatActivity {
             }
         });
         snackbar.show();
-       // updateUI();
+        updateUI();
     }
 
 
     //This method will be called after successful sign up
-    private void updateUI(View view){
-
-        userName = (AppCompatEditText) view.findViewById(R.id.reg_user_name_et);
-        userEmail = (AppCompatEditText) view.findViewById(R.id.reg_user_email_et);
-        userPassword = (AppCompatEditText) view.findViewById(R.id.reg_user_pass_et);
-        userPhoneNo = (AppCompatEditText) view.findViewById(R.id.reg_user_phone_no_et);
-        back = (AppCompatButton) view.findViewById(R.id.back_button);
-        done = (AppCompatButton) view.findViewById(R.id.fb_login_btn);
-        sign_in = (AppCompatButton) view.findViewById(R.id.sign_in_btn);
-
+    private void updateUI(){
 
         userName.setEnabled(false);
         userEmail.setEnabled(false);
@@ -250,6 +283,23 @@ public class UserRegistrationActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    @Override
+    public void onClick(View view) {
+        int itemId = view.getId();
+        switch(itemId){
+            case R.id.user_profile_image_view:
+            case R.id.camera_image_view:
+                PhotoPickerFragment photoPickerFragment = PhotoPickerFragment.newInstance();
+                photoPickerFragment.show(getSupportFragmentManager(),PHOTO_PICKER_TAG);
+        }
+    }
+
+    @Override
+    public void setCurrentPhotoPath(Uri photoPath) {
+        mParentPhotoUri = photoPath;
+        mProfileImageView.setImageURI(photoPath);
     }
 }
 

@@ -1,27 +1,28 @@
 package com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v4.net.ConnectivityManagerCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.sjsu.edu.schoolbustracker.R;
@@ -46,8 +47,14 @@ public class PhotoPickerFragment extends DialogFragment {
     private Uri mCurrentPhotoPath=null;
 
     private final String TAG="PhotoPickerFragment";
+
+    private OnPhotoPickerPathListener mListener;
     public PhotoPickerFragment() {
         // Required empty public constructor
+    }
+
+    public interface OnPhotoPickerPathListener {
+        void setCurrentPhotoPath(Uri photoPath);
     }
 
     public static PhotoPickerFragment newInstance(){
@@ -72,14 +79,14 @@ public class PhotoPickerFragment extends DialogFragment {
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 startActivityForResult(intent, IMG_RESULT);
             }
         });
         mCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dispatchTakePictureIntent();
+                    dispatchTakePictureIntent();
             }
         });
         mCancelButton.setOnClickListener(new View.OnClickListener() {
@@ -94,6 +101,7 @@ public class PhotoPickerFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 if(mCurrentPhotoPath!=null){
+                    mListener.setCurrentPhotoPath(mCurrentPhotoPath);
                     sendData(Activity.RESULT_OK);
                     dismiss();
                 }
@@ -104,6 +112,7 @@ public class PhotoPickerFragment extends DialogFragment {
         alertDialog.setView(v);
         return alertDialog.create();
     }
+
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -116,6 +125,7 @@ public class PhotoPickerFragment extends DialogFragment {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
+
                 Uri photoURI = FileProvider.getUriForFile(getActivity(),
                         "com.sjsu.edu.schoolbustracker.fileprovider",
                         photoFile);
@@ -132,10 +142,12 @@ public class PhotoPickerFragment extends DialogFragment {
             mPickerLayout.setVisibility(View.GONE);
             mConfirmationLayout.setVisibility(View.VISIBLE);
             mCircleImageView.setImageURI(mCurrentPhotoPath);
+            //mListener.setCurrentPhotoPath(mCurrentPhotoPath);
         }
         else if(requestCode == IMG_RESULT && resultCode == Activity.RESULT_OK){
             Uri selectedImageUri = data.getData();
             mCurrentPhotoPath = selectedImageUri;
+            getActivity().grantUriPermission("com.sjsu.edu.schoolbustracker.fileprovider",mCurrentPhotoPath, Intent.FLAG_GRANT_READ_URI_PERMISSION);
             Log.d(TAG,"From Gallery "+mCurrentPhotoPath);
             Log.d(TAG,"From Gallery "+selectedImageUri.getPath());
             mPickerLayout.setVisibility(View.GONE);
@@ -170,4 +182,20 @@ public class PhotoPickerFragment extends DialogFragment {
                 .onActivityResult(getTargetRequestCode(), resultCode, i);
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if( context instanceof OnPhotoPickerPathListener){
+            mListener = (OnPhotoPickerPathListener) context;
+        }else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnPhotoPickerPathListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 }

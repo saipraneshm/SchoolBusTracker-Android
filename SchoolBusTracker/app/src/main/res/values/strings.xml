@@ -89,6 +89,12 @@
     <string name="click_here"><u>Click Here!</u></string>
     <string name="tag_line">Getting kids to bus on time</string>
     <string name="signin_please_wait">Signing you in. Please wait...</string>
+    <string name="please_try_again_msg">Something went wrong please try again</string>
+    <string name="ntw_issue_msg">Not connected to internet. Please connect to network</string>
+    <string name="log_in_fail_msg">Please check username and password.</string>
+    <string name="log_out_successful">Logout successful</string>
+    <string name="reset_password">Reset password</string>
+    <string name="send_email">Send email</string>
 
 
 </resources>

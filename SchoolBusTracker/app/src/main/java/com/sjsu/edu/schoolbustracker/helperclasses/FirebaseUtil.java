@@ -103,6 +103,13 @@ public class FirebaseUtil {
         return null;
     }
 
+    public static StorageReference getParentUsersPhotoRef(String fileName){
+        if(fileName != null){
+            return getBaseStorageReference().child(PARENT_USER).child(fileName);
+        }
+        return null;
+    }
+
 
     public static void setUpInitialProfile(final Context context , final Profile user){
 
