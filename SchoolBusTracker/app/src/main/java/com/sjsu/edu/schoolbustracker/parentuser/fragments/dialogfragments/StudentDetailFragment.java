@@ -51,7 +51,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class StudentDetailFragment extends DialogFragment {
 
-    private TextInputEditText mStudentName,mStudentId,mSchoolName,mSchoolAddress;
+    private TextInputEditText mStudentName,mStudentId,mSchoolName,mSchoolAddress,mRouteNumber;
     private AppCompatButton mSaveButton;
     private CircleImageView mStudentPicture;
     private DatabaseReference mStudentReference;
@@ -65,11 +65,10 @@ public class StudentDetailFragment extends DialogFragment {
     private ProgressDialog progressDialog;
     private Boolean isPhotoUpdated=false;
     private FrameLayout mFrameLayout;
-    private AppCompatSpinner mSchoolSpinner,mRouteSpinner;
+    private AppCompatSpinner mSchoolSpinner;
     private Map<String,School> schoolMap;
-    private ArrayList<String> schools,routeNumbers;
-    private ArrayList<String> schoolIds,routeIds;
-    private Map<String,String> routeMap;
+    private ArrayList<String> schools;
+    private ArrayList<String> schoolIds;
 
     public static StudentDetailFragment newInstance(String studentId){
         StudentDetailFragment studentDetailFragment = new StudentDetailFragment();
@@ -102,27 +101,13 @@ public class StudentDetailFragment extends DialogFragment {
         mSchoolAddress = (TextInputEditText) v.findViewById(R.id.school_address);
         mStudentPicture = (CircleImageView) v.findViewById(R.id.student_picture);
         mFrameLayout = (FrameLayout) v.findViewById(R.id.student_picture_frame);
-        mRouteSpinner = (AppCompatSpinner) v.findViewById(R.id.route_spinner);
         mSchoolSpinner = (AppCompatSpinner) v.findViewById(R.id.school_spinner);
+        mRouteNumber = (TextInputEditText) v.findViewById(R.id.route_number_edittext);
         mSchoolSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 mSchoolName.setText(schoolMap.get(schoolIds.get(i)).getSchoolName());
                 mSchoolAddress.setText(schoolMap.get(schoolIds.get(i)).getSchoolAddress());
-                routeMap = schoolMap.get(schoolIds.get(i)).getRegisteredRoutes();
-                routeIds = new ArrayList<>();
-                routeNumbers = new ArrayList<>();
-                if(routeMap!=null){
-                    for(String key:routeMap.keySet()){
-                        routeIds.add(key);
-                        routeNumbers.add(routeMap.get(key));
-                    }
-                }
-                ArrayAdapter<String> routeArrayAdapter = new ArrayAdapter<>(getActivity(),
-                        android.R.layout.simple_spinner_dropdown_item,routeNumbers);
-                mRouteSpinner.setAdapter(routeArrayAdapter);
-                mRouteSpinner.setSelection(routeIds.indexOf(student.getRouteId()));
-
             }
 
             @Override
@@ -195,6 +180,7 @@ public class StudentDetailFragment extends DialogFragment {
                 else{
                     String studentUUID = UUID.randomUUID().toString();
                     mStudentId.setText(studentUUID);
+                    mRouteNumber.setVisibility(View.GONE);
                 }
             }
 
@@ -218,8 +204,6 @@ public class StudentDetailFragment extends DialogFragment {
         newStudent.setStudentName(mStudentName.getText().toString());
         newStudent.setStudentUUID(mStudentId.getText().toString());
         newStudent.setSchoolId(schoolMap.get(schoolIds.get(mSchoolSpinner.getSelectedItemPosition())).getSchoolId());
-        newStudent.setRouteId(routeIds.get(mRouteSpinner.getSelectedItemPosition()));
-        newStudent.setRouteNumber(routeNumbers.get(mRouteSpinner.getSelectedItemPosition()));
         if(mPhotoFilePath!=null){
             Uri file = mPhotoFilePath;
             StorageReference photoRef = FirebaseUtil.getStudentPhotoRef(file.getLastPathSegment());
@@ -270,8 +254,6 @@ public class StudentDetailFragment extends DialogFragment {
         updateStudent.setSchoolName(mSchoolName.getText().toString());
         updateStudent.setStudentName(mStudentName.getText().toString());
         updateStudent.setStudentUUID(mStudentId.getText().toString());
-        updateStudent.setRouteId(routeIds.get(mRouteSpinner.getSelectedItemPosition()));
-        updateStudent.setRouteNumber(routeNumbers.get(mRouteSpinner.getSelectedItemPosition()));
         Log.d(TAG,"before set old school-->"+student.getSchoolId());
         Log.d(TAG,"before set new school-->"+updateStudent.getSchoolId());
         final String oldSchoolId = updateStudent.getSchoolId();
@@ -335,7 +317,7 @@ public class StudentDetailFragment extends DialogFragment {
                 //Set School details and Student picture using Glide.
                 mSchoolAddress.setText(student.getSchoolAddress());
                 mSchoolName.setText(student.getSchoolName());
-
+                mRouteNumber.setText(student.getRouteNumber() == null ? getString(R.string.route_ask_school):student.getRouteNumber());
                 if(student.getStudentPicName()!=null){
                     StorageReference photoReference = FirebaseUtil.getStudentPhotoRef(student.getStudentPicName());
                     Glide.with(getActivity() /* context */)
