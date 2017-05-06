@@ -3,11 +3,15 @@ package com.sjsu.edu.schoolbustracker.parentuser.fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +26,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
+import com.sjsu.edu.schoolbustracker.parentuser.adapter.StudentFirebaseRecyclerAdapter;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.StudentDetailFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
+import com.sjsu.edu.schoolbustracker.parentuser.model.School;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Student;
 import com.sjsu.edu.schoolbustracker.parentuser.model.TransportCoordinator;
 
@@ -39,9 +47,11 @@ public class ContactCardFragment extends Fragment {
     private AppCompatButton driver_call,driver_msg,school_call,school_msg;
     private AppCompatTextView driver_name,driver_phone,school_coordinator_name,school_coordinator_phone;
     private Toolbar mToolbar;
-    private AppCompatSpinner mSchoolSelectorSpinner;
-    private ArrayList<String> schoolIds,schoolNames;
+    private StudentFirebaseRecyclerAdapter mAdapter;
     private final String TAG = "ContactCardFragment";
+    private DatabaseReference mStudentRef;
+    private RecyclerView mChildImageLayout;
+    private ConstraintLayout mConstraintLayout;
 
     public ContactCardFragment() {
         // Required empty public constructor
@@ -75,20 +85,23 @@ public class ContactCardFragment extends Fragment {
         school_coordinator_name = (AppCompatTextView) view.findViewById(R.id.school_coordinator_name);
         school_coordinator_phone = (AppCompatTextView) view.findViewById(R.id.school_coordinator_phnumber);
 
-        mSchoolSelectorSpinner = (AppCompatSpinner) view.findViewById(R.id.school_contact_selector);
-        mSchoolSelectorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mConstraintLayout = (ConstraintLayout) view.findViewById(R.id.contacts_constraint_layout); 
+
+        mChildImageLayout = (RecyclerView) view.findViewById(R.id.student_list_view_contact);
+        mStudentRef = FirebaseUtil.getStudentsRef();
+        mChildImageLayout.setLayoutManager(new LinearLayoutManager(getActivity(),
+                LinearLayoutManager.HORIZONTAL,false));
+        mAdapter = new StudentFirebaseRecyclerAdapter(mStudentRef,getActivity(),true);
+        mAdapter.setOnItemClickListener(new StudentFirebaseRecyclerAdapter.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-                fetchDataForSelectedSchool(schoolIds.get(i));
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+            public void onItemClick(String studentId) {
+                mConstraintLayout.setVisibility(View.VISIBLE);
+                fetchContactDetails(studentId);
 
             }
         });
+
+        mChildImageLayout.setAdapter(mAdapter);
 
         //SET phone and name values from firebase
 
@@ -133,18 +146,19 @@ public class ContactCardFragment extends Fragment {
         });
 
 
-        populateSpinnerFromFireBase();
         return view;
     }
 
-    private void fetchDataForSelectedSchool(String s) {
-        DatabaseReference transportCoordinatorRef = FirebaseUtil.getTransportCoordinator(s);
-        transportCoordinatorRef.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void fetchContactDetails(String studentId) {
+        DatabaseReference studentDetailRef = FirebaseUtil.getStudentsRef().child(studentId);
+        studentDetailRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                TransportCoordinator transportCoordinator = dataSnapshot.getValue(TransportCoordinator.class);
-                school_coordinator_name.setText(transportCoordinator.getCoordinatorName());
-                school_coordinator_phone.setText(transportCoordinator.getCoordinatorPhone());
+                Student student = dataSnapshot.getValue(Student.class);
+                String schoolId = student.getSchoolId();
+                fetchSchoolCoordinator(schoolId);
+                String routeId = student.getRouteId();
+                fetchRouteDetails(routeId);
             }
 
             @Override
@@ -152,34 +166,21 @@ public class ContactCardFragment extends Fragment {
 
             }
         });
-
+        
     }
 
-    private void populateSpinnerFromFireBase() {
+    private void fetchRouteDetails(String routeId) {
+    }
 
-        Log.d(TAG,"/*** Fetching Applicable Schools ***/");
-        DatabaseReference studentsRef = FirebaseUtil.getStudentsRef();
-        final Map<String,String> schoolsMap = new HashMap<>();
-        studentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void fetchSchoolCoordinator(String schoolId) {
+        DatabaseReference schoolDetailsRef = FirebaseUtil.getSchoolRef(schoolId);
+        schoolDetailsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot studentSnapshot:dataSnapshot.getChildren()){
-                    Student student = studentSnapshot.getValue(Student.class);
-                    Log.d(TAG,student.getSchoolId());
-                    schoolsMap.put(student.getSchoolId(),student.getSchoolName());
-                }
-
-                Log.d(TAG,"/*** Setting Spinner Up ***/");
-                schoolIds = new ArrayList<>();
-                schoolNames = new ArrayList<>();
-
-                for(String key:schoolsMap.keySet()){
-                    schoolIds.add(key);
-                    schoolNames.add(schoolsMap.get(key));
-                }
-                Log.d(TAG,schoolNames.toString());
-                ArrayAdapter<String> schoolArrayAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item,schoolNames);
-                mSchoolSelectorSpinner.setAdapter(schoolArrayAdapter);
+                School school = dataSnapshot.getValue(School.class);
+                school_coordinator_name.setText(school.getTransportCoordinator()
+                        .getCoordinatorName());
+                school_coordinator_phone.setText(school.getTransportCoordinator().getCoordinatorPhone());
             }
 
             @Override
@@ -188,6 +189,5 @@ public class ContactCardFragment extends Fragment {
             }
         });
     }
-
 
 }

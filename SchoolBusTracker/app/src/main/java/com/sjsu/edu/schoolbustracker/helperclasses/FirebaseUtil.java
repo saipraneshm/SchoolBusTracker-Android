@@ -76,6 +76,10 @@ public class FirebaseUtil {
         return getBaseRef().child(PROFILE).child(PARENT_USER).getRef();
     }
 
+    public static DatabaseReference getCurrentParentUserRef(){
+        return getBaseRef().child(PROFILE).child(PARENT_USER).child(getCurrentUserId()).getRef();
+    }
+
     //Fetches the current user's previous trip ref
     public static DatabaseReference getExisitingPreviousTripsRef(){
         String userId = getCurrentUserId();

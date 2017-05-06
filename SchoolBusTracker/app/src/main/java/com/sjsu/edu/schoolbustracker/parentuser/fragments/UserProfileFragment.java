@@ -213,7 +213,7 @@ public class UserProfileFragment extends Fragment {
 
         mChildImageLayout.setLayoutManager(new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.HORIZONTAL,false));
-        mAdapter = new StudentFirebaseRecyclerAdapter(mStudentReference,getActivity());
+        mAdapter = new StudentFirebaseRecyclerAdapter(mStudentReference,getActivity(),false);
         mAdapter.setOnItemClickListener(new StudentFirebaseRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(String studentId) {
