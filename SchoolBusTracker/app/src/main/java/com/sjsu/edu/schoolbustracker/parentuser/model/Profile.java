@@ -12,6 +12,16 @@ public class Profile {
     private String mUUID;
     private String mEmailId;
 
+    public String getPhone() {
+        return mPhone;
+    }
+
+    public void setPhone(String phone) {
+        mPhone = phone;
+    }
+
+    private String mPhone;
+
     public String getPhotoUri() {
         return mPhotoUri;
     }

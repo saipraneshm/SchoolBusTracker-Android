@@ -10,6 +10,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -28,7 +29,9 @@ import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.adapter.StudentFirebaseRecyclerAdapter;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.StudentDetailFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.model.Driver;
 import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
+import com.sjsu.edu.schoolbustracker.parentuser.model.Route;
 import com.sjsu.edu.schoolbustracker.parentuser.model.School;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Student;
 import com.sjsu.edu.schoolbustracker.parentuser.model.TransportCoordinator;
@@ -52,6 +55,7 @@ public class ContactCardFragment extends Fragment {
     private DatabaseReference mStudentRef;
     private RecyclerView mChildImageLayout;
     private ConstraintLayout mConstraintLayout;
+    private CardView mDriverCardView,mSchoolCoordinatorCardView;
 
     public ContactCardFragment() {
         // Required empty public constructor
@@ -85,7 +89,9 @@ public class ContactCardFragment extends Fragment {
         school_coordinator_name = (AppCompatTextView) view.findViewById(R.id.school_coordinator_name);
         school_coordinator_phone = (AppCompatTextView) view.findViewById(R.id.school_coordinator_phnumber);
 
-        mConstraintLayout = (ConstraintLayout) view.findViewById(R.id.contacts_constraint_layout); 
+        mConstraintLayout = (ConstraintLayout) view.findViewById(R.id.contacts_constraint_layout);
+        mDriverCardView = (CardView) view.findViewById(R.id.driver_contact);
+        mSchoolCoordinatorCardView =(CardView) view.findViewById(R.id.school_contact);
 
         mChildImageLayout = (RecyclerView) view.findViewById(R.id.student_list_view_contact);
         mStudentRef = FirebaseUtil.getStudentsRef();
@@ -156,9 +162,16 @@ public class ContactCardFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Student student = dataSnapshot.getValue(Student.class);
                 String schoolId = student.getSchoolId();
-                fetchSchoolCoordinator(schoolId);
+                if (schoolId!=null)
+                    fetchSchoolCoordinator(schoolId);
                 String routeId = student.getRouteId();
-                fetchRouteDetails(routeId);
+                if(routeId!=null)
+                    fetchRouteDetails(routeId);
+                else{
+                    Log.d(TAG,"Route id is NULL");
+                    mDriverCardView.setVisibility(View.GONE);
+                }
+
             }
 
             @Override
@@ -170,6 +183,42 @@ public class ContactCardFragment extends Fragment {
     }
 
     private void fetchRouteDetails(String routeId) {
+        DatabaseReference routeRef =FirebaseUtil.getRouteRef(routeId);
+        routeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Route routeDetails = dataSnapshot.getValue(Route.class);
+                if(routeDetails.getDriverId()!=null)
+                    fetchRouteDriver(routeDetails.getDriverId());
+                else{
+                    Log.d(TAG,"Route id is NULL");
+                    mDriverCardView.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void fetchRouteDriver(String driverId) {
+        DatabaseReference driverDetails = FirebaseUtil.getDriverDetailRef(driverId);
+        driverDetails.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Driver driverDetails = dataSnapshot.getValue(Driver.class);
+                mDriverCardView.setVisibility(View.VISIBLE);
+                driver_name.setText(driverDetails.getName());
+                driver_phone.setText(driverDetails.getPhone());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void fetchSchoolCoordinator(String schoolId) {
