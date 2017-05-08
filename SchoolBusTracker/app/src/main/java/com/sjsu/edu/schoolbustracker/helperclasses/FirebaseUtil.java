@@ -33,6 +33,7 @@ public class FirebaseUtil {
     private static final String APP_SETTINGS = "AppSettings";
     private static final String SCHOOLS = "Schools";
     private static final String TRANSPORT_COORDINATOR = "transportCoordinator";
+    private static final String BUS_TRACKING = "BusTracking";
 
     private static DatabaseReference mDatabase;
     private static DatabaseReference mCheckUserTypeRef;
@@ -229,7 +230,20 @@ public class FirebaseUtil {
 
             }
         });
+
     }
 
+    public static DatabaseReference getBusTrackingRef(){
+        return getBaseRef().child(BUS_TRACKING).getRef();
+    }
 
+    //Comment it out later
+    public static DatabaseReference getBusTrackingDummyRef(){
+        return getBusTrackingRef()
+                .child("ADFF12")
+                .child("Trips")
+                .child("03-31-2017")
+                .child("1")
+                .child("Coordinates");
+    }
 }
