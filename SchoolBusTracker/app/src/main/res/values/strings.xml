@@ -97,6 +97,7 @@
     <string name="reset_password">Reset password</string>
     <string name="send_email">Send email</string>
     <string name="route_ask_school">Please ask school to assign route number.</string>
+    <string name="select_child">Please select a Child for displaying contact information</string>
 
 
 </resources>

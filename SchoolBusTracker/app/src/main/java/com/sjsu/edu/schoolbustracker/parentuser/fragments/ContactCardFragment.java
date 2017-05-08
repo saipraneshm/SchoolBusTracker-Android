@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -54,8 +55,8 @@ public class ContactCardFragment extends Fragment {
     private final String TAG = "ContactCardFragment";
     private DatabaseReference mStudentRef;
     private RecyclerView mChildImageLayout;
-    private ConstraintLayout mConstraintLayout;
     private CardView mDriverCardView,mSchoolCoordinatorCardView;
+    private LinearLayout mHintLinearLayout;
 
     public ContactCardFragment() {
         // Required empty public constructor
@@ -89,9 +90,9 @@ public class ContactCardFragment extends Fragment {
         school_coordinator_name = (AppCompatTextView) view.findViewById(R.id.school_coordinator_name);
         school_coordinator_phone = (AppCompatTextView) view.findViewById(R.id.school_coordinator_phnumber);
 
-        mConstraintLayout = (ConstraintLayout) view.findViewById(R.id.contacts_constraint_layout);
         mDriverCardView = (CardView) view.findViewById(R.id.driver_contact);
         mSchoolCoordinatorCardView =(CardView) view.findViewById(R.id.school_contact);
+        mHintLinearLayout = (LinearLayout) view.findViewById(R.id.select_child_view);
 
         mChildImageLayout = (RecyclerView) view.findViewById(R.id.student_list_view_contact);
         mStudentRef = FirebaseUtil.getStudentsRef();
@@ -101,7 +102,9 @@ public class ContactCardFragment extends Fragment {
         mAdapter.setOnItemClickListener(new StudentFirebaseRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(String studentId) {
-                mConstraintLayout.setVisibility(View.VISIBLE);
+                mDriverCardView.setVisibility(View.VISIBLE);
+                mSchoolCoordinatorCardView.setVisibility(View.VISIBLE);
+                mHintLinearLayout.setVisibility(View.GONE);
                 fetchContactDetails(studentId);
 
             }
