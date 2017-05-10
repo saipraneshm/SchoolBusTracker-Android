@@ -1,8 +1,6 @@
 package com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments;
 
 
-import android.Manifest;
-import android.animation.TypeEvaluator;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -24,6 +22,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -34,6 +33,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.helperclasses.LatLngInterpolator;
@@ -48,7 +48,8 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
 
 
     private static final String TAG = RealTimeMapFragment.class.getSimpleName();
-    DatabaseReference mCurrentBusTrackingDetails;
+    DatabaseReference mCurrentBusTrackingDetailsRef;
+    ChildEventListener mChildEventListener;
 
     //Map related initializations
     private GoogleMap mGoogleMap;
@@ -56,6 +57,7 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
     private CameraPosition mCameraPosition;
     private PolylineOptions mPolylineOptions;
     private Marker mMarker;
+
 
     //Entry point to Google Play services, used by Fused Location Provider.
     private GoogleApiClient mGoogleApiClient;
@@ -66,6 +68,7 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
     private boolean isFirstTimeLoad = false;
+    private int previousKey = 0;
 
     //last known location retrieved using Fused location API
     private Location mLastLocation;
@@ -80,51 +83,26 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "connecting to Google API client ");
-      //  QueryPreferences.setFirstTimePref(getActivity(),true);
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
         mGoogleApiClient.connect();
-        mCurrentBusTrackingDetails = FirebaseUtil.getBusTrackingDummyRef();
-        mCurrentBusTrackingDetails.addChildEventListener(new ChildEventListener() {
+        mCurrentBusTrackingDetailsRef = FirebaseUtil.getBusTrackingDummyRef();
+        Query myRecentCoordinate = mCurrentBusTrackingDetailsRef.orderByKey().limitToLast(1);
+        myRecentCoordinate.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Coordinates coordinates = dataSnapshot.getValue(Coordinates.class);
-              //  isFirstTimeLoad = QueryPreferences.getFirstTimePref(getActivity());
-                if (coordinates != null) {
-                    Log.d(TAG, coordinates.getLat() + ": latitude added");
-                    Log.d(TAG, coordinates.getLng() + ": longitude added");
-                    mLatLng = new LatLng(coordinates.getLat(), coordinates.getLng());
-                    if (mGoogleMap != null) {
-                        Log.d(TAG, "adding marker");
-                        //Marker marker = mGoogleMap.addMarker(new MarkerOptions().position(mLatLng));
-                        //LatLngInterpolator latLngInterpolator = new LatLngInterpolator.Spherical();
-                        //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(mLatLng));
-                        //mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 10));
-                        //MarkerAnimation.animateMarkerToICS(marker, mLatLng, latLngInterpolator);
-
-                        updatePolyline();
-                        //updateCamera();
-                        updateMarker();
-                    }
-                }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "single value event listener " + dataSnapshot.getValue());
+                /*Coordinates coordinates = dataSnapshot.getValue(Coordinates.class);
+                String value = dataSnapshot.getValue().toString();
+                int equalIndex = value.indexOf("=");
+                String keyValue = value.substring(1,equalIndex);
+                Log.d(TAG,"The last element in the list is " + coordinates.getLat()
+                        + " " + coordinates.getLng() + " " + dataSnapshot.getKey() + " " +
+                        dataSnapshot.getValue() + " " + keyValue);
+               previousKey = Integer.parseInt(keyValue);*/
             }
 
             @Override
@@ -132,7 +110,16 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
 
             }
         });
+
     }
+
+/*    public int getPreviousKey() {
+        return previousKey;
+    }
+
+    public void setPreviousKey(int previousKey) {
+        this.previousKey = previousKey;
+    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -150,6 +137,7 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
+        Log.d(TAG,"Map Ready");
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
 
@@ -160,9 +148,21 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.d(TAG, "connected to google api client");
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.real_time_map);
-        mapFragment.getMapAsync(this);
+        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true;
+            Log.d(TAG,"Permission Already Granted");
+            SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+                    .findFragmentById(R.id.real_time_map);
+            mapFragment.getMapAsync(this);
+        } else {
+            Log.d(TAG,"Requesting Permissions");
+            /*ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);*/
+            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
         /*if (ActivityCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getActivity(),
@@ -203,6 +203,7 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
+        Log.d(TAG,"In On RequestPermission");
         mLocationPermissionGranted = false;
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
@@ -210,10 +211,15 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionGranted = true;
+                    Log.d(TAG,"Permission Granted");
+                    SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+                            .findFragmentById(R.id.real_time_map);
+                    mapFragment.getMapAsync(this);
                 }
             }
         }
         updateLocationUI();
+
     }
 
 
@@ -250,6 +256,57 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
             mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
             mLastLocation = null;
         }
+
+        mChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+               Log.d(TAG, dataSnapshot.getValue() + " " +  " child event listener " + dataSnapshot.getKey());
+
+                Coordinates coordinates = dataSnapshot.getValue(Coordinates.class);
+                //  isFirstTimeLoad = QueryPreferences.getFirstTimePref(getActivity());
+                //&& previousKey > 0 && previousKey < Integer.parseInt(dataSnapshot.getKey())
+                if (coordinates != null ) {
+
+                    Log.d(TAG, coordinates.getLat() + ": latitude added");
+                    Log.d(TAG, coordinates.getLng() + ": longitude added");
+                    mLatLng = new LatLng(coordinates.getLat(), coordinates.getLng());
+                    if (mGoogleMap != null) {
+                        Log.d(TAG, "adding marker");
+                        //Marker marker = mGoogleMap.addMarker(new MarkerOptions().position(mLatLng));
+                        //LatLngInterpolator latLngInterpolator = new LatLngInterpolator.Spherical();
+                        //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(mLatLng));
+                        //mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 10));
+                        //MarkerAnimation.animateMarkerToICS(marker, mLatLng, latLngInterpolator);
+
+                        updatePolyline();
+                        //updateCamera();
+                        updateMarker();
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        mCurrentBusTrackingDetailsRef.addChildEventListener(mChildEventListener);
+
     }
 
     /**
@@ -296,7 +353,8 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
 
     private void updatePolyline(){
       //mGoogleMap.clear();
-        mGoogleMap.addPolyline(mPolylineOptions.add(mLatLng));
+        if(mPolylineOptions != null)
+            mGoogleMap.addPolyline(mPolylineOptions.add(mLatLng));
     }
 
     private void updateCamera(){
@@ -305,8 +363,11 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
 
     private void updateMarker(){
         if(mMarker == null){
-            mMarker = mGoogleMap.addMarker(new MarkerOptions().position(mLatLng));
-         //   MarkerAnimation.animateMarkerToGB(mMarker, mLatLng, new LatLngInterpolator.LinearFixed());
+                mMarker = mGoogleMap.addMarker(new MarkerOptions()
+                    .position(mLatLng)
+                    .icon(BitmapDescriptorFactory.fromAsset("images/school-bus _128.png"))
+                    .flat(false)
+                    .anchor(0.5f,0.5f));
         }
 
         Log.d(TAG, mMarker.getPosition() + " sending to animator");
@@ -323,6 +384,8 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
         if(mGoogleApiClient != null)
             mGoogleApiClient.disconnect();
         super.onStop();
+        if(mCurrentBusTrackingDetailsRef != null && mChildEventListener != null)
+            mCurrentBusTrackingDetailsRef.removeEventListener(mChildEventListener);
      //   QueryPreferences.setFirstTimePref(getActivity(), false);
     }
 

@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sjsu.edu.schoolbustracker.R;
+import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -98,7 +99,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        ActivityHelper.initialize(this);
         setContentView(R.layout.activity_fullscreen);
 
         hide();
