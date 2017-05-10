@@ -3,11 +3,16 @@ package com.sjsu.edu.schoolbustracker.parentuser.fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,6 +28,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
+import com.sjsu.edu.schoolbustracker.parentuser.adapter.StudentFirebaseRecyclerAdapter;
+import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.StudentDetailFragment;
+import com.sjsu.edu.schoolbustracker.parentuser.model.Driver;
+import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
+import com.sjsu.edu.schoolbustracker.parentuser.model.Route;
+import com.sjsu.edu.schoolbustracker.parentuser.model.School;
 import com.sjsu.edu.schoolbustracker.parentuser.model.Student;
 import com.sjsu.edu.schoolbustracker.parentuser.model.TransportCoordinator;
 
@@ -39,9 +51,12 @@ public class ContactCardFragment extends Fragment {
     private AppCompatButton driver_call,driver_msg,school_call,school_msg;
     private AppCompatTextView driver_name,driver_phone,school_coordinator_name,school_coordinator_phone;
     private Toolbar mToolbar;
-    private AppCompatSpinner mSchoolSelectorSpinner;
-    private ArrayList<String> schoolIds,schoolNames;
+    private StudentFirebaseRecyclerAdapter mAdapter;
     private final String TAG = "ContactCardFragment";
+    private DatabaseReference mStudentRef;
+    private RecyclerView mChildImageLayout;
+    private CardView mDriverCardView,mSchoolCoordinatorCardView;
+    private LinearLayout mHintLinearLayout;
 
     public ContactCardFragment() {
         // Required empty public constructor
@@ -75,20 +90,27 @@ public class ContactCardFragment extends Fragment {
         school_coordinator_name = (AppCompatTextView) view.findViewById(R.id.school_coordinator_name);
         school_coordinator_phone = (AppCompatTextView) view.findViewById(R.id.school_coordinator_phnumber);
 
-        mSchoolSelectorSpinner = (AppCompatSpinner) view.findViewById(R.id.school_contact_selector);
-        mSchoolSelectorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mDriverCardView = (CardView) view.findViewById(R.id.driver_contact);
+        mSchoolCoordinatorCardView =(CardView) view.findViewById(R.id.school_contact);
+        mHintLinearLayout = (LinearLayout) view.findViewById(R.id.select_child_view);
+
+        mChildImageLayout = (RecyclerView) view.findViewById(R.id.student_list_view_contact);
+        mStudentRef = FirebaseUtil.getStudentsRef();
+        mChildImageLayout.setLayoutManager(new LinearLayoutManager(getActivity(),
+                LinearLayoutManager.HORIZONTAL,false));
+        mAdapter = new StudentFirebaseRecyclerAdapter(mStudentRef,getActivity(),true);
+        mAdapter.setOnItemClickListener(new StudentFirebaseRecyclerAdapter.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-                fetchDataForSelectedSchool(schoolIds.get(i));
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+            public void onItemClick(String studentId) {
+                mDriverCardView.setVisibility(View.VISIBLE);
+                mSchoolCoordinatorCardView.setVisibility(View.VISIBLE);
+                mHintLinearLayout.setVisibility(View.GONE);
+                fetchContactDetails(studentId);
 
             }
         });
+
+        mChildImageLayout.setAdapter(mAdapter);
 
         //SET phone and name values from firebase
 
@@ -133,18 +155,26 @@ public class ContactCardFragment extends Fragment {
         });
 
 
-        populateSpinnerFromFireBase();
         return view;
     }
 
-    private void fetchDataForSelectedSchool(String s) {
-        DatabaseReference transportCoordinatorRef = FirebaseUtil.getTransportCoordinator(s);
-        transportCoordinatorRef.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void fetchContactDetails(String studentId) {
+        DatabaseReference studentDetailRef = FirebaseUtil.getStudentsRef().child(studentId);
+        studentDetailRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                TransportCoordinator transportCoordinator = dataSnapshot.getValue(TransportCoordinator.class);
-                school_coordinator_name.setText(transportCoordinator.getCoordinatorName());
-                school_coordinator_phone.setText(transportCoordinator.getCoordinatorPhone());
+                Student student = dataSnapshot.getValue(Student.class);
+                String schoolId = student.getSchoolId();
+                if (schoolId!=null)
+                    fetchSchoolCoordinator(schoolId);
+                String routeId = student.getRouteId();
+                if(routeId!=null)
+                    fetchRouteDetails(routeId);
+                else{
+                    Log.d(TAG,"Route id is NULL");
+                    mDriverCardView.setVisibility(View.GONE);
+                }
+
             }
 
             @Override
@@ -152,34 +182,21 @@ public class ContactCardFragment extends Fragment {
 
             }
         });
-
+        
     }
 
-    private void populateSpinnerFromFireBase() {
-
-        Log.d(TAG,"/*** Fetching Applicable Schools ***/");
-        DatabaseReference studentsRef = FirebaseUtil.getStudentsRef();
-        final Map<String,String> schoolsMap = new HashMap<>();
-        studentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void fetchRouteDetails(String routeId) {
+        DatabaseReference routeRef =FirebaseUtil.getRouteRef(routeId);
+        routeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot studentSnapshot:dataSnapshot.getChildren()){
-                    Student student = studentSnapshot.getValue(Student.class);
-                    Log.d(TAG,student.getSchoolId());
-                    schoolsMap.put(student.getSchoolId(),student.getSchoolName());
+                Route routeDetails = dataSnapshot.getValue(Route.class);
+                if(routeDetails.getDriverId()!=null)
+                    fetchRouteDriver(routeDetails.getDriverId());
+                else{
+                    Log.d(TAG,"Route id is NULL");
+                    mDriverCardView.setVisibility(View.GONE);
                 }
-
-                Log.d(TAG,"/*** Setting Spinner Up ***/");
-                schoolIds = new ArrayList<>();
-                schoolNames = new ArrayList<>();
-
-                for(String key:schoolsMap.keySet()){
-                    schoolIds.add(key);
-                    schoolNames.add(schoolsMap.get(key));
-                }
-                Log.d(TAG,schoolNames.toString());
-                ArrayAdapter<String> schoolArrayAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item,schoolNames);
-                mSchoolSelectorSpinner.setAdapter(schoolArrayAdapter);
             }
 
             @Override
@@ -189,5 +206,40 @@ public class ContactCardFragment extends Fragment {
         });
     }
 
+    private void fetchRouteDriver(String driverId) {
+        DatabaseReference driverDetails = FirebaseUtil.getDriverDetailRef(driverId);
+        driverDetails.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Driver driverDetails = dataSnapshot.getValue(Driver.class);
+                mDriverCardView.setVisibility(View.VISIBLE);
+                driver_name.setText(driverDetails.getName());
+                driver_phone.setText(driverDetails.getPhone());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void fetchSchoolCoordinator(String schoolId) {
+        DatabaseReference schoolDetailsRef = FirebaseUtil.getSchoolRef(schoolId);
+        schoolDetailsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                School school = dataSnapshot.getValue(School.class);
+                school_coordinator_name.setText(school.getTransportCoordinator()
+                        .getCoordinatorName());
+                school_coordinator_phone.setText(school.getTransportCoordinator().getCoordinatorPhone());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
 }

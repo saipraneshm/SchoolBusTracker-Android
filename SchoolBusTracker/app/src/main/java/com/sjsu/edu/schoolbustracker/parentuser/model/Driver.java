@@ -9,26 +9,13 @@ import java.util.UUID;
 
 public class Driver extends Profile {
 
+    private String mDrivingLicenceNumber;
 
-    private String mPhoneNumber;
-    //For image purposes
-    private UUID mDriverId;
-
-
-    public String getPhoneNumber() {
-        return mPhoneNumber;
+    public String getDrivingLicenceNumber() {
+        return mDrivingLicenceNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        mPhoneNumber = phoneNumber;
+    public void setDrivingLicenceNumber(String drivingLicenceNumber) {
+        mDrivingLicenceNumber = drivingLicenceNumber;
     }
-
-    public UUID getDriverId() {
-        return mDriverId;
-    }
-
-    public void setDriverId(UUID driverId) {
-        mDriverId = driverId;
-    }
-
 }

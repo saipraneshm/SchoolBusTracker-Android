@@ -33,7 +33,9 @@ public class FirebaseUtil {
     private static final String APP_SETTINGS = "AppSettings";
     private static final String SCHOOLS = "Schools";
     private static final String TRANSPORT_COORDINATOR = "transportCoordinator";
+    private static final String ROUTES = "Routes";
     private static final String BUS_TRACKING = "BusTracking";
+
 
     private static DatabaseReference mDatabase;
     private static DatabaseReference mCheckUserTypeRef;
@@ -72,9 +74,19 @@ public class FirebaseUtil {
     public static DatabaseReference getDriverRef(){
         return getBaseRef().child(PROFILE).child(DRIVER).getRef();
     }
+    public static DatabaseReference getDriverDetailRef(String driverId){
+        if(driverId!=null){
+            return getDriverRef().child(driverId);
+        }
+        return null;
+    }
 
     public static DatabaseReference getParentUserRef(){
         return getBaseRef().child(PROFILE).child(PARENT_USER).getRef();
+    }
+
+    public static DatabaseReference getCurrentParentUserRef(){
+        return getBaseRef().child(PROFILE).child(PARENT_USER).child(getCurrentUserId()).getRef();
     }
 
     //Fetches the current user's previous trip ref
@@ -147,6 +159,16 @@ public class FirebaseUtil {
 
     public static DatabaseReference getTransportCoordinator(String schoolId) {
         return getSchoolRef(schoolId).child(TRANSPORT_COORDINATOR);
+    }
+
+    public static DatabaseReference getAllRouteRef(){
+        return getBaseRef().child(ROUTES);
+    }
+    public static DatabaseReference getRouteRef(String routeId){
+        if(routeId!=null){
+            return getAllRouteRef().child(routeId);
+        }
+        return null;
     }
 
 

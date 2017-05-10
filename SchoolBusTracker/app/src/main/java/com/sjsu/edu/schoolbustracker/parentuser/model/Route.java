@@ -7,6 +7,16 @@ package com.sjsu.edu.schoolbustracker.parentuser.model;
 public class Route {
     private String mRouteNumber;
 
+    public String getDriverId() {
+        return mDriverId;
+    }
+
+    public void setDriverId(String driverId) {
+        mDriverId = driverId;
+    }
+
+    private String mDriverId;
+
     public String getRouteNumber() {
         return mRouteNumber;
     }

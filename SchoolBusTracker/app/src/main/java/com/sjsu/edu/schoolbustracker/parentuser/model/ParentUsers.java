@@ -7,20 +7,12 @@ package com.sjsu.edu.schoolbustracker.parentuser.model;
 
 public class ParentUsers extends Profile {
 
-    private String mPhone;
+
     private String mHouseAddress;
     private Student[] mChildren;
 
 
     public ParentUsers(){}
-
-    public String getPhone() {
-        return mPhone;
-    }
-
-    public void setPhone(String phone) {
-        mPhone = phone;
-    }
 
     public String getHouseAddress() {
         return mHouseAddress;
