@@ -15,6 +15,8 @@ public class QueryPreferences {
 
     private static final String PREF_SIGN_UP = "preference_sign_up";
 
+    private static final String PREF_FIRST_TIME = "preference_first_time_load";
+
     public static boolean getTripDetailsNavRef(Context context){
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(PREF_PARENT_TRIP_DETAILS_NAV,false);
@@ -38,6 +40,18 @@ public class QueryPreferences {
                 .edit()
                 .putBoolean(PREF_SIGN_UP,value)
                 .apply();
+    }
+
+    public static void setFirstTimePref(Context context, boolean value){
+        PreferenceManager.getDefaultSharedPreferences(context)
+                        .edit()
+                        .putBoolean(PREF_FIRST_TIME, value)
+                        .apply();
+    }
+
+    public static boolean getFirstTimePref(Context context){
+       return PreferenceManager.getDefaultSharedPreferences(context)
+                        .getBoolean(PREF_FIRST_TIME, false);
     }
 
 

@@ -23,7 +23,9 @@ import com.sjsu.edu.schoolbustracker.parentuser.model.TripDetails;
  * Created by sai pranesh on 13-Apr-17.
  */
 
-public class TripsFirebaseRecyclerAdapter extends FirebaseRecyclerAdapter<TripDetails, TripsFirebaseRecyclerAdapter.TripViewHolder> implements OnMapReadyCallback{
+public class TripsFirebaseRecyclerAdapter extends
+        FirebaseRecyclerAdapter<TripDetails, TripsFirebaseRecyclerAdapter.TripViewHolder>
+        implements OnMapReadyCallback{
 
     Context context;
     GoogleMap mGoogleMap;
