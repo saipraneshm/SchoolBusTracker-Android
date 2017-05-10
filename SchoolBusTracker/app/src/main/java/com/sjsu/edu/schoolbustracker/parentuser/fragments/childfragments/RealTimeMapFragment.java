@@ -113,14 +113,6 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
 
     }
 
-/*    public int getPreviousKey() {
-        return previousKey;
-    }
-
-    public void setPreviousKey(int previousKey) {
-        this.previousKey = previousKey;
-    }*/
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -148,39 +140,10 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.d(TAG, "connected to google api client");
-        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            mLocationPermissionGranted = true;
-            Log.d(TAG,"Permission Already Granted");
-            SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                    .findFragmentById(R.id.real_time_map);
-            mapFragment.getMapAsync(this);
-        } else {
-            Log.d(TAG,"Requesting Permissions");
-            /*ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);*/
-            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        }
-        /*if (ActivityCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if(mLastLocation != null){
-            LatLng currentLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng,10));
-        }*/
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.real_time_map);
+        mapFragment.getMapAsync(this);
+
     }
 
     @Override
@@ -212,9 +175,6 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionGranted = true;
                     Log.d(TAG,"Permission Granted");
-                    SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                            .findFragmentById(R.id.real_time_map);
-                    mapFragment.getMapAsync(this);
                 }
             }
         }
@@ -241,8 +201,7 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
                 == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
         } else {
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
 
@@ -386,7 +345,6 @@ public class RealTimeMapFragment extends Fragment implements OnMapReadyCallback,
         super.onStop();
         if(mCurrentBusTrackingDetailsRef != null && mChildEventListener != null)
             mCurrentBusTrackingDetailsRef.removeEventListener(mChildEventListener);
-     //   QueryPreferences.setFirstTimePref(getActivity(), false);
     }
 
 
