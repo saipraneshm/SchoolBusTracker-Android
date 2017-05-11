@@ -41,6 +41,7 @@ public class FirebaseUtil {
     private static DatabaseReference mCheckUserTypeRef;
     private static DatabaseReference mProfileRef;
     private static DatabaseReference userSettingsReference;
+    private static boolean result = false;
 
 
     public static DatabaseReference getBaseRef(){
@@ -172,24 +173,15 @@ public class FirebaseUtil {
     }
 
 
-    public static void setUpInitialProfile(final Context context , final Profile user){
+    public static void setUpInitialProfile(final Profile user){
 
-        mCheckUserTypeRef = FirebaseUtil.getCheckUserRef();
+        mCheckUserTypeRef = getCheckUserRef();
         mCheckUserTypeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean doesProfileExists = dataSnapshot.hasChild(user.getUUID());
                 if(doesProfileExists){
-                    Log.d("ProfileExists", user.getEmailId() + " profile exists in the database" );
 
-                    Boolean isDriver = dataSnapshot.child(user.getUUID()).child("isDriver")
-                            .getValue(Boolean.class);
-                    Log.d("ProfileExists", isDriver.toString() + " is driver ?");
-                    if(isDriver){
-
-                        mProfileRef = FirebaseUtil.getDriverRef();
-
-                    }else{
                         mProfileRef = FirebaseUtil.getParentUserRef().child(user.getUUID()).getRef();
 
                         mProfileRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -209,7 +201,6 @@ public class FirebaseUtil {
 
                             }
                         });
-                    }
 
                 }else{
                     Log.d("ProfileExists", user.getEmailId() +
@@ -217,7 +208,7 @@ public class FirebaseUtil {
                     mCheckUserTypeRef.child(user.getUUID()).child("isDriver").setValue(false);
 
                     userSettingsReference = FirebaseUtil.getBaseRef()
-                            .child(context.getResources().getString(R.string.firebase_settings_node))
+                            .child(APP_SETTINGS)
                             .child(user.getUUID());
 
 
@@ -229,13 +220,6 @@ public class FirebaseUtil {
                     newSettings.setContactPreference("Mobile");
 
                     userSettingsReference.setValue(newSettings);
-
-                    /*Profile newParent = new ParentUsers();
-                    newParent.setUUID(user.getUUID());
-                    newParent.setName(user.getName());
-                    newParent.setEmailId(user.getEmail());
-                    if(user.getPhotoUrl() != null)
-                        newParent.setPhotoUri(user.getPhotoUrl().toString());*/
                     FirebaseUtil.getParentUserRef()
                             .child(user.getUUID())
                             .setValue(user);
@@ -268,4 +252,33 @@ public class FirebaseUtil {
                 .child("1")
                 .child("Coordinates");
     }
+
+ /*   public static boolean isCurrentUserDriver(final FirebaseUser user){
+        mCheckUserTypeRef = getCheckUserRef();
+        result = false;
+        mCheckUserTypeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean doesProfileExists = dataSnapshot.hasChild(user.getUid());
+                if(doesProfileExists){
+                    Log.d("ProfileExists", user.getEmail() + " profile exists in the database" );
+
+                    Boolean isDriver = dataSnapshot.child(user.getUid()).child("isDriver")
+                            .getValue(Boolean.class);
+                    Log.d("ProfileExists", isDriver.toString() + " is driver ?");
+                    if(isDriver) {
+                        result = true;
+                        mProfileRef = FirebaseUtil.getDriverRef();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        return result;
+
+    }*/
 }

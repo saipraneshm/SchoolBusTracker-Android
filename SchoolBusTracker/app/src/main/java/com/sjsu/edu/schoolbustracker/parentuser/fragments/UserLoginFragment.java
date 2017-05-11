@@ -47,7 +47,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
+import com.sjsu.edu.schoolbustracker.driver.activity.DriverBottomNavigationActivity;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.BottomNavigationActivity;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.UserRegistrationActivity;
@@ -191,16 +195,42 @@ public class UserLoginFragment extends Fragment {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                            String classname = this.getClass().getName();
-                            Log.d(TAG,classname + " is the classname from which it has been called");
-                            Profile newParent = new ParentUsers();
-                            newParent.setUUID(user.getUid());
-                            newParent.setName(user.getDisplayName());
-                            newParent.setEmailId(user.getEmail());
-                            if(user.getPhotoUrl() != null)
-                                newParent.setPhotoUri(user.getPhotoUrl().toString());
-                            FirebaseUtil.setUpInitialProfile(getActivity(),newParent);
-                            startBottomNavigationActivity();
+                    FirebaseUtil.getCheckUserRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            boolean doesProfileExists = dataSnapshot.hasChild(user.getUid());
+                            if(doesProfileExists){
+                                Log.d("ProfileExists", user.getEmail() + " profile exists in the database" );
+
+                                Boolean isDriver = dataSnapshot.child(user.getUid()).child("isDriver")
+                                        .getValue(Boolean.class);
+                                Log.d("ProfileExists", isDriver.toString() + " is driver ?");
+                                if(isDriver) {
+                                   Log.d(TAG, "current user is the driver " + user.getDisplayName());
+                                    startActivity(new Intent(getActivity(),
+                                            DriverBottomNavigationActivity.class ));
+                                }else{
+                                    String classname = this.getClass().getName();
+                                    Log.d(TAG,classname + " is the classname from which it has been called");
+                                    Profile newParent = new ParentUsers();
+                                    newParent.setUUID(user.getUid());
+                                    newParent.setName(user.getDisplayName());
+                                    newParent.setEmailId(user.getEmail());
+                                    if(user.getPhotoUrl() != null)
+                                        newParent.setPhotoUri(user.getPhotoUrl().toString());
+                                    FirebaseUtil.setUpInitialProfile(newParent);
+                                    startBottomNavigationActivity();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");

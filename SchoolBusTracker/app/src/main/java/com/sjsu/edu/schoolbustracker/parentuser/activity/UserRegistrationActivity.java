@@ -246,7 +246,7 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
             newParent.setPhotoUri(mParentPhotoUri.toString());
         /*if(user.getPhotoUrl() != null)
             newParent.setPhotoUri(user.getPhotoUrl().toString());*/
-        FirebaseUtil.setUpInitialProfile(UserRegistrationActivity.this, newParent);
+        FirebaseUtil.setUpInitialProfile(newParent);
       //  QueryPreferences.setSignUpPref(UserRegistrationActivity.this,true);
         mProgressDialog.hide();
         final Snackbar snackbar = Snackbar.make(view, R.string.sign_up_complete, Snackbar.LENGTH_INDEFINITE)

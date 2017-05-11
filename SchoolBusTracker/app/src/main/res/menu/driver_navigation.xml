@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_current_trip"
+        android:icon="@drawable/ic_map_black_24px"
+        android:title="@string/title_trip_list"
+        />
+
+    <item
+        android:id="@+id/navigation_child_attendance"
+        android:icon="@drawable/ic_history_black_24px"
+        android:title="@string/title_child_attendance"/>
+
+    <item
+        android:id="@+id/navigation_contact_parent"
+        android:icon="@drawable/ic_contacts_black_24px"
+        android:title="@string/title_parent_contact"/>
+
+    <item
+        android:id="@+id/navigation_user_profile_driver"
+        android:icon="@drawable/ic_account_circle_black_24px"
+        android:title="@string/title_user_profile"/>
+
+</menu>

@@ -91,7 +91,7 @@ public class BottomNavigationActivity extends AppCompatActivity implements
             mNavItemIndex = 1;
             sTagCurrent = sTagTripHistory;
             loadFragment();
-            navigation.getMenu().getItem(1).setChecked(true);
+            parent_navigation.getMenu().getItem(1).setChecked(true);
         }*/
 
         navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {

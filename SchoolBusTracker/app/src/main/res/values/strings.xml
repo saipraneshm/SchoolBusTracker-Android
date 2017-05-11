@@ -98,6 +98,10 @@
     <string name="send_email">Send email</string>
     <string name="route_ask_school">Please ask school to assign route number.</string>
     <string name="select_child">Please select a Child for displaying contact information</string>
+    <string name="title_activity_driver_bottom_navigation">DriverBottomNavigationActivity</string>
+    <string name="title_trip_list">Trip</string>
+    <string name="title_child_attendance">Attendance</string>
+    <string name="title_parent_contact">Contact</string>
 
 
 </resources>
