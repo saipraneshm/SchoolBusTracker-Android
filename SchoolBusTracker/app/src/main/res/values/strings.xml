@@ -30,6 +30,13 @@
         <item>Profile</item>
     </string-array>
 
+    <string-array name="driver_fragment_titles">
+        <item>Current Trip</item>
+        <item>Attendance</item>
+        <item>Contact Parent</item>
+        <item>Profile</item>
+    </string-array>
+
     <string name="loading">Please Wait</string>
     <string name="logout_txt">Logout</string>
 

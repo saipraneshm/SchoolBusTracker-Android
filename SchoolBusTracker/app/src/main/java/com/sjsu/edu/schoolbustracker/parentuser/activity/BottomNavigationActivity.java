@@ -42,8 +42,6 @@ public class BottomNavigationActivity extends AppCompatActivity implements
         PhotoPickerFragment.OnPhotoPickerPathListener{
 
 
-    private TextView mTextMessage;
-
     private static final String TAG = "BottomNavigation" ;
 
     //Tag to keep track of the current fragment
@@ -138,11 +136,6 @@ public class BottomNavigationActivity extends AppCompatActivity implements
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        ActivityHelper.saveUID(this, FirebaseUtil.getCurrentUserId());
-    }
 
     public void loadFragment(){
         if(getSupportActionBar() != null)
