@@ -27,28 +27,26 @@ public class AccountSettingsFragment extends Fragment {
     private DatabaseReference userSettingsReference;
     private UserSettings mUserSettings;
     private AppCompatButton mEnableAccountButton,mDisableAccountButton;
+    private static final String IS_DRIVER = "isDriver";
+    private static boolean isDriver = false;
 
     public AccountSettingsFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AccountSettingsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AccountSettingsFragment newInstance(String param1, String param2) {
+    public static AccountSettingsFragment newInstance(boolean isDriver) {
         AccountSettingsFragment fragment = new AccountSettingsFragment();
+        Bundle arg = new Bundle();
+        arg.putBoolean(IS_DRIVER, isDriver);
+        fragment.setArguments(arg);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isDriver = getArguments().getBoolean(IS_DRIVER);
+        Log.d(TAG, isDriver + " : is the current user a driver?");
     }
 
     @Override
@@ -82,7 +80,7 @@ public class AccountSettingsFragment extends Fragment {
             }
         });
 
-        mUserUID = ActivityHelper.getUID(getActivity());
+        mUserUID = FirebaseUtil.getCurrentUserId();
         Log.d(TAG,"User UID -->"+ mUserUID);
         userSettingsReference = FirebaseUtil.getUserAppSettingRef();
 
@@ -147,15 +145,15 @@ public class AccountSettingsFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mUserSettings = dataSnapshot.getValue(UserSettings.class);
 
-                if(mUserSettings.getContactPreference().equals("Email")){
+                if(mUserSettings.getContactPreference()!=null && mUserSettings.getContactPreference().equals("Email")){
                     mRadioEmail.setChecked(true);
 
                 }
-                else if(mUserSettings.getContactPreference().equals("Mobile")){
+                else if(mUserSettings.getContactPreference()!=null && mUserSettings.getContactPreference().equals("Mobile")){
                     mRadioMobile.setChecked(true);
                 }
 
-                if(mUserSettings.isAccountEnabled()){
+                if(mUserSettings.isAccountEnabled()!=null && mUserSettings.isAccountEnabled()){
                     mEnableAccountButton.setVisibility(View.GONE);
                     mDisableAccountButton.setVisibility(View.VISIBLE);
                 }

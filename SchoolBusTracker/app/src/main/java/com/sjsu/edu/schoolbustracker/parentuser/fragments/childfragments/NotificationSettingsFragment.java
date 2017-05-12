@@ -31,13 +31,18 @@ public class NotificationSettingsFragment extends Fragment {
     private DatabaseReference mDatabaseReference;
     private DatabaseReference userSettingsReference;
     private UserSettings mUserSettings;
+    private static final String IS_DRIVER = "isDriver";
+    private static boolean isDriver = false;
 
     public NotificationSettingsFragment() {
         // Required empty public constructor
     }
 
-    public static NotificationSettingsFragment newInstance(String param1, String param2) {
+    public static NotificationSettingsFragment newInstance(boolean isDriver) {
         NotificationSettingsFragment fragment = new NotificationSettingsFragment();
+        Bundle arg = new Bundle();
+        arg.putBoolean(IS_DRIVER, isDriver);
+        fragment.setArguments(arg);
         return fragment;
     }
 
@@ -45,6 +50,8 @@ public class NotificationSettingsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        isDriver = getArguments().getBoolean(IS_DRIVER);
+        Log.d(TAG, isDriver + " : is the current user a driver?");
 
     }
 
@@ -59,7 +66,7 @@ public class NotificationSettingsFragment extends Fragment {
         mTextNotificationSwitch = (SwitchCompat) v.findViewById(R.id.text_notification_switch);
         saveSettings = (AppCompatButton) v.findViewById(R.id.save_settings_button);
 
-        mUserUID = ActivityHelper.getUID(getActivity());
+        mUserUID = FirebaseUtil.getCurrentUserId();
         Log.d(TAG,"User UID -->"+ mUserUID);
         userSettingsReference = FirebaseUtil.getUserAppSettingRef();
 
@@ -69,12 +76,12 @@ public class NotificationSettingsFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                UserSettings newSettings = new UserSettings();
-                newSettings.setEmailNotification(mEmailNotificationSwitch.isChecked());
-                newSettings.setPushNotification(mPushNotificationSwitch.isChecked());
-                newSettings.setTextNotification(mTextNotificationSwitch.isChecked());
+                //UserSettings newSettings = new UserSettings();
+                mUserSettings.setEmailNotification(mEmailNotificationSwitch.isChecked());
+                mUserSettings.setPushNotification(mPushNotificationSwitch.isChecked());
+                mUserSettings.setTextNotification(mTextNotificationSwitch.isChecked());
 
-                userSettingsReference.setValue(newSettings);
+                userSettingsReference.setValue(mUserSettings);
 
             }
         });

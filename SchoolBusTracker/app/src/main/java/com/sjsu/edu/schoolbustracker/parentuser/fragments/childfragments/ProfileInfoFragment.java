@@ -28,6 +28,8 @@ public class ProfileInfoFragment extends Fragment {
     private AppCompatButton mEditProfile,mSaveProfile;
     private String mUserUID;
     private ParentUsers parentUser;
+    private static final String IS_DRIVER = "isDriver";
+    private static boolean isDriver = false;
 
     private final String TAG = "ProfileInfoFrag";
 
@@ -39,8 +41,11 @@ public class ProfileInfoFragment extends Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static ProfileInfoFragment newInstance(String param1, String param2) {
+    public static ProfileInfoFragment newInstance(boolean isDriver) {
         ProfileInfoFragment fragment = new ProfileInfoFragment();
+        Bundle arg = new Bundle();
+        arg.putBoolean(IS_DRIVER, isDriver);
+        fragment.setArguments(arg);
         return fragment;
     }
 
@@ -48,6 +53,8 @@ public class ProfileInfoFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        isDriver = getArguments().getBoolean(IS_DRIVER);
+        Log.d(TAG, isDriver + " : is the current user a driver?");
 
     }
 
@@ -66,9 +73,15 @@ public class ProfileInfoFragment extends Fragment {
 
         mUserUID = FirebaseUtil.getCurrentUserId();
         Log.d(TAG,"User UID -->"+ mUserUID);
-        parentProfileRef = mDatabaseReference
+
+        if(isDriver)
+            parentProfileRef = mDatabaseReference
                 .child(getString(R.string.firebase_profile_node))
-                .child(getString(R.string.firebase_parent_node)).child(mUserUID);
+                .child(getString(R.string.firebase_driver_node)).child(mUserUID);
+        else
+            parentProfileRef = mDatabaseReference
+                    .child(getString(R.string.firebase_profile_node))
+                    .child(getString(R.string.firebase_parent_node)).child(mUserUID);
         setupDataFromFirebase();
 
         mEditProfile.setOnClickListener(new View.OnClickListener() {
