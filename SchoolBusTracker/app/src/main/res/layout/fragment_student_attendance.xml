@@ -11,7 +11,7 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        android:id="@+id/toolbar4"
+        android:id="@+id/student_attendance_fragment"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="0dp"
         android:layout_marginLeft="0dp"
