@@ -2,7 +2,6 @@ package com.sjsu.edu.schoolbustracker.parentuser.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -23,13 +22,12 @@ public class StudentHolder extends RecyclerView.ViewHolder {
 
     private final CircleImageView mStudentImage;
     private final LinearLayout mHighlighter;
-    static View prevView;
+    private static int prevPos ;
 
     public StudentHolder(View itemView) {
         super(itemView);
         mStudentImage = (CircleImageView) itemView.findViewById(R.id.student_image_holder);
         mHighlighter = (LinearLayout) itemView.findViewById(R.id.recycler_view_background);
-        prevView = null;
     }
 
     void bindView(final Student student, Context context, final StudentFirebaseRecyclerAdapter.OnItemClickListener listener, final boolean highlightSelected){
@@ -48,21 +46,17 @@ public class StudentHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View view) {
                 if(highlightSelected)
-                    changeSelectedItem();
-                listener.onItemClick(student.getStudentUUID());
+                    changeSelectedItem(listener);
+                listener.onItemClick(student.getStudentUUID(), prevPos);
             }
         });
 
     }
 
-    private void changeSelectedItem(){
-        if(prevView!=null){
-            LinearLayout ll =(LinearLayout) prevView.findViewById(R.id.recycler_view_background);
-            ll.setSelected(false);
-        }
+    private void changeSelectedItem(StudentFirebaseRecyclerAdapter.OnItemClickListener listener){
+        listener.getPrevPos(prevPos);
         mHighlighter.setSelected(true);
         itemView.setTag(R.id.recycler_view_background, itemView);
-        prevView = itemView;
-
+        prevPos = getAdapterPosition();
     }
 }

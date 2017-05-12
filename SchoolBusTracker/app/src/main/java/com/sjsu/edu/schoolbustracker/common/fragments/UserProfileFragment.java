@@ -216,9 +216,14 @@ public class UserProfileFragment extends Fragment {
         mAdapter = new StudentFirebaseRecyclerAdapter(mStudentReference,getActivity(),false);
         mAdapter.setOnItemClickListener(new StudentFirebaseRecyclerAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(String studentId) {
+            public void onItemClick(String studentId, int pos) {
                 DialogFragment studentDetailFragment = StudentDetailFragment.newInstance(studentId);
                 studentDetailFragment.show(getFragmentManager(),"Student Detail");
+
+            }
+
+            @Override
+            public void getPrevPos(int position) {
 
             }
         });

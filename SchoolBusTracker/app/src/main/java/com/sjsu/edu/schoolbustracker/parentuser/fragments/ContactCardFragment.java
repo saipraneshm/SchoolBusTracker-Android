@@ -52,7 +52,7 @@ public class ContactCardFragment extends Fragment {
     private AppCompatTextView driver_name,driver_phone,school_coordinator_name,school_coordinator_phone;
     private Toolbar mToolbar;
     private StudentFirebaseRecyclerAdapter mAdapter;
-    private final String TAG = "ContactCardFragment";
+    private final String TAG = ContactCardFragment.class.getSimpleName();
     private DatabaseReference mStudentRef;
     private RecyclerView mChildImageLayout;
     private CardView mDriverCardView,mSchoolCoordinatorCardView;
@@ -96,17 +96,27 @@ public class ContactCardFragment extends Fragment {
 
         mChildImageLayout = (RecyclerView) view.findViewById(R.id.student_list_view_contact);
         mStudentRef = FirebaseUtil.getStudentsRef();
-        mChildImageLayout.setLayoutManager(new LinearLayoutManager(getActivity(),
-                LinearLayoutManager.HORIZONTAL,false));
+        final LinearLayoutManager mLm = new LinearLayoutManager(getActivity(),
+                LinearLayoutManager.HORIZONTAL,false);
+        mChildImageLayout.setLayoutManager(mLm);
         mAdapter = new StudentFirebaseRecyclerAdapter(mStudentRef,getActivity(),true);
         mAdapter.setOnItemClickListener(new StudentFirebaseRecyclerAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(String studentId) {
+            public void onItemClick(String studentId, int pos) {
                 mDriverCardView.setVisibility(View.VISIBLE);
                 mSchoolCoordinatorCardView.setVisibility(View.VISIBLE);
                 mHintLinearLayout.setVisibility(View.GONE);
                 fetchContactDetails(studentId);
+            }
 
+            @Override
+            public void getPrevPos(int pos) {
+                View view =  mLm.findViewByPosition(pos);
+                if(view != null){
+                    Log.d(TAG, "view retreived successfully at position " + pos);
+                    LinearLayout ll =(LinearLayout) view.findViewById(R.id.recycler_view_background);
+                    ll.setSelected(false);
+                }
             }
         });
 

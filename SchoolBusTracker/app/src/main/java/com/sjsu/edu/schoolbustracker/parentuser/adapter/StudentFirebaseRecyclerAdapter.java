@@ -25,7 +25,8 @@ public class StudentFirebaseRecyclerAdapter extends FirebaseRecyclerAdapter<Stud
     }
 
     public interface OnItemClickListener{
-        void onItemClick(String studentId);
+        void onItemClick(String studentId, int position);
+        void getPrevPos(int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
