@@ -30,7 +30,6 @@ public class ContactParentFragment extends Fragment {
         mToolbar = (Toolbar) view.findViewById(R.id.contact_parent_toolbar);
         mToolbar.setTitle(R.string.title_parent_contact);
         mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.black, null));
-        // Inflate the layout for this fragment
         return view;
     }
 

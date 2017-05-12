@@ -16,13 +16,10 @@ import com.sjsu.edu.schoolbustracker.R;
  */
 public class StudentAttendanceFragment extends Fragment {
 
-
     private Toolbar mToolbar;
-
     public StudentAttendanceFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -8,14 +8,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,14 +20,10 @@ import android.view.ViewGroup;
 
 import com.sjsu.edu.schoolbustracker.R;
 
-import com.sjsu.edu.schoolbustracker.driver.services.CustomLocationService;
 import com.sjsu.edu.schoolbustracker.driver.services.LocationUpdateService;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.MapTextFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.RealTimeMapFragment;
-import com.sjsu.edu.schoolbustracker.helperclasses.CustomFragmentPagerAdapter;
-
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import com.sjsu.edu.schoolbustracker.parentuser.adapter.CustomFragmentPagerAdapter;
 
 
 /**
