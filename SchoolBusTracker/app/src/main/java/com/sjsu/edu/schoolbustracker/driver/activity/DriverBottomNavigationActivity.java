@@ -8,17 +8,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.driver.fragments.ContactParentFragment;
 import com.sjsu.edu.schoolbustracker.driver.fragments.CurrentTripFragment;
 import com.sjsu.edu.schoolbustracker.driver.fragments.StudentAttendanceFragment;
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
-import com.sjsu.edu.schoolbustracker.parentuser.fragments.ContactCardFragment;
-import com.sjsu.edu.schoolbustracker.parentuser.fragments.RealTimeFragment;
-import com.sjsu.edu.schoolbustracker.parentuser.fragments.TripsFragment;
-import com.sjsu.edu.schoolbustracker.parentuser.fragments.UserProfileFragment;
+import com.sjsu.edu.schoolbustracker.common.fragments.UserProfileFragment;
 
 public class DriverBottomNavigationActivity extends AppCompatActivity {
 

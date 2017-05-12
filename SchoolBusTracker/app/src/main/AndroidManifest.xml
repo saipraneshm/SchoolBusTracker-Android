@@ -22,7 +22,7 @@
         android:roundIcon="@mipmap/ic_bus_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".parentuser.activity.MainActivity">
+        <activity android:name=".common.activity.MainActivity">
         </activity>
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -46,7 +46,7 @@
             android:value="@string/facebook_app_id"/>
 
         <activity
-            android:name=".parentuser.activity.BottomNavigationActivity"
+            android:name=".common.activity.BottomNavigationActivity"
             android:label="@string/title_activity_bottom_navigation">
         </activity>
 
@@ -67,10 +67,10 @@
 
         <activity
             android:name=".parentuser.activity.UserRegistrationActivity"
-            android:parentActivityName=".parentuser.activity.MainActivity">
+            android:parentActivityName=".common.activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".parentuser.activity.MainActivity"/>
+                android:value=".common.activity.MainActivity"/>
         </activity>
 
         <provider
@@ -84,7 +84,7 @@
         </provider>
 
         <activity
-            android:name=".parentuser.activity.SplashScreenActivity"
+            android:name=".common.activity.SplashScreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/FullscreenTheme">
             <intent-filter>

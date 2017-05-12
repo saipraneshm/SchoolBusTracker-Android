@@ -16,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
+import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
 
 
@@ -63,7 +64,7 @@ public class ProfileInfoFragment extends Fragment {
         mEditProfile = (AppCompatButton) v.findViewById(R.id.edit_btn);
         mSaveProfile = (AppCompatButton) v.findViewById(R.id.save_btn);
 
-        mUserUID = ActivityHelper.getUID(getActivity());
+        mUserUID = FirebaseUtil.getCurrentUserId();
         Log.d(TAG,"User UID -->"+ mUserUID);
         parentProfileRef = mDatabaseReference
                 .child(getString(R.string.firebase_profile_node))

@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.parentuser.fragments;
+package com.sjsu.edu.schoolbustracker.common.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,7 +36,7 @@ import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 import com.sjsu.edu.schoolbustracker.helperclasses.CustomFragmentPagerAdapter;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
-import com.sjsu.edu.schoolbustracker.parentuser.activity.MainActivity;
+import com.sjsu.edu.schoolbustracker.common.activity.MainActivity;
 import com.sjsu.edu.schoolbustracker.parentuser.adapter.StudentFirebaseRecyclerAdapter;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.AccountSettingsFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.NotificationSettingsFragment;
@@ -73,31 +73,32 @@ public class UserProfileFragment extends Fragment {
     private String mUserUID;
     private ParentUsers parentUser;
     private CircleImageView mNewStudentButton;
+    private static final String IS_DRIVER = "isDriver";
+    private static boolean isDriver = false;
 
 
     public UserProfileFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment UserProfileFragment.
-     */
     // TODO: Rename and change types and number of parameters
-    public static UserProfileFragment newInstance(String param1, String param2) {
+    public static UserProfileFragment newInstance(boolean isDriver) {
         UserProfileFragment fragment = new UserProfileFragment();
+        Bundle arg = new Bundle();
+        arg.putBoolean(IS_DRIVER, isDriver);
+        fragment.setArguments(arg);
         return fragment;
     }
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        isDriver = getArguments().getBoolean(IS_DRIVER);
+        Log.d(TAG, isDriver + " : is the current user a driver?");
     }
 
 
@@ -186,7 +187,7 @@ public class UserProfileFragment extends Fragment {
         mProfileName = (AppCompatTextView) view.findViewById(R.id.profile_top_name);
         mProfileNumber = (AppCompatTextView) view.findViewById(R.id.profile_top_phone);
 
-        mUserUID = ActivityHelper.getUID(getActivity());
+        mUserUID = FirebaseUtil.getCurrentUserId();
         Log.d(TAG,"User UID -->"+ mUserUID);
         parentProfileRef = mDatabaseReference
                 .child(getString(R.string.firebase_profile_node))

@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.parentuser.activity;
+package com.sjsu.edu.schoolbustracker.common.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

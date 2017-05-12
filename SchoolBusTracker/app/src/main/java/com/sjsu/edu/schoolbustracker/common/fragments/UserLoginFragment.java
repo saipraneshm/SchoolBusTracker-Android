@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.parentuser.fragments;
+package com.sjsu.edu.schoolbustracker.common.fragments;
 
 import android.app.ActivityOptions;
 import android.app.ProgressDialog;
@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -53,7 +52,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.driver.activity.DriverBottomNavigationActivity;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
-import com.sjsu.edu.schoolbustracker.parentuser.activity.BottomNavigationActivity;
+import com.sjsu.edu.schoolbustracker.common.activity.BottomNavigationActivity;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.UserRegistrationActivity;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.LoginFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.ResetDialogFragment;
@@ -77,6 +76,7 @@ public class UserLoginFragment extends Fragment {
     private AppCompatButton mFbLoginButton;
     private CallbackManager mCallbackManager;
     private TextView mSignUpTv, mLoginTv, mAppNameTxt, mForgotPassword;
+    private static boolean isDriver = false;
     public ProgressDialog mProgressDialog;
     private LoginManager mLoginManager;
     private View view;
@@ -107,7 +107,6 @@ public class UserLoginFragment extends Fragment {
         mLoginManager.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
 
@@ -115,17 +114,13 @@ public class UserLoginFragment extends Fragment {
 
             @Override
             public void onCancel() {
-
                 hideProgressDialog();
-
                 Log.d(TAG, "Facebook cancelled the login process");
             }
 
             @Override
             public void onError(FacebookException exception) {
-
                 hideProgressDialog();
-
                 Log.e(TAG,"Facebook exception", new Exception());
             }
 
@@ -135,11 +130,9 @@ public class UserLoginFragment extends Fragment {
 
 
     //This is used to start the next activity
-    private void startBottomNavigationActivity() {
+    private void startBottomNavigationActivity(boolean isDriver) {
         if(UserLoginFragment.this.isAdded()){
-            Intent intent =new Intent(getActivity(),BottomNavigationActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    |Intent.FLAG_ACTIVITY_NEW_TASK);
+            Intent intent = BottomNavigationActivity.newIntent(getActivity(), isDriver);
             startActivity(intent);
         }
     }
@@ -202,13 +195,11 @@ public class UserLoginFragment extends Fragment {
                             if(doesProfileExists){
                                 Log.d("ProfileExists", user.getEmail() + " profile exists in the database" );
 
-                                Boolean isDriver = dataSnapshot.child(user.getUid()).child("isDriver")
+                                isDriver = dataSnapshot.child(user.getUid()).child("isDriver")
                                         .getValue(Boolean.class);
-                                Log.d("ProfileExists", isDriver.toString() + " is driver ?");
+                                Log.d("ProfileExists", isDriver + " is driver ?");
                                 if(isDriver) {
                                    Log.d(TAG, "current user is the driver " + user.getDisplayName());
-                                    startActivity(new Intent(getActivity(),
-                                            DriverBottomNavigationActivity.class ));
                                 }else{
                                     String classname = this.getClass().getName();
                                     Log.d(TAG,classname + " is the classname from which it has been called");
@@ -219,8 +210,8 @@ public class UserLoginFragment extends Fragment {
                                     if(user.getPhotoUrl() != null)
                                         newParent.setPhotoUri(user.getPhotoUrl().toString());
                                     FirebaseUtil.setUpInitialProfile(newParent);
-                                    startBottomNavigationActivity();
                                 }
+                                startBottomNavigationActivity(isDriver);
                             }
                         }
 
