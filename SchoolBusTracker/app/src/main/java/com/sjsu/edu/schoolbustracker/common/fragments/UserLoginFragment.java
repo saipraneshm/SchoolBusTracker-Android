@@ -55,8 +55,8 @@ import com.sjsu.edu.schoolbustracker.common.activity.BottomNavigationActivity;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.UserRegistrationActivity;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.LoginFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.ResetDialogFragment;
-import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
-import com.sjsu.edu.schoolbustracker.parentuser.model.Profile;
+import com.sjsu.edu.schoolbustracker.common.model.ParentUsers;
+import com.sjsu.edu.schoolbustracker.common.model.Profile;
 
 import java.util.Arrays;
 

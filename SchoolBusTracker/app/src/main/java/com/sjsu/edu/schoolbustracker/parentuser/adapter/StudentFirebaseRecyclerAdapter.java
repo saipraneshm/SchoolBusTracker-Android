@@ -5,7 +5,7 @@ import android.content.Context;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.parentuser.model.Student;
+import com.sjsu.edu.schoolbustracker.common.model.Student;
 
 /**
  * Created by akshaymathur on 4/15/17.

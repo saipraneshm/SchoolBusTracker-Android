@@ -41,7 +41,7 @@ import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.Account
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.NotificationSettingsFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.ProfileInfoFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.StudentDetailFragment;
-import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
+import com.sjsu.edu.schoolbustracker.common.model.ParentUsers;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 

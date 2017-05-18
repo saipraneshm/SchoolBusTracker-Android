@@ -109,6 +109,11 @@
     <string name="title_trip_list">Trip</string>
     <string name="title_child_attendance">Attendance</string>
     <string name="title_parent_contact">Contact</string>
+    <string name="current_trip_text">Current Trip</string>
+    <string name="student_name">Student name</string>
+    <string name="address_string">Destination Address</string>
+    <string name="upcoming_trip_text">Upcoming trip</string>
+    <string name="start_navigation">Start</string>
 
 
 </resources>

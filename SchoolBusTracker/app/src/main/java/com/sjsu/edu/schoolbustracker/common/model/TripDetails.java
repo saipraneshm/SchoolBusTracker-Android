@@ -1,6 +1,4 @@
-package com.sjsu.edu.schoolbustracker.parentuser.model;
-
-import com.google.android.gms.maps.model.LatLng;
+package com.sjsu.edu.schoolbustracker.common.model;
 
 /**
  * Created by sai pranesh on 13-Apr-17.

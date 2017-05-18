@@ -10,7 +10,7 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.StorageReference;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
-import com.sjsu.edu.schoolbustracker.parentuser.model.Student;
+import com.sjsu.edu.schoolbustracker.common.model.Student;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 

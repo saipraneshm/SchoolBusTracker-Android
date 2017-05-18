@@ -3,12 +3,9 @@ package com.sjsu.edu.schoolbustracker.parentuser.fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,8 +15,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
 import com.google.firebase.database.DataSnapshot;
@@ -29,17 +24,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.adapter.StudentFirebaseRecyclerAdapter;
-import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.StudentDetailFragment;
-import com.sjsu.edu.schoolbustracker.parentuser.model.Driver;
-import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
-import com.sjsu.edu.schoolbustracker.parentuser.model.Route;
-import com.sjsu.edu.schoolbustracker.parentuser.model.School;
-import com.sjsu.edu.schoolbustracker.parentuser.model.Student;
-import com.sjsu.edu.schoolbustracker.parentuser.model.TransportCoordinator;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import com.sjsu.edu.schoolbustracker.common.model.Driver;
+import com.sjsu.edu.schoolbustracker.common.model.Route;
+import com.sjsu.edu.schoolbustracker.common.model.School;
+import com.sjsu.edu.schoolbustracker.common.model.Student;
 
 
 public class ContactCardFragment extends Fragment {

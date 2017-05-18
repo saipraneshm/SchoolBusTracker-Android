@@ -12,7 +12,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
-import com.sjsu.edu.schoolbustracker.parentuser.model.Coordinates;
+import com.sjsu.edu.schoolbustracker.common.model.Coordinates;
 
 
 public class LocationUpdateService extends Service  {

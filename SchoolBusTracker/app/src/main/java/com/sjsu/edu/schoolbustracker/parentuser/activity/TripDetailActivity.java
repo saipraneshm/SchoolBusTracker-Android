@@ -2,7 +2,6 @@ package com.sjsu.edu.schoolbustracker.parentuser.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,8 +10,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
@@ -24,8 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
-import com.sjsu.edu.schoolbustracker.helperclasses.QueryPreferences;
-import com.sjsu.edu.schoolbustracker.parentuser.model.TripDetails;
+import com.sjsu.edu.schoolbustracker.common.model.TripDetails;
 
 public class TripDetailActivity extends AppCompatActivity implements OnMapReadyCallback{
 

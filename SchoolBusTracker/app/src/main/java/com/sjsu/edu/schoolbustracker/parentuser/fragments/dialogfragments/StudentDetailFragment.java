@@ -35,8 +35,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
-import com.sjsu.edu.schoolbustracker.parentuser.model.School;
-import com.sjsu.edu.schoolbustracker.parentuser.model.Student;
+import com.sjsu.edu.schoolbustracker.common.model.School;
+import com.sjsu.edu.schoolbustracker.common.model.Student;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -170,7 +170,8 @@ public class StudentDetailFragment extends DialogFragment {
                     schoolMap.put(school.getSchoolId(),school);
 
                 }
-                ArrayAdapter<String> schoolsAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_spinner_dropdown_item,schools);
+                ArrayAdapter<String> schoolsAdapter = new ArrayAdapter<>(getActivity(),
+                        android.R.layout.simple_spinner_dropdown_item,schools);
                 mSchoolSpinner.setAdapter(schoolsAdapter);
                 String studentId = args.getString("studentid");
                 if(studentId !=null){

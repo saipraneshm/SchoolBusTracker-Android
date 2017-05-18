@@ -1,6 +1,4 @@
-package com.sjsu.edu.schoolbustracker.parentuser.model;
-
-import android.net.Uri;
+package com.sjsu.edu.schoolbustracker.common.model;
 
 /**
  * Created by sai pranesh on 12-Apr-17.

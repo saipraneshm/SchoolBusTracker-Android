@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.UiThread;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +18,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -28,7 +26,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.sjsu.edu.schoolbustracker.R;
@@ -36,10 +33,7 @@ import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.helperclasses.QueryPreferences;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.PhotoPickerFragment;
-import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.StudentDetailFragment;
-import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
-
-import java.util.UUID;
+import com.sjsu.edu.schoolbustracker.common.model.ParentUsers;
 
 public class UserRegistrationActivity extends AppCompatActivity implements View.OnClickListener,
         PhotoPickerFragment.OnPhotoPickerPathListener{
