@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.helperclasses;
+package com.sjsu.edu.schoolbustracker.parentuser.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

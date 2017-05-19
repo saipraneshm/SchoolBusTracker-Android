@@ -17,7 +17,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.parentuser.model.TripDetails;
+import com.sjsu.edu.schoolbustracker.common.model.TripDetails;
 
 /**
  * Created by sai pranesh on 13-Apr-17.

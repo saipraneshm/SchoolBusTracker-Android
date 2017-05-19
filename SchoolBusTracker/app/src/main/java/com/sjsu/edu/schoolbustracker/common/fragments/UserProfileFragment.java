@@ -34,8 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
-import com.sjsu.edu.schoolbustracker.helperclasses.CustomFragmentPagerAdapter;
+import com.sjsu.edu.schoolbustracker.parentuser.adapter.CustomFragmentPagerAdapter;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.common.activity.MainActivity;
 import com.sjsu.edu.schoolbustracker.helperclasses.LatLngInterpolator;
@@ -44,7 +43,7 @@ import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.Account
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.NotificationSettingsFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.ProfileInfoFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.StudentDetailFragment;
-import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
+import com.sjsu.edu.schoolbustracker.common.model.ParentUsers;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -209,20 +208,25 @@ public class UserProfileFragment extends Fragment {
         if(!isDriver) {
             mChildImageLayout = (RecyclerView) view.findViewById(R.id.student_list_view);
 
-            mStudentReference = FirebaseUtil.getStudentsRef();
 
-            mChildImageLayout.setLayoutManager(new LinearLayoutManager(getActivity(),
-                    LinearLayoutManager.HORIZONTAL, false));
-            mAdapter = new StudentFirebaseRecyclerAdapter(mStudentReference, getActivity(), false);
-            mAdapter.setOnItemClickListener(new StudentFirebaseRecyclerAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(String studentId) {
-                    DialogFragment studentDetailFragment = StudentDetailFragment.newInstance(studentId);
-                    studentDetailFragment.show(getFragmentManager(), "Student Detail");
+        mChildImageLayout.setLayoutManager(new LinearLayoutManager(getActivity(),
+                LinearLayoutManager.HORIZONTAL,false));
+        mAdapter = new StudentFirebaseRecyclerAdapter(mStudentReference,getActivity(),false);
+        mAdapter.setOnItemClickListener(new StudentFirebaseRecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(String studentId, int pos) {
+                DialogFragment studentDetailFragment = StudentDetailFragment.newInstance(studentId);
+                studentDetailFragment.show(getFragmentManager(),"Student Detail");
 
-                }
-            });
+            }
 
+            @Override
+            public void getPrevPos(int position) {
+
+            }
+        });
+
+          //  mStudentReference = FirebaseUtil.getStudentsRef();
             mChildImageLayout.setAdapter(mAdapter);
         }
         return view;

@@ -3,12 +3,9 @@ package com.sjsu.edu.schoolbustracker.parentuser.fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,8 +15,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
 import com.google.firebase.database.DataSnapshot;
@@ -29,17 +24,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.adapter.StudentFirebaseRecyclerAdapter;
-import com.sjsu.edu.schoolbustracker.parentuser.fragments.dialogfragments.StudentDetailFragment;
-import com.sjsu.edu.schoolbustracker.parentuser.model.Driver;
-import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
-import com.sjsu.edu.schoolbustracker.parentuser.model.Route;
-import com.sjsu.edu.schoolbustracker.parentuser.model.School;
-import com.sjsu.edu.schoolbustracker.parentuser.model.Student;
-import com.sjsu.edu.schoolbustracker.parentuser.model.TransportCoordinator;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import com.sjsu.edu.schoolbustracker.common.model.Driver;
+import com.sjsu.edu.schoolbustracker.common.model.Route;
+import com.sjsu.edu.schoolbustracker.common.model.School;
+import com.sjsu.edu.schoolbustracker.common.model.Student;
 
 
 public class ContactCardFragment extends Fragment {
@@ -52,7 +40,7 @@ public class ContactCardFragment extends Fragment {
     private AppCompatTextView driver_name,driver_phone,school_coordinator_name,school_coordinator_phone;
     private Toolbar mToolbar;
     private StudentFirebaseRecyclerAdapter mAdapter;
-    private final String TAG = "ContactCardFragment";
+    private final String TAG = ContactCardFragment.class.getSimpleName();
     private DatabaseReference mStudentRef;
     private RecyclerView mChildImageLayout;
     private CardView mDriverCardView,mSchoolCoordinatorCardView;
@@ -96,17 +84,27 @@ public class ContactCardFragment extends Fragment {
 
         mChildImageLayout = (RecyclerView) view.findViewById(R.id.student_list_view_contact);
         mStudentRef = FirebaseUtil.getStudentsRef();
-        mChildImageLayout.setLayoutManager(new LinearLayoutManager(getActivity(),
-                LinearLayoutManager.HORIZONTAL,false));
+        final LinearLayoutManager mLm = new LinearLayoutManager(getActivity(),
+                LinearLayoutManager.HORIZONTAL,false);
+        mChildImageLayout.setLayoutManager(mLm);
         mAdapter = new StudentFirebaseRecyclerAdapter(mStudentRef,getActivity(),true);
         mAdapter.setOnItemClickListener(new StudentFirebaseRecyclerAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(String studentId) {
+            public void onItemClick(String studentId, int pos) {
                 mDriverCardView.setVisibility(View.VISIBLE);
                 mSchoolCoordinatorCardView.setVisibility(View.VISIBLE);
                 mHintLinearLayout.setVisibility(View.GONE);
                 fetchContactDetails(studentId);
+            }
 
+            @Override
+            public void getPrevPos(int pos) {
+                View view =  mLm.findViewByPosition(pos);
+                if(view != null){
+                    Log.d(TAG, "view retreived successfully at position " + pos);
+                    LinearLayout ll =(LinearLayout) view.findViewById(R.id.recycler_view_background);
+                    ll.setSelected(false);
+                }
             }
         });
 

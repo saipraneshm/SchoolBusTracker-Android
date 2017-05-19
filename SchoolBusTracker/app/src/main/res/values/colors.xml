@@ -7,4 +7,5 @@
     <color name="background_material_light">#dfdbc3</color>
     <color name="black">#000000</color>
     <color name="black_overlay">#66000000</color>
+    <color name="card_view_disabled_color">#bdbdbd</color>
 </resources>

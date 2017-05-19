@@ -12,7 +12,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
-import com.sjsu.edu.schoolbustracker.parentuser.model.Coordinates;
+import com.sjsu.edu.schoolbustracker.common.model.Coordinates;
 
 
 public class LocationUpdateService extends Service  {
@@ -46,8 +46,15 @@ public class LocationUpdateService extends Service  {
             Coordinates coordinates = new Coordinates();
             coordinates.setLat(mLastLocation.getLatitude());
             coordinates.setLng(mLastLocation.getLongitude());
-            FirebaseUtil.getBusTrackingRef().child("ADFF12").child("Trips").child("03-31-2017").child("1").child("Coordinates").child(System.currentTimeMillis() + "").setValue(coordinates);
-            Log.d(TAG,"mCurrentLocation " + mLastLocation.getLongitude() + " " + mLastLocation.getLatitude());
+            FirebaseUtil.getBusTrackingRef().child("ADFF12")
+                    .child("Trips")
+                    .child("03-31-2017")
+                    .child("1")
+                    .child("Coordinates")
+                    .child(System.currentTimeMillis() + "")
+                    .setValue(coordinates);
+            Log.d(TAG,"mCurrentLocation " + mLastLocation.getLongitude() + " "
+                    + mLastLocation.getLatitude());
         }
 
         @Override

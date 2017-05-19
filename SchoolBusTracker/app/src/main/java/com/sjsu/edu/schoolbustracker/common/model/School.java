@@ -1,4 +1,4 @@
-package com.sjsu.edu.schoolbustracker.parentuser.model;
+package com.sjsu.edu.schoolbustracker.common.model;
 
 import java.util.Map;
 

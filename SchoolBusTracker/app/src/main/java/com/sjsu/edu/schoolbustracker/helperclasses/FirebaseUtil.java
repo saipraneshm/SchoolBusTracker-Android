@@ -1,6 +1,5 @@
 package com.sjsu.edu.schoolbustracker.helperclasses;
 
-import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -13,10 +12,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.parentuser.model.ParentUsers;
-import com.sjsu.edu.schoolbustracker.parentuser.model.Profile;
-import com.sjsu.edu.schoolbustracker.parentuser.model.UserSettings;
+import com.sjsu.edu.schoolbustracker.common.model.ParentUsers;
+import com.sjsu.edu.schoolbustracker.common.model.Profile;
+import com.sjsu.edu.schoolbustracker.common.model.UserSettings;
 
 /**
  * Created by sai pranesh on 12-Apr-17.
@@ -41,7 +39,6 @@ public class FirebaseUtil {
     private static DatabaseReference mCheckUserTypeRef;
     private static DatabaseReference mProfileRef;
     private static DatabaseReference userSettingsReference;
-    private static boolean result = false;
 
 
     public static DatabaseReference getBaseRef(){
@@ -129,7 +126,6 @@ public class FirebaseUtil {
 
     //Fetches the Storage reference to students photos
     public static StorageReference getStudentPhotoRef(String fileName){
-
         if(fileName!=null){
             return getBaseStorageReference().child(STUDENTS).child(fileName);
         }
@@ -152,7 +148,6 @@ public class FirebaseUtil {
     public static StorageReference getParentUsersPhotoRef(String fileName){
         if(fileName != null){
             return getBaseStorageReference().child(PARENT_USER).child(fileName);
-
         }
         return null;
     }
@@ -253,32 +248,23 @@ public class FirebaseUtil {
                 .child("Coordinates");
     }
 
- /*   public static boolean isCurrentUserDriver(final FirebaseUser user){
-        mCheckUserTypeRef = getCheckUserRef();
-        result = false;
-        mCheckUserTypeRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean doesProfileExists = dataSnapshot.hasChild(user.getUid());
-                if(doesProfileExists){
-                    Log.d("ProfileExists", user.getEmail() + " profile exists in the database" );
 
-                    Boolean isDriver = dataSnapshot.child(user.getUid()).child("isDriver")
-                            .getValue(Boolean.class);
-                    Log.d("ProfileExists", isDriver.toString() + " is driver ?");
-                    if(isDriver) {
-                        result = true;
-                        mProfileRef = FirebaseUtil.getDriverRef();
-                    }
-                }
-            }
+    public static DatabaseReference getPlannedRoutesDummyRef(){
+        return getBaseRef()
+                .child("Sample_DB")
+                .child("School")
+                .child("school_id")
+                .child("routes")
+                .child("bus_no")
+                .child("planned_route").getRef();
+    }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+    public static DatabaseReference getRegisteredChildrenRef(){
+        return getBaseRef()
+                .child("Sample_DB")
+                .child("School")
+                .child("school_id")
+                .child("registeredStudents").getRef();
+    }
 
-            }
-        });
-        return result;
-
-    }*/
 }

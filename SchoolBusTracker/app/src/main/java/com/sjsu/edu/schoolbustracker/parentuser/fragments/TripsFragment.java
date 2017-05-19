@@ -1,45 +1,26 @@
 package com.sjsu.edu.schoolbustracker.parentuser.fragments;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
-import android.support.v7.widget.AppCompatButton;
-
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
 
-import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.sjsu.edu.schoolbustracker.R;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.parentuser.activity.TripDetailActivity;
 import com.sjsu.edu.schoolbustracker.parentuser.adapter.TripsFirebaseRecyclerAdapter;
-import com.sjsu.edu.schoolbustracker.parentuser.model.Coordinates;
-import com.sjsu.edu.schoolbustracker.parentuser.model.TripDetails;
-
-import java.security.Timestamp;
-import java.util.Date;
-
-import java.util.HashSet;
 
 /**
  * A simple {@link Fragment} subclass.

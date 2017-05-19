@@ -93,10 +93,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".driver.activity.DriverBottomNavigationActivity"
-            android:label="@string/title_activity_driver_bottom_navigation">
-        </activity>
     </application>
 
 </manifest>

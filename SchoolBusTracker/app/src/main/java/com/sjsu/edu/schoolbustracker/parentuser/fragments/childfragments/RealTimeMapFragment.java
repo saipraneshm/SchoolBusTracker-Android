@@ -39,7 +39,7 @@ import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.helperclasses.LatLngInterpolator;
 import com.sjsu.edu.schoolbustracker.helperclasses.MarkerAnimation;
 import com.sjsu.edu.schoolbustracker.helperclasses.QueryPreferences;
-import com.sjsu.edu.schoolbustracker.parentuser.model.Coordinates;
+import com.sjsu.edu.schoolbustracker.common.model.Coordinates;
 
 /**
  * A simple {@link Fragment} subclass.
