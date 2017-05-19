@@ -28,7 +28,6 @@ public class StudentAttendanceFragment extends Fragment {
         mToolbar = (Toolbar) view.findViewById(R.id.student_attendance_fragment);
         mToolbar.setTitle(R.string.title_child_attendance);
         mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.black, null));
-        // Inflate the layout for this fragment
         return view;
     }
 
