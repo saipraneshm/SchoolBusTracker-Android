@@ -18,7 +18,6 @@ public class StudentAttendanceFragment extends Fragment {
 
     private Toolbar mToolbar;
     public StudentAttendanceFragment() {
-        // Required empty public constructor
     }
 
     @Override
