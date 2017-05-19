@@ -114,6 +114,6 @@
     <string name="address_string">Destination Address</string>
     <string name="upcoming_trip_text">Upcoming trip</string>
     <string name="start_navigation">Start</string>
-
+    <string name="firebase_driver_node">Driver</string>
 
 </resources>

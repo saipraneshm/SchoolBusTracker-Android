@@ -13,8 +13,9 @@ import android.view.ViewGroup;
 
 import com.google.firebase.database.DatabaseReference;
 import com.sjsu.edu.schoolbustracker.R;
-import com.sjsu.edu.schoolbustracker.driver.adapter.CurrentTripFragmentFirebaseAdapter;
-import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
+
+import com.sjsu.edu.schoolbustracker.parentuser.adapter.StudentFirebaseRecyclerAdapter;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +25,7 @@ public class ContactParentFragment extends Fragment {
 
     private Toolbar mToolbar;
     private RecyclerView mRecyclerView;
+
     public ContactParentFragment() {
         // Required empty public constructor
     }
@@ -32,13 +34,15 @@ public class ContactParentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_contact_parent, container, false);
+
+        // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.fragment_contact_parent, container, false);
         mToolbar = (Toolbar) view.findViewById(R.id.contact_parent_toolbar);
         mToolbar.setTitle(R.string.title_parent_contact);
         mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.black, null));
+        mStudentRecyclerView = (RecyclerView) v.findViewById(R.id.students_recycler_view);
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.current_trip_list_rv);
-        return view;
+        return v;
     }
 
 }
