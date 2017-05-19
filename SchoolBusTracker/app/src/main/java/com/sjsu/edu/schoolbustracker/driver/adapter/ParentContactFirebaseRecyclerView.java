@@ -40,7 +40,7 @@ public class ParentContactFirebaseRecyclerView extends FirebaseRecyclerAdapter<S
         }
 
         void bindView(String studentId){
-            DatabaseReference mStudentDetailRef = FirebaseUtil.getS
+            //DatabaseReference mStudentDetailRef = FirebaseUtil.getSchoolRef()
         }
     }
 }

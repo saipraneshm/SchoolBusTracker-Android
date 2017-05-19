@@ -24,7 +24,7 @@ public class ContactParentFragment extends Fragment {
 
 
     private Toolbar mToolbar;
-    private RecyclerView mRecyclerView;
+    private RecyclerView mStudentRecyclerView;
 
     public ContactParentFragment() {
         // Required empty public constructor
@@ -37,7 +37,7 @@ public class ContactParentFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_contact_parent, container, false);
-        mToolbar = (Toolbar) view.findViewById(R.id.contact_parent_toolbar);
+        mToolbar = (Toolbar) v.findViewById(R.id.contact_parent_toolbar);
         mToolbar.setTitle(R.string.title_parent_contact);
         mToolbar.setTitleTextColor(ResourcesCompat.getColor(getResources(),R.color.black, null));
         mStudentRecyclerView = (RecyclerView) v.findViewById(R.id.students_recycler_view);
