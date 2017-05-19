@@ -3,6 +3,8 @@ package com.sjsu.edu.schoolbustracker.driver.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -26,6 +28,10 @@ import com.sjsu.edu.schoolbustracker.common.model.ParentUsers;
 import com.sjsu.edu.schoolbustracker.common.model.StudentDetail;
 import com.sjsu.edu.schoolbustracker.common.model.StudentTemp;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -104,6 +110,18 @@ public class CurrentTripFragmentFirebaseAdapter extends FirebaseRecyclerAdapter<
                     public void onClick(View view) {
                         Uri intentUri = Uri.parse("google.navigation:q=" +
                                         Uri.encode(mAddressTv.getText().toString()));
+
+                        //Geocoding - Converting address into latitude and longitude, remember to set min,mx lat and lng
+                        //incomplete implementation of the feature.
+                        /*Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+                        try {
+                            List<Address> addresses = geocoder.getFromLocationName(mAddressTv.getText().toString(),1);
+                            for(Address adr : addresses){
+                                Log.d(TAG, "Addresses geo coding them " + adr.getLatitude() + ", " + adr.getLongitude());
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }*/
                         Intent mapIntent = new Intent(Intent.ACTION_VIEW, intentUri);
                         mapIntent.setPackage("com.google.android.apps.maps");
                         context.startActivity(mapIntent);
