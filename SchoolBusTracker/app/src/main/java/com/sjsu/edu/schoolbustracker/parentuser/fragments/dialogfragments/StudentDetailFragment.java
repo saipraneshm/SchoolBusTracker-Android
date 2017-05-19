@@ -162,9 +162,9 @@ public class StudentDetailFragment extends DialogFragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterable<DataSnapshot> d =dataSnapshot.getChildren();
                 for (DataSnapshot data:d) {
-                    Log.d(TAG,data.getKey());
+                    Log.d(TAG,"School ID--> "+data.getKey());
                     School school = data.getValue(School.class);
-                    Log.d(TAG,school.getSchoolName());
+                    Log.d(TAG,"School Name--> "+school.getSchoolName());
                     schools.add(school.getSchoolName());
                     schoolIds.add(school.getSchoolId());
                     schoolMap.put(school.getSchoolId(),school);

@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
@@ -37,6 +38,7 @@ import com.sjsu.edu.schoolbustracker.helperclasses.ActivityHelper;
 import com.sjsu.edu.schoolbustracker.helperclasses.CustomFragmentPagerAdapter;
 import com.sjsu.edu.schoolbustracker.helperclasses.FirebaseUtil;
 import com.sjsu.edu.schoolbustracker.common.activity.MainActivity;
+import com.sjsu.edu.schoolbustracker.helperclasses.LatLngInterpolator;
 import com.sjsu.edu.schoolbustracker.parentuser.adapter.StudentFirebaseRecyclerAdapter;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.AccountSettingsFragment;
 import com.sjsu.edu.schoolbustracker.parentuser.fragments.childfragments.NotificationSettingsFragment;
@@ -59,6 +61,7 @@ public class UserProfileFragment extends Fragment {
     private CircleImageView mParentImageView;
     private RecyclerView mChildImageLayout;
     private StudentFirebaseRecyclerAdapter mAdapter;
+    private LinearLayout mChildrenLayout;
 
     //CollectionPagerAdapter mDemoCollectionPagerAdapter;
     ViewPager mViewPager;
@@ -186,45 +189,42 @@ public class UserProfileFragment extends Fragment {
 
         mProfileName = (AppCompatTextView) view.findViewById(R.id.profile_top_name);
         mProfileNumber = (AppCompatTextView) view.findViewById(R.id.profile_top_phone);
-
+        mChildrenLayout = (LinearLayout) view.findViewById(R.id.children_linear_layout);
         mUserUID = FirebaseUtil.getCurrentUserId();
         Log.d(TAG,"User UID -->"+ mUserUID);
-        parentProfileRef = mDatabaseReference
+        if(isDriver) {
+            parentProfileRef = mDatabaseReference
+                    .child(getString(R.string.firebase_profile_node))
+                    .child(getString(R.string.firebase_driver_node)).child(mUserUID);
+            mChildrenLayout.setVisibility(View.GONE);
+        }
+        else
+            parentProfileRef = mDatabaseReference
                 .child(getString(R.string.firebase_profile_node))
                 .child(getString(R.string.firebase_parent_node)).child(mUserUID);
         setupDataFromFirebase();
 
-        //mViewPager.setAdapter(mDemoCollectionPagerAdapter);
-
-        /*AppCompatButton logout = (AppCompatButton) view.findViewById(R.id.logout_btn);
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mAuth.getInstance().signOut();
-                Intent intent =new Intent(getActivity(),MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        });*/
-
         mParentImageView = (CircleImageView) view.findViewById(R.id.parent_profile_pic);
-        mChildImageLayout = (RecyclerView) view.findViewById(R.id.student_list_view);
 
-        mStudentReference = FirebaseUtil.getStudentsRef();
+        if(!isDriver) {
+            mChildImageLayout = (RecyclerView) view.findViewById(R.id.student_list_view);
 
-        mChildImageLayout.setLayoutManager(new LinearLayoutManager(getActivity(),
-                LinearLayoutManager.HORIZONTAL,false));
-        mAdapter = new StudentFirebaseRecyclerAdapter(mStudentReference,getActivity(),false);
-        mAdapter.setOnItemClickListener(new StudentFirebaseRecyclerAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(String studentId) {
-                DialogFragment studentDetailFragment = StudentDetailFragment.newInstance(studentId);
-                studentDetailFragment.show(getFragmentManager(),"Student Detail");
+            mStudentReference = FirebaseUtil.getStudentsRef();
 
-            }
-        });
+            mChildImageLayout.setLayoutManager(new LinearLayoutManager(getActivity(),
+                    LinearLayoutManager.HORIZONTAL, false));
+            mAdapter = new StudentFirebaseRecyclerAdapter(mStudentReference, getActivity(), false);
+            mAdapter.setOnItemClickListener(new StudentFirebaseRecyclerAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(String studentId) {
+                    DialogFragment studentDetailFragment = StudentDetailFragment.newInstance(studentId);
+                    studentDetailFragment.show(getFragmentManager(), "Student Detail");
 
-        mChildImageLayout.setAdapter(mAdapter);
+                }
+            });
+
+            mChildImageLayout.setAdapter(mAdapter);
+        }
         return view;
     }
 
@@ -253,9 +253,9 @@ public class UserProfileFragment extends Fragment {
     private void setupViewPager(ViewPager viewPager) {
 
         CustomFragmentPagerAdapter adapter = new CustomFragmentPagerAdapter(getChildFragmentManager());
-        adapter.addFragment(new ProfileInfoFragment(), "Profile");
-        adapter.addFragment(new NotificationSettingsFragment(), "Notifications");
-        adapter.addFragment(new AccountSettingsFragment(), "Settings");
+        adapter.addFragment(ProfileInfoFragment.newInstance(isDriver), "Profile");
+        adapter.addFragment(NotificationSettingsFragment.newInstance(isDriver), "Notifications");
+        adapter.addFragment(AccountSettingsFragment.newInstance(isDriver), "Settings");
         viewPager.setAdapter(adapter);
     }
 
