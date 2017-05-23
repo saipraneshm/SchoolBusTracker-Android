@@ -1,5 +1,5 @@
 # Schooler 
-[Download App](https://play.google.com/store/apps/details?id=com.sjsu.edu.schoolbustracker)
+[Download App from Playstore](https://play.google.com/store/apps/details?id=com.sjsu.edu.schoolbustracker)
 
 App Description
 ======
