@@ -9,35 +9,35 @@ App Features
 ======
 1. Google and Facebook Authentication
 
-![alt text](https://github.com/saipraneshm/SchoolBusTracker-Android/blob/upload_section/Screenshots/Login_screen.png "Login Screen")
+![alt text](/Screenshots/Login_screen.png "Login Screen")
 
 2. Account creation and authentication using email
 
-![alt text](https://github.com/saipraneshm/SchoolBusTracker-Android/blob/upload_section/Screenshots/Screenshot_1495493527.png "Registration Screen")
-![alt text](https://github.com/saipraneshm/SchoolBusTracker-Android/blob/upload_section/Screenshots/Screenshot_1495493601.png "Login Dialog")
+![alt text](/Screenshots/Screenshot_1495493527.png "Registration Screen")
+![alt text](/Screenshots/Screenshot_1495493601.png "Login Dialog")
 
 3. Real time tracking information of the bus in which the child is travelling
 
-![alt text](https://github.com/saipraneshm/SchoolBusTracker-Android/blob/upload_section/Screenshots/Screenshot_1495493955.png "Realtime Tracking")
+![alt text](/Screenshots/Screenshot_1495493955.png "Realtime Tracking")
 
 4. Ability to contact the kid's bus coordinator
 
-![alt text](https://github.com/saipraneshm/SchoolBusTracker-Android/blob/upload_section/Screenshots/Screenshot_1495493904.png "Contact Fragment")
-![alt text](https://github.com/saipraneshm/SchoolBusTracker-Android/blob/upload_section/Screenshots/Screenshot_1495493909.png "Contact Driver")
+![alt text](/Screenshots/Screenshot_1495493904.png "Contact Fragment")
+![alt text](/Screenshots/Screenshot_1495493909.png "Contact Driver")
 
 5. Update user profile information and other user preferences for notifications.
 
-![alt text](https://github.com/saipraneshm/SchoolBusTracker-Android/blob/upload_section/Screenshots/Screenshot_1495493859.png "Profile")
-![alt text](https://github.com/saipraneshm/SchoolBusTracker-Android/blob/upload_section/Screenshots/Screenshot_1495493893.png "Notification Settings")
-![alt text](https://github.com/saipraneshm/SchoolBusTracker-Android/blob/upload_section/Screenshots/Screenshot_1495493898.png "Account Settings")
+![alt text](/Screenshots/Screenshot_1495493859.png "Profile")
+![alt text](/Screenshots/Screenshot_1495493893.png "Notification Settings")
+![alt text](/Screenshots/Screenshot_1495493898.png "Account Settings")
 
 6. Add children to registered Schools.
 
-![alt text](https://github.com/saipraneshm/SchoolBusTracker-Android/blob/upload_section/Screenshots/Screenshot_1495493850.png "Add Child")
+![alt text](/Screenshots/Screenshot_1495493850.png "Add Child")
 
 7. Upload children profile pictures.
 
-![alt text](https://github.com/saipraneshm/SchoolBusTracker-Android/blob/upload_section/Screenshots/Screenshot_1495493831.png "Pick Photo")
+![alt text](/Screenshots/Screenshot_1495493831.png "Pick Photo")
 
 Built Using
 ======
