@@ -1,5 +1,4 @@
 # Schooler
-## Getting kids to bus on time
 
 App Description
 ======
@@ -36,10 +35,10 @@ Features Implemented Using
 12. Glide
 13. Circle Image View
 14. Other Components
-  * Implict Intents to start respective Activites
-    1. To pick images from gallery.
-    2. To call or sent text message.
-    3. To click photo using camera.
-  * Custom Dialog Fragments
-  * Bottom Navigation Activity
-  * Services to push location data to Firebase
+      * Implict Intents to start respective Activites
+        1. To pick images from gallery.
+        2. To call or sent text message.
+        3. To click photo using camera.
+      * Custom Dialog Fragments
+      * Bottom Navigation Activity
+      * Services to push location data to Firebase
