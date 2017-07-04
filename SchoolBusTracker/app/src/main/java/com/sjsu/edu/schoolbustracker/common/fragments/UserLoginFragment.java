@@ -210,8 +210,9 @@ public class UserLoginFragment extends Fragment {
                                         newParent.setPhotoUri(user.getPhotoUrl().toString());
                                     FirebaseUtil.setUpInitialProfile(newParent);
                                 }
-                                startBottomNavigationActivity(isDriver);
+
                             }
+                            startBottomNavigationActivity(isDriver);
                         }
 
                         @Override

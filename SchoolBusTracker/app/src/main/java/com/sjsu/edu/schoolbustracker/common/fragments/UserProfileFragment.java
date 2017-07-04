@@ -208,7 +208,7 @@ public class UserProfileFragment extends Fragment {
         if(!isDriver) {
             mChildImageLayout = (RecyclerView) view.findViewById(R.id.student_list_view);
 
-
+            mStudentReference = FirebaseUtil.getStudentsRef();
         mChildImageLayout.setLayoutManager(new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.HORIZONTAL,false));
         mAdapter = new StudentFirebaseRecyclerAdapter(mStudentReference,getActivity(),false);

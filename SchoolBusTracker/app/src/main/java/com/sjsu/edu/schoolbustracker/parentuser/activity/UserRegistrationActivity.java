@@ -114,35 +114,38 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
                 //Getting the current user after successful sign up
                 user = firebaseAuth.getCurrentUser();
                 if(user!=null) {
-
-                    //wrong place to upload the photo
-                    StorageReference parentStorageRef = FirebaseUtil
-                            .getParentUsersPhotoRef(mParentPhotoUri.getLastPathSegment());
-                    parentStorageRef.putFile(mParentPhotoUri)
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            mParentPhotoUri =  taskSnapshot.getDownloadUrl();
-                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                    .setDisplayName(userName.getText().toString())
-                                    .setPhotoUri(mParentPhotoUri == null ? null : mParentPhotoUri)
-                                    .build();
-                            user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()){
-                                        Log.d(TAG,"update profile calling");
-                                        updateProfile(mCl);
+                    if(mParentPhotoUri !=null){
+                        StorageReference parentStorageRef = FirebaseUtil
+                                .getParentUsersPhotoRef(mParentPhotoUri.getLastPathSegment());
+                        parentStorageRef.putFile(mParentPhotoUri)
+                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        mParentPhotoUri =  taskSnapshot.getDownloadUrl();
+                                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                                .setDisplayName(userName.getText().toString())
+                                                .setPhotoUri(mParentPhotoUri == null ? null : mParentPhotoUri)
+                                                .build();
+                                        user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful()){
+                                                    Log.d(TAG,"update profile calling");
+                                                    updateProfile(mCl);
+                                                }
+                                            }
+                                        });
                                     }
-                                }
-                            });
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e(TAG,"failure to upload photo " , e);
-                        }
-                    });
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e(TAG,"failure to upload photo " , e);
+                            }
+                        });
+                    }
+                    updateProfile(mCl);
+                    //wrong place to upload the photo
+
 
 
                 }
@@ -196,6 +199,7 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
         String user_password = String.valueOf(userPassword.getText());
         String user_phone = String.valueOf(userPhoneNo.getText());
         newParent = new ParentUsers();
+        newParent.setName(user_name);
         newParent.setPhone(user_phone);
         if(mParentPhotoUri!= null){
             newParent.setPhotoUri(mParentPhotoUri.toString());
@@ -241,7 +245,7 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
     private void updateProfile(final View view){
         Log.d(TAG, " user _name " +  user.getDisplayName());
         newParent.setUUID(user.getUid());
-        newParent.setName(user.getDisplayName());
+        //newParent.setName(user.getDisplayName());
         newParent.setEmailId(user.getEmail());
         if(mParentPhotoUri != null)
             newParent.setPhotoUri(mParentPhotoUri.toString());
