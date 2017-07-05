@@ -79,7 +79,7 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
         mProfileImageView = (ImageView) findViewById(R.id.user_profile_image_view) ;
         mCameraImageView = (ImageView) findViewById(R.id.camera_image_view);
 
-       mProfileImageView.setOnClickListener(this);
+        mProfileImageView.setOnClickListener(this);
 
         done.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +88,7 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
                 if (!isValidEmail)
                     userEmail.setError(getResources().getString(R.string.invalid_email));
                 else{
-                    mAuth.signOut();
+                  //  mAuth.signOut();
                     mProgressDialog.setMessage(getResources().getString(R.string.create_account_msg));
                     mProgressDialog.show();
                     fetchAndStoreDetails(view);
@@ -122,11 +122,14 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
                                     @Override
                                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                         mParentPhotoUri =  taskSnapshot.getDownloadUrl();
-                                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                        UserProfileChangeRequest profileUpdates =
+                                                new UserProfileChangeRequest.Builder()
                                                 .setDisplayName(userName.getText().toString())
                                                 .setPhotoUri(mParentPhotoUri == null ? null : mParentPhotoUri)
                                                 .build();
-                                        user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        user.updateProfile(profileUpdates)
+                                                .addOnCompleteListener
+                                                        (new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if(task.isSuccessful()){
@@ -144,10 +147,6 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
                         });
                     }
                     updateProfile(mCl);
-                    //wrong place to upload the photo
-
-
-
                 }
             }
         };
@@ -157,7 +156,6 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
     @Override
     protected void onStart() {
         super.onStart();
-
         mAuth.addAuthStateListener(mAuthStateListener);
     }
 
@@ -178,13 +176,10 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
             Slide returnSlide = (Slide) TransitionInflater.from(this).inflateTransition(R.transition.slide);
             returnSlide.setSlideEdge(Gravity.BOTTOM);
             getWindow().setReturnTransition(slide);
-            /*Explode explode = new Explode();
-            explode.setDuration(1000);
-            getWindow().setReturnTransition(explode);*/
         }
     }
 
-    public final static boolean isValidEmail(CharSequence target) {
+    public static boolean isValidEmail(CharSequence target) {
         if (target == null) {
             return false;
         } else {
@@ -210,7 +205,7 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
             public void onComplete(@NonNull Task<AuthResult> task) {
 
 
-                //Showing the corresponding failed snackbar message
+                //Showing the corresponding failed snack bar message
                 // If sign in fails, display a message to the user. If sign in succeeds
                 // the auth state listener will be notified and logic to handle the
                 // signed in user can be handled in the listener.
@@ -228,11 +223,7 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
                     });
                     snackbar.show();
                 }
-
                 Log.d(TAG, "createWithEmail: " + task.isSuccessful());
-
-
-
             }
         });
 
@@ -249,10 +240,8 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
         newParent.setEmailId(user.getEmail());
         if(mParentPhotoUri != null)
             newParent.setPhotoUri(mParentPhotoUri.toString());
-        /*if(user.getPhotoUrl() != null)
-            newParent.setPhotoUri(user.getPhotoUrl().toString());*/
+
         FirebaseUtil.setUpInitialProfile(newParent);
-      //  QueryPreferences.setSignUpPref(UserRegistrationActivity.this,true);
         mProgressDialog.hide();
         final Snackbar snackbar = Snackbar.make(view, R.string.sign_up_complete, Snackbar.LENGTH_INDEFINITE)
                 .setActionTextColor(getResources().getColor(R.color.colorPrimary));
@@ -260,7 +249,7 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
             @Override
             public void onClick(View view) {
                 snackbar.dismiss();
-                mAuth.signOut();
+               // mAuth.signOut();
                 finish();
             }
         });
@@ -276,13 +265,15 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
         userEmail.setEnabled(false);
         userPassword.setEnabled(false);
         userPhoneNo.setEnabled(false);
+        mProfileImageView.setEnabled(false);
+        mCameraImageView.setEnabled(false);
         back.setVisibility(View.GONE);
         done.setVisibility(View.GONE);
         sign_in.setVisibility(View.VISIBLE);
         sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mAuth.signOut();
+               // mAuth.signOut();
                 finish();
             }
         });
